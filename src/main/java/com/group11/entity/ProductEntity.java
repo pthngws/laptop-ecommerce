@@ -27,13 +27,13 @@ public class ProductEntity {
     @Column(nullable = false)
     private int price;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private int status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     @JsonIgnore
-    @ToString.Exclude
     private CategoryEntity category;
 
     @ManyToOne(fetch = FetchType.LAZY)
