@@ -14,18 +14,15 @@ public class AddressEntity {
     @Column(name = "address_id")
     private Long addressID;
 
-    @Column(columnDefinition = "nvarchar(250) not null")
+    @Column(columnDefinition = "nvarchar(250)")
     private String country;
 
-    @Column(columnDefinition = "nvarchar(250) not null")
+    @Column(columnDefinition = "nvarchar(250)")
     private String province;
 
-    @Column(columnDefinition = "nvarchar(250) not null")
+    @Column(columnDefinition = "nvarchar(250)")
     private String district;
 
-    @Column(columnDefinition = "nvarchar(250) not null")
+    @Column(columnDefinition = "nvarchar(250)")
     private String commune;
-
-    @Column(columnDefinition = "nvarchar(250) not null")
-    private String other;
 }
