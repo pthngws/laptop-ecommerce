@@ -4,10 +4,10 @@ import com.group11.entity.UserEntity;
 import com.group11.model.LoginResponse;
 import com.group11.model.LoginUserModel;
 import com.group11.model.RegisterUserModel;
-import com.group11.service.IChatService;
+import com.group11.service.IAuthenticationService;
+import com.group11.service.IJwtService;
 import com.group11.service.IUserService;
-import com.group11.service.impl.AuthenticationService;
-import com.group11.service.impl.JwtService;
+import com.group11.service.impl.JwtServiceImpl;
 import com.group11.service.impl.EmailServiceImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,13 +23,13 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthenticationController {
     @Autowired
-    AuthenticationService authenticationService;
+    IAuthenticationService authenticationService;
 
     @Autowired
     IUserService userService;
 
     @Autowired
-    private JwtService jwtService;
+    private IJwtService jwtService;
 
     @Autowired
     private EmailServiceImpl emailService; // Inject EmailServiceImpl

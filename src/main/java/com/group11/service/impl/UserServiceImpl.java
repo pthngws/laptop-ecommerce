@@ -43,6 +43,7 @@ public class UserServiceImpl implements IUserService {
                 .build();
     }
 
+    @Override
     public List<UserEntity> allUsers() {
         return userRepository.findAll();
     }

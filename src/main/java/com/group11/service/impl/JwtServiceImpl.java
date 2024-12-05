@@ -1,6 +1,7 @@
 package com.group11.service.impl;
 
 import com.group11.entity.UserEntity;
+import com.group11.service.IJwtService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtService {
+public class JwtServiceImpl implements IJwtService {
 
     @Value("${security.jwt.secret-key}")
     private String secretKey;
@@ -22,18 +23,18 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
-    // Extract username (email) from the token
+    @Override
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extract a claim from the token
+    @Override
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // Generate token with custom claims
+    @Override
     public String generateToken(Map<String, Object> extraClaims, UserEntity userDetails) {
         extraClaims.put("role", userDetails.getRoleName());
         extraClaims.put("name", userDetails.getName());
@@ -43,18 +44,18 @@ public class JwtService {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
-    // Generate token from UserEntity
+    @Override
     public String generateToken(UserEntity userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    // Get the expiration time (in minutes) of the JWT
+    @Override
     public long getExpirationTime() {
         return jwtExpiration;
     }
 
-    // Build the JWT with claims and expiration
-    private String buildToken(Map<String, Object> extraClaims, UserEntity userDetails, long expiration) {
+    @Override
+    public String buildToken(Map<String, Object> extraClaims, UserEntity userDetails, long expiration) {
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getEmail())
@@ -64,24 +65,24 @@ public class JwtService {
                 .compact();
     }
 
-    // Validate token against UserDetails
+    @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    // Check if the token has expired
-    private boolean isTokenExpired(String token) {
+    @Override
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Extract expiration date from the token
-    private Date extractExpiration(String token) {
+    @Override
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // Extract all claims from the JWT
-    private Claims extractAllClaims(String token) {
+    @Override
+    public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(getSignInKey())  // Set the signing key for verification
                 .build()
@@ -89,8 +90,8 @@ public class JwtService {
                 .getBody();  // Extract claims
     }
 
-    // Get the signing key from the secret key (Base64 decoded)
-    private SecretKey getSignInKey() {
+    @Override
+    public SecretKey getSignInKey() {
         byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);  // Return the signing key for JWT
     }

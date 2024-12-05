@@ -5,23 +5,23 @@ import com.group11.entity.UserEntity;
 import com.group11.model.LoginUserModel;
 import com.group11.model.RegisterUserModel;
 import com.group11.repository.UserRepository;
+import com.group11.service.IAuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+public class AuthenticationServiceImpl implements IAuthenticationService {
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-    }
-
+    @Override
     public UserEntity signup(RegisterUserModel input){
         UserEntity user = new UserEntity();
         user.setName(input.getName());
@@ -32,11 +32,12 @@ public class AuthenticationService {
         user.setAddress(address);
         return userRepository.save(user);
     }
+    @Override
     public UserEntity authenticate(LoginUserModel input){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword()));
         return userRepository.findByEmail(input.getEmail());
     }
-
+    @Override
     public void ChangePassword(String email, String password){
         UserEntity user = userRepository.findByEmail(email);
         user.setPassword(passwordEncoder.encode(password));
