@@ -36,4 +36,9 @@ public class HomeController {
     public String personalInfo() {
         return "personal-info";
     }
+
+    @GetMapping("/inventory")
+    public String inventory() {
+        return "inventory";
+    }
 }

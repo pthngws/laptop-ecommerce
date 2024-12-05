@@ -8,23 +8,54 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Đăng nhập</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div layout:fragment="content">
-    <h2>Login</h2>
+
+    <!-- login register wrapper start -->
+    <div class="login-register-wrapper">
+        <div class="container">
+            <div class="member-area-from-wrap">
+                <div class="row">
+                    <!-- Login Content Start -->
+                    <div class="col-lg-6">
+                        <div class="login-reg-form-wrap  pr-lg-50">
+                            <h2>Đăng nhập</h2>
+
+                            <div th:if="${error}" class="alert alert-danger">
+                                <p th:text="${error}"></p>
+                            </div>
     <form id="loginForm">
-        <label for="email">email:</label>
-        <input type="text" id="email" name="email" required><br>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-
-        <button type="submit">Login</button>
+        <div class="single-input-item">
+            <!-- Email field with pattern for stricter validation -->
+            <input id="email"
+                   type="email"
+                   placeholder="Email"
+                   name="email"
+                   required
+                   pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                   title="Nhập đúng định dạng email!" />
+        </div>
+        <div class="single-input-item">
+            <input type="password" id="password" placeholder="Mật khẩu" name="password" required />
+        </div>
+        <div class="single-input-item">
+            <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
+                <a th:href="@{/recover}" class="forget-pwd">Quên mật khẩu</a>
+            </div>
+        </div>
+        <div class="single-input-item">
+            <button type="submit" class="sqr-btn">Đăng nhập</button>
+        </div>
     </form>
 
-    <div id="loginError" style="color: red; display: none;"></div>
-
+                            <a th:href="@{/signup}" class="forget-pwd">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         // AJAX request to login
         $(document).ready(function() {
@@ -52,6 +83,7 @@
             });
         });
     </script>
-
+</div>
 </body>
+
 </html>
