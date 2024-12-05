@@ -29,7 +29,7 @@ public class ProductEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private int status;
+    private ProductStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)

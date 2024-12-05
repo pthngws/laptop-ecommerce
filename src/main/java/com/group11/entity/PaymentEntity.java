@@ -24,7 +24,7 @@ public class PaymentEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", columnDefinition = "nvarchar(250)", nullable = false)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;

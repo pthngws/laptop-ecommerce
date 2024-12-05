@@ -38,7 +38,7 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "shipping_status")
     //Trạng thái giao hàng
-    private String shippingStatus;
+    private OrderShippingStatus shippingStatus;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -47,7 +47,7 @@ public class OrderEntity {
 
     @Column(name = "payment_status")
     //Trạng thái giao hàng
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonBackReference
