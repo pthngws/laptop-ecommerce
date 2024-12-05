@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.security.SecureRandom;
 
 @Service
 public class EmailServiceImpl implements IEmailService {
@@ -66,6 +67,18 @@ public class EmailServiceImpl implements IEmailService {
         simpleMailMessage.setText(message);
 
         this.mailSender.send(simpleMailMessage);
+    }
+    private static final int OTP_LENGTH = 6;
+    private static final SecureRandom random = new SecureRandom();
+
+    @Override
+    public String generateOtp() {
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            int digit = random.nextInt(10); // Lấy một số ngẫu nhiên từ 0 đến 9
+            otp.append(digit);
+        }
+        return otp.toString();
     }
 }
 

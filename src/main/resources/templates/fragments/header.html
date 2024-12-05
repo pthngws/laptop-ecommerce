@@ -18,39 +18,21 @@
                     <div class="header-top-right float-md-right float-none">
                         <nav>
                             <ul>
-<!--                                <li>-->
-<!--                                    <div class="dropdown header-top-dropdown">-->
-<!--                                        <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"-->
-<!--                                           aria-haspopup="true" aria-expanded="false">-->
-<!--                                            Tài khoản-->
-<!--                                            <i class="fa fa-angle-down"></i>-->
-<!--                                        </a>-->
-<!--                                        <div class="dropdown-menu" aria-labelledby="myaccount">-->
-<!--                                            <a class="dropdown-item" href="">Tài khoản</a>-->
-<!--                                            <a class="dropdown-item" href="/login"> Đăng nhập</a>-->
-<!--                                            <a class="dropdown-item" href="/register">Đăng ký</a>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </li>-->
+                                <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
+                                <li id="user-info" style="display: none;">
+                                    <a id="user-name"></a>
+                                    <a href="/logout">Đăng xuất</a>
+                                </li>
 
-                                <th:block th:if="${session.username}">
-                                    <li>
-                                        <a  href="/personal-info" th:text="${session.fullName}"></a>
-                                        <a href="/logout">Đăng xuất</a>
-                                    </li>
-                                </th:block>
-
-                                <th:block th:unless="${session.username}">
-                                    <li>
-                                        <a href="/login">Đăng nhập</a>
-                                    </li>
-                                    <li>
-                                        <a href="/register">Đăng ký</a>
-                                    </li>
-                                </th:block>
+                                <!-- Hiển thị đăng nhập và đăng ký nếu chưa đăng nhập -->
+                                <li id="login-register">
+                                    <a href="/login">Đăng nhập</a>
+                                    <a href="/register">Đăng ký</a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -116,5 +98,62 @@
             </div>
         </div>
     </div>
-    <!-- main menu area end -->
+
+    <script>
+        const token = localStorage.getItem('jwtToken');  // Lấy token từ localStorage
+
+        // Khi người dùng click vào tên
+        document.getElementById('user-name').addEventListener('click', function(event) {
+            event.preventDefault();  // Ngăn chặn hành động mặc định (nếu có)
+
+            if (token) {
+                // Gửi yêu cầu Ajax đến API /personal-info
+                fetch('/personal-info', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`  // Đính kèm token vào header
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Unauthorized or expired token');
+                        }
+                        return response.json(); // Giải mã dữ liệu trả về (giả sử trả về JSON)
+                    })
+                    .then(data => {
+                        // Xử lý dữ liệu nhận được, hoặc chuyển hướng tới trang personal-info
+                        window.location.href = '/personal-info';  // Chuyển hướng đến trang personal-info
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+
+            } else {
+                // Nếu không có token, yêu cầu người dùng đăng nhập
+                window.location.href = '/login';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            if (token) {
+                try {
+                    // Giải mã JWT
+                    const decoded = jwt_decode(token);
+                    const userName = decoded.name; // Thay 'name' bằng key chứa tên người dùng trong JWT
+
+                    // Hiển thị tên người dùng
+                    document.getElementById('user-name').innerText = userName;
+                    document.getElementById('user-info').style.display = 'block';
+
+                    // Ẩn phần đăng nhập/đăng ký
+                    document.getElementById('login-register').style.display = 'none';
+                } catch (error) {
+                    console.error('Lỗi khi giải mã JWT:', error);
+                }
+            }
+        });
+    </script>
+
 </header>
