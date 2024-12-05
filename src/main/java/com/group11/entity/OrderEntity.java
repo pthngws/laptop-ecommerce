@@ -45,6 +45,7 @@ public class OrderEntity {
 
     private String note;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_status")
     //Trạng thái giao hàng
     private PaymentStatus paymentStatus;
