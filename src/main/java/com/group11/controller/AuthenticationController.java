@@ -41,7 +41,7 @@ public class AuthenticationController {
         }
 
         // Proceed with user registration if OTP is valid
-        UserEntity registeredUser = authenticationService.signup(registerUser);
+        authenticationService.signup(registerUser);
         otpStorage.remove(registerUser.getEmail()); // Clear OTP after registration
         return ResponseEntity.ok("Registration successful!");
     }

@@ -19,7 +19,7 @@ public class HomeController {
     public String home(Model model) {
         List<ProductEntity> products = productService.findAll();
         model.addAttribute("products", products);
-        return "home";
+        return "MainHome";
     }
 
     @GetMapping("/signup")
@@ -35,5 +35,10 @@ public class HomeController {
     @GetMapping("/personal-info")
     public String personalInfo() {
         return "personal-info";
+    }
+
+    @GetMapping("/inventory")
+    public String inventory() {
+        return "inventory";
     }
 }
