@@ -7,6 +7,7 @@ import com.group11.dto.EmailDetail;
 import com.group11.dto.PaymentDTO;
 import com.group11.entity.OrderEntity;
 import com.group11.entity.PaymentEntity;
+import com.group11.entity.PaymentStatus;
 import com.group11.repository.OrderRepository;
 import com.group11.repository.PaymentRepository;
 import com.group11.service.IPaymentService;
@@ -66,12 +67,12 @@ public class PaymentServiceImpl implements IPaymentService {
     public void handlePayBank(String transactionNo, String bankCode, String transactionStatus, LocalDateTime localDateTime, int amount, Long orderId){
         Optional<OrderEntity> orderOtn = orderRepository.findById(orderId);
         OrderEntity order = orderOtn.get();
-        order.setPaymentStatus("Completed");
+        order.setPaymentStatus(PaymentStatus.PAID);
 
         PaymentEntity paymentEntity = new PaymentEntity();
         paymentEntity.setTransactionID(transactionNo);
         paymentEntity.setPaymentMethod(bankCode);
-        paymentEntity.setPaymentStatus(transactionStatus);
+        paymentEntity.setPaymentStatus(PaymentStatus.COMPLETED);
         paymentEntity.setPaymentDate(localDateTime);
         paymentEntity.setTotal(amount);
         paymentEntity.setOrder(order);
