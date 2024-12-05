@@ -1,57 +1,93 @@
 <header>
     <!-- Header Top Area -->
-    <div class="header-top-area bg-danger text-center" style="font-weight: bold;">
+    <!-- Header Top Area -->
+    <div class="header-top-area text-white py-2" style="background-color: #D8373E; font-weight: bold">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-5">
-                    <div class="header-call-action">
-                        <a href="mailto:cnpm@laptop.com">
-                            <i class="fa fa-envelope"></i>
-                            cnpm@laptop.com
-                        </a>
-                        <a href="tel:0123456789">
-                            <i class="fa fa-phone"></i>
-                            0123456789
-                        </a>
-                    </div>
+            <div class="row justify-content-between align-items-center">
+                <!-- Contact info (email and phone) on the left -->
+                <div>
+                        <i class="fa fa-envelope" style="font-size: 15px;"></i>
+                        <span>ltw@laptop.com</span>
+                        <span>|</span>
+                        <i class="fa fa-phone" style="font-size: 15px;"></i>
+                        <span>0123456789</span>
                 </div>
-                <div class="col-lg-6 col-md-7">
-                    <div class="header-top-right float-md-right float-none">
-                        <nav>
-                            <ul>
-                                <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
-                                <li id="user-info" style="display: none;">
-                                    <a href="/personal-info" id="user-name"></a>
-                                    <a href="#" id="logout">Đăng xuất</a>
-                                </li>
 
-                                <!-- Hiển thị đăng nhập và đăng ký nếu chưa đăng nhập -->
-                                <li id="login-register">
-                                    <a href="/login">Đăng nhập</a>
-                                    <a href="/signup">Đăng ký</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+
+                <!-- User login/register or user info on the right -->
+                <div class="col-auto">
+                    <nav>
+                        <ul class="list-unstyled mb-0 d-flex gap-3">
+                            <!-- User info if logged in -->
+                            <li id="user-info" style="display: none;">
+                                <a href="/personal-info" id="user-name" class="text-white text-decoration-none">Welcome, User</a>
+                                <span>|</span>
+                                <a href="#" id="logout" class="text-white text-decoration-none">Đăng xuất</a>
+                            </li>
+
+                            <!-- Login and Register if not logged in -->
+                            <li id="login-register">
+                                <a href="/login" class="text-white text-decoration-none">Đăng nhập</a>
+                                <span>|</span>
+                                <a href="/signup" class="text-white text-decoration-none">Đăng ký</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Header Middle Area -->
+
+
+
     <div class="header-middle-area pt-20 pb-20">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-3">
                     <div class="brand-logo">
-                        <a href="/">
-                            <img src="/assets/img/logo/logo.png" alt="brand logo">
+                        <a href="index.html">
+                            <img src="assets/img/logo/logo.jpg" width="50%" alt="brand logo">
                         </a>
+                    </div>
+                </div> <!-- end logo area -->
+                <div class="col-lg-9">
+                    <div class="header-middle-right">
+                        <div class="header-middle-shipping mb-20">
+                            <div class="single-block-shipping">
+                                <div class="shipping-icon">
+                                    <i class="fa fa-clock-o"></i>
+                                </div>
+                                <div class="shipping-content">
+                                    <h5>Giờ mở cửa</h5>
+                                    <span>Thứ - Chủ nhật: 8.00 - 18.00</span>
+                                </div>
+                            </div> <!-- end single shipping -->
+                            <div class="single-block-shipping">
+                                <div class="shipping-icon">
+                                    <i class="fa fa-truck"></i>
+                                </div>
+                                <div class="shipping-content">
+                                    <h5>Miễn Phí Vận Chuyển</h5>
+                                    <span>Cho đơn hàng từ 10 triệu</span>
+                                </div>
+                            </div> <!-- end single shipping -->
+                            <div class="single-block-shipping">
+                                <div class="shipping-icon">
+                                    <i class="fa fa-money"></i>
+                                </div>
+                                <div class="shipping-content">
+                                    <h5>Hoàn tiền 100%</h5>
+                                    <span>Trong vòng 30 ngày</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Main Menu Area -->
     <div class="main-header-wrapper bdr-bottom1">
@@ -62,7 +98,7 @@
                         <!-- Category Toggle Section -->
                         <div class="category-toggle-wrap">
                             <div class="category-toggle d-flex align-items-center">
-                                <span>CNPM</span>
+                                <span>LAPTOPT4</span>
                                 <div class="cat-icon ms-2">
                                     <i class="fa fa-laptop"></i>
                                 </div>
@@ -73,7 +109,9 @@
                         <div class="main-menu">
                             <ul class="nav">
                                 <li class="nav-item active">
-                                    <a class="nav-link" href="/home"><i class="fa fa-home"></i> Trang chủ</a>
+                                    <a class="nav-link" href="/home"><i class="fa fa-home"></i>
+                                        Trang
+                                        chủ</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="/products">Sản phẩm</a>
@@ -83,23 +121,30 @@
                                 </li>
                                 <!-- Admin Dropdown -->
                                 <!-- Admin Dropdown -->
-                                <li class="nav-item dropdown" id="admin-menu" style="display: none;">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <li class="nav-item dropdown" id="admin-menu"
+                                    style="display: none;">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                       id="navbarDropdown"
+                                       role="button" data-bs-toggle="dropdown"
+                                       aria-expanded="false">
                                         Quản Lý Sản Phẩm
                                     </a>
                                     <ul class="dropdown">
-                                        <li ><a href="/admin/products">Sản Phẩm</a></li>
+                                        <li><a href="/admin/products">Sản Phẩm</a></li>
                                         <li><a href="/admin/manufacturers">Nhà Sản Xuất</a></li>
                                         <li><a href="/admin/categories">Thể Loại</a></li>
                                         <li><a href="/admin/inventory">Kho</a></li>
-                                        <li><a href="/admin/rate-list">Phản hồi đánh giá</a></li>
+                                        <li><a href="/admin/rate-list">Phản hồi đánh giá</a>
+                                        </li>
                                         <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
-                                        <li><a href="/admin/customers">Quản lý khách hàng</a></li>
+                                        <li><a href="/admin/customers">Quản lý khách hàng</a>
+                                        </li>
                                     </ul>
                                 </li>
 
 
-                                <li class="nav-item" id="admin-dashboard" style="display: none;">
+                                <li class="nav-item" id="admin-dashboard"
+                                    style="display: none;">
                                     <a class="nav-link" href="/admin/dashboard">Doanh thu</a>
                                 </li>
                                 <!-- Customer Menu -->
