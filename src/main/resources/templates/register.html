@@ -43,7 +43,6 @@
 
                                 <script>
                                     var check = function () {
-
                                         if (document.getElementById('password').value ===
                                             document.getElementById('confirmPassword').value) {
                                             document.getElementById('message').style.color = 'green';
@@ -52,19 +51,6 @@
                                             document.getElementById('message').style.color = 'red';
                                             document.getElementById('message').innerHTML = 'Mật Khẩu Không Trùng Khớp!';
                                         }
-                                    }
-
-                                    // Validate the form before submitting
-                                    function validateForm() {
-                                        var password = document.getElementById('password').value;
-                                        var confirmPassword = document.getElementById('confirmPassword').value;
-
-                                        if (password !== confirmPassword) {
-                                            alert('Mật khẩu và mật khẩu xác nhận không khớp!');
-                                            return false;
-                                        }
-
-                                        return true;
                                     }
                                 </script>
                                 <div class="row">
@@ -91,13 +77,6 @@
                                     <button type="submit" class="sqr-btn">Đăng ký</button>
                                 </div>
                             </form>
-                            <div id="otpForm" class="otp-section">
-                                <label for="otp">OTP:</label>
-                                <input class="single-input-item" type="text" id="otp" name="otp" required>
-                                <button id="verifyOtpButton" class="sqr-btn">Xác minh OTP</button>
-                                <div id="signupError" style="color: red; display: none;"></div>
-                                <div id="signupSuccess" style="color: green; display: none;"></div>
-                            </div>
                             <a th:href="@{/login}" class="forget-pwd">Đăng nhập</a>
                         </div>
                     </div>
@@ -106,6 +85,16 @@
         </div>
     </div>
 
+
+    <div id="otpForm" style="display:none;">
+        <h3>Enter OTP sent to your email</h3>
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" name="otp" required><br>
+        <button id="verifyOtpButton">Verify OTP</button>
+    </div>
+
+    <div id="signupError" style="color: red; display: none;"></div>
+    <div id="signupSuccess" style="color: green; display: none;"></div>
 
     <script>
         $(document).ready(function () {
