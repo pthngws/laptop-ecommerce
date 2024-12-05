@@ -20,8 +20,8 @@
                             <ul>
                                 <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
                                 <li id="user-info" style="display: none;">
-                                    <a id="user-name"></a>
-                                    <a href="/logout">Đăng xuất</a>
+                                    <a th:href="@{/personal-info}" id="user-name"></a>
+                                    <a id="logout">Đăng xuất</a>
                                 </li>
 
                                 <!-- Hiển thị đăng nhập và đăng ký nếu chưa đăng nhập -->
@@ -101,40 +101,6 @@
 
     <script>
         const token = localStorage.getItem('jwtToken');  // Lấy token từ localStorage
-
-        // Khi người dùng click vào tên
-        document.getElementById('user-name').addEventListener('click', function(event) {
-            event.preventDefault();  // Ngăn chặn hành động mặc định (nếu có)
-
-            if (token) {
-                // Gửi yêu cầu Ajax đến API /personal-info
-                fetch('/personal-info', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`  // Đính kèm token vào header
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Unauthorized or expired token');
-                        }
-                        return response.json(); // Giải mã dữ liệu trả về (giả sử trả về JSON)
-                    })
-                    .then(data => {
-                        // Xử lý dữ liệu nhận được, hoặc chuyển hướng tới trang personal-info
-                        window.location.href = '/personal-info';  // Chuyển hướng đến trang personal-info
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-
-            } else {
-                // Nếu không có token, yêu cầu người dùng đăng nhập
-                window.location.href = '/login';
-            }
-        });
-
         document.addEventListener('DOMContentLoaded', () => {
 
             if (token) {
@@ -154,6 +120,29 @@
                 }
             }
         });
+
+        $('#logout').on('click', function (e) {
+            e.preventDefault();  // Ngừng hành động mặc định của link (chuyển trang)
+
+            // Xóa JWT từ localStorage hoặc sessionStorage
+            localStorage.removeItem('jwtToken');  // Nếu lưu JWT ở localStorage
+            // sessionStorage.removeItem('jwt');  // Nếu lưu JWT ở sessionStorage
+
+            // Gửi yêu cầu đăng xuất tới backend để xóa cookie JWT
+            $.ajax({
+                type: 'POST',
+                url: '/auth/logout',  // URL của backend để xử lý logout
+                success: function (response) {
+                    // Sau khi logout thành công, chuyển hướng người dùng đến trang login
+                    window.location.href = '/login';
+                },
+                error: function () {
+                    alert('Đăng xuất thất bại. Vui lòng thử lại.');
+                }
+            });
+        });
+    </script>
+
     </script>
 
 </header>

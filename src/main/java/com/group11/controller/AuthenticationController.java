@@ -7,6 +7,8 @@ import com.group11.model.RegisterUserModel;
 import com.group11.service.impl.AuthenticationService;
 import com.group11.service.impl.JwtService;
 import com.group11.service.impl.EmailServiceImpl;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,5 +75,18 @@ public class AuthenticationController {
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        // Tạo cookie để xóa JWT
+        Cookie cookie = new Cookie("jwtToken", null);  // JWT token trong cookie
+        cookie.setHttpOnly(true);  // Giúp bảo vệ cookie khỏi việc bị truy cập từ JavaScript
+        cookie.setSecure(true);  // Nếu sử dụng HTTPS
+        cookie.setPath("/");  // Đảm bảo cookie được xóa cho tất cả các route
+        cookie.setMaxAge(0);  // Xóa cookie ngay lập tức
+        response.addCookie(cookie);
+
+        return "Logged out successfully!";
     }
 }
