@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manufacturer List</title>
+    <link rel="stylesheet" href="/assets/css/admin/manufacturer-list.css">
+</head>
+<body>
+
+	<section class="row" layout:fragment="content">
+	
+    <h1>Danh Sách Nhà Sản Xuất</h1>
+
+    <!-- Button to Add Manufacturer -->
+    <a href="/admin/manufacturers/add" class="btn btn-add">Thêm Nhà Sản Xuất</a>
+
+    <!-- Manufacturer Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Địa Chỉ</th>
+                <th>Sản Phẩm</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="manufacturer : ${manufacturers}">
+                <td th:text="${manufacturer.id}"></td>
+                <td th:text="${manufacturer.name}"></td>
+                <td th:text="${manufacturer.address}"></td>
+
+                <!-- Display the list of products for each manufacturer -->
+                <td>
+                    <ul>
+                        <li th:each="product : ${manufacturer.products}" th:text="${product.name}"></li>
+                    </ul>
+                </td>
+
+                <td>
+                    <a th:href="@{'/admin/manufacturers/edit/' + ${manufacturer.id}}" class="btn btn-edit">Chỉnh Sửa</a>
+                    <a th:href="@{'/admin/manufacturers/delete/' + ${manufacturer.id}}" class="btn btn-delete" 
+                       onclick="return confirm('Bạn có chắc muốn xóa nhà sản xuất này?');">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    </section>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Category</title>
+    <link rel="stylesheet" href="/assets/css/admin/category-add.css">
+</head>
+<body>
+
+	<section class="row" layout:fragment="content">
+
+    <h1>Thêm Thể Loại</h1>
+    <form th:action="@{/admin/categories/add}" th:object="${category}" method="post">
+        <label for="name">Tên:</label>
+        <input type="text" id="name" th:field="*{name}" required />
+        <br />
+        <label for="description">Mô Tả:</label>
+        <input type="text" id="description" th:field="*{description}" />
+        <br />
+        <button type="submit">Thêm</button>
+        <a href="/admin/categories">Hủy</a>
+    </form>
+    
+    </section>
+</body>
+</html>
