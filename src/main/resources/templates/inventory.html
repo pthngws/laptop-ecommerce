@@ -40,6 +40,7 @@
         .table td:nth-child(3) button:hover {
             background-color: #a32b31; /* Màu đỏ đậm hơn khi hover */
         }
+
         /* Notification Styling */
         #notification {
             padding: 10px;
@@ -60,8 +61,6 @@
             border: 1px solid #f5c6cb;
         }
     </style>
-
-
 </head>
 <body>
 <section class="row" layout:fragment="content">
@@ -92,11 +91,23 @@
         // Fetch and display inventory with search and pagination
         async function fetchInventory(searchQuery = '') {
             try {
-                const response = await fetch(`/admin/api/inventory?page=${currentPage}&size=${itemsPerPage}&search=${searchQuery}`);
-                const data = await response.json();
-                inventoryData = data.content; // Use 'content' to get the list of items
-                displayInventory(inventoryData);
-                displayPagination(data.totalPages); // Assuming API returns 'totalPages'
+                const response = await $.ajax({
+                    url: '/admin/api/inventory',
+                    type: 'GET',
+                    data: {
+                        page: currentPage,
+                        size: itemsPerPage,
+                        search: searchQuery
+                    },
+                    success: function(data) {
+                        inventoryData = data.content; // Use 'content' to get the list of items
+                        displayInventory(inventoryData);
+                        displayPagination(data.totalPages); // Assuming API returns 'totalPages'
+                    },
+                    error: function(error) {
+                        console.error('Error fetching inventory:', error);
+                    }
+                });
             } catch (error) {
                 console.error('Error fetching inventory:', error);
             }
@@ -152,39 +163,40 @@
                 return; // Dừng thực hiện nếu không hợp lệ
             }
             try {
-                const response = await fetch(`/admin/api/inventory/${productId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
+                const response = await $.ajax({
+                    url: `/admin/api/inventory/${productId}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ quantity: quantity }),
+                    success: function(response) {
+                        // Hiển thị thông báo thành công
+                        notificationDiv.textContent = 'Cập nhật thành công!';
+                        notificationDiv.className = 'success';
+                        notificationDiv.style.display = 'block';
+                        setTimeout(() => {
+                            notificationDiv.style.display = 'none';
+                        }, 5000);
+                        // Reload inventory after updating
+                        fetchInventory();
                     },
-                    body: JSON.stringify({ quantity: quantity })
+                    error: function(error) {
+                        // Hiển thị thông báo thất bại
+                        notificationDiv.textContent = 'Cập nhật không thành công!';
+                        notificationDiv.className = 'error';
+                        notificationDiv.style.display = 'block';
+                        setTimeout(() => {
+                            notificationDiv.style.display = 'none';
+                        }, 5000);
+                    }
                 });
-
-                if (response.ok) {
-                    // Hiển thị thông báo thành công
-                    notificationDiv.textContent = 'Cập nhật thành công!';
-                    notificationDiv.className = 'success';
-                } else {
-                    // Hiển thị thông báo thất bại
-                    notificationDiv.textContent = 'Cập nhật không thành công!';
-                    notificationDiv.className = 'error';
-                }
             } catch (error) {
                 console.error('Error updating quantity:', error);
                 // Hiển thị thông báo lỗi
                 notificationDiv.textContent = 'Có lỗi xảy ra khi cập nhật!';
                 notificationDiv.className = 'error';
             }
-
-            // Hiển thị thông báo trong 5 giây rồi ẩn
-            notificationDiv.style.display = 'block';
-            setTimeout(() => {
-                notificationDiv.style.display = 'none';
-            }, 5000);
-
-            // Reload inventory sau khi cập nhật
-            fetchInventory();
         }
+
         // Function to display pagination links
         function displayPagination(totalPages) {
             const paginationDiv = document.getElementById('paginationControls');

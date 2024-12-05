@@ -20,10 +20,8 @@
             </form>
         </div>
     </div>
-    <div th:if="${session.user != null}" style="display: none;">
-        <span id="userId" th:text="${session.user.getUserID()}"></span>
-    </div>
-    <div th:if="${session.user == null}" style="display: none;">
+
+    <div>
         <span id="userId" th:text="${session.GID}"></span>
     </div>
 
