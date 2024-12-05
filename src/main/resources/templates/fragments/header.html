@@ -1,5 +1,5 @@
 <header>
-    <div class="header-top-area bg-gray text-center text-md-left"  style="background-color: white; font-weight: bold ">
+    <div class="header-top-area bg-gray text-center text-md-left"  style="background-color: #D8373E; font-weight: bold ">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-5">
@@ -26,8 +26,8 @@
 
                                 <!-- Hiển thị đăng nhập và đăng ký nếu chưa đăng nhập -->
                                 <li id="login-register">
-                                    <a href="/login">Đăng nhập</a>
-                                    <a href="/register">Đăng ký</a>
+                                    <a th:href="@{/login}">Đăng nhập</a>
+                                    <a th:href="@{/signup}">Đăng ký</a>
                                 </li>
                             </ul>
                         </nav>

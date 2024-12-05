@@ -8,7 +8,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="meta description">
+<style>
+    .modal-content {
+        border-radius: 10px;
+        padding: 20px;
+    }
 
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-body {
+        padding: 15px 30px;
+    }
+
+    #otpError, #otpSuccess {
+        font-size: 14px;
+        text-align: center;
+    }
+
+    #verifyOtpButton {
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+</style>
     <!-- Site title -->
     <title>Đăng ký</title>
 </head>
@@ -86,77 +112,90 @@
     </div>
 
 
-    <div id="otpForm" style="display:none;">
-        <h3>Enter OTP sent to your email</h3>
-        <label for="otp">OTP:</label>
-        <input type="text" id="otp" name="otp" required><br>
-        <button id="verifyOtpButton">Verify OTP</button>
+    <!-- OTP Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <form id="otpForm">
+                        <div class="mb-3">
+                            <input type="text" id="otp" name="otp" class="form-control" placeholder="Nhập OTP" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" id="verifyOtpButton" class="btn btn-primary">Xác nhận</button>
+                        </div>
+                        <div id="otpError" class="mt-2 text-danger" style="display: none;"></div>
+                        <div id="otpSuccess" class="mt-2 text-success" style="display: none;"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="signupError" style="color: red; display: none;"></div>
-    <div id="signupSuccess" style="color: green; display: none;"></div>
 
-    <script>
-        $(document).ready(function () {
-            // Handle sign-up form submission
-            $('#signupForm').on('submit', function (e) {
-                e.preventDefault();
 
-                const name = $('#name').val();
-                const email = $('#email').val();
-                const password = $('#password').val();
-                const confirmPassword = $('#confirmPassword').val();
+        <script>
+            $(document).ready(function () {
+                // Hiển thị popup OTP sau khi gửi email thành công
+                $('#signupForm').on('submit', function (e) {
+                    e.preventDefault();
 
-                if (password !== confirmPassword) {
-                    $('#signupError').text('Passwords do not match.');
-                    $('#signupError').show();
-                    return;
-                }
+                    const email = $('#email').val();
+                    const name = $('#name').val();
+                    const password = $('#password').val();
+                    const confirmPassword = $('#confirmPassword').val();
 
-                // Send OTP before proceeding with sign-up
-                $.ajax({
-                    type: 'POST',
-                    url: '/auth/send-otp',
-                    data: {email: email},
-                    success: function (response) {
-                        $('#otpForm').show();
-                        $('#signupSuccess').text(response).show();
-                        $('#signupError').hide();
-                    },
-                    error: function (error) {
-                        $('#signupError').text('Error sending OTP. Please try again.').show();
-                        $('#signupSuccess').hide();
+                    if (password !== confirmPassword) {
+                        $('#signupError').text('Passwords do not match.').show();
+                        return;
                     }
+
+                    // Gửi yêu cầu OTP
+                    $.ajax({
+                        type: 'POST',
+                        url: '/auth/send-otp',
+                        data: {email: email},
+                        success: function (response) {
+                            $('#otpModal').modal('show'); // Hiển thị modal OTP
+                            $('#signupSuccess').text(response).show();
+                            $('#signupError').hide();
+                        },
+                        error: function () {
+                            $('#signupError').text('Error sending OTP. Please try again.').show();
+                            $('#signupSuccess').hide();
+                        }
+                    });
+                });
+
+
+                // Handle OTP verification
+                $('#verifyOtpButton').on('click', function () {
+                    const email = $('#email').val();
+                    const otp = $('#otp').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/auth/signup',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            email: email,
+                            otp: otp,
+                            name: $('#name').val(),
+                            password: $('#password').val()
+                        }),
+                        success: function (response) {
+                            $('#signupSuccess').text(response).show();
+                            $('#signupError').hide();
+                        },
+                        error: function (error) {
+                            $('#signupError').text('Invalid OTP. Please try again.').show();
+                            $('#signupSuccess').hide();
+                        }
+                    });
                 });
             });
-
-            // Handle OTP verification
-            $('#verifyOtpButton').on('click', function () {
-                const email = $('#email').val();
-                const otp = $('#otp').val();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/auth/signup',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        email: email,
-                        otp: otp,
-                        name: $('#name').val(),
-                        password: $('#password').val()
-                    }),
-                    success: function (response) {
-                        $('#signupSuccess').text(response).show();
-                        $('#signupError').hide();
-                    },
-                    error: function (error) {
-                        $('#signupError').text('Invalid OTP. Please try again.').show();
-                        $('#signupSuccess').hide();
-                    }
-                });
-            });
-        });
-    </script>
-</div>
+        </script>
+    </div>
 </body>
 </html>

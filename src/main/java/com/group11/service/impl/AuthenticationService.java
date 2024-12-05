@@ -37,4 +37,10 @@ public class AuthenticationService {
         return userRepository.findByEmail(input.getEmail());
     }
 
+    public void ChangePassword(String email, String password){
+        UserEntity user = userRepository.findByEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+    }
+
 }

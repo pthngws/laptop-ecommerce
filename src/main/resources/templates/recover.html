@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="meta description">
+
+    <!-- Site title -->
+    <title>Đăng ký</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- login register wrapper start -->
+    <div class="login-register-wrapper">
+        <div class="container">
+            <div class="member-area-from-wrap">
+                <div class="row">
+                    <!-- Register Content Start -->
+                    <div class="col-lg-6">
+                        <div class="login-reg-form-wrap mt-md-34 mt-sm-34">
+
+                            <!-- Step 1: Gửi OTP -->
+                            <div id="step1">
+                                <h2>Nhập email của bạn</h2>
+                                <form id="sendOtpForm">
+                                    <div class="single-input-item">
+                                        <input type="email" id="email" name="email" placeholder="Nhập email" required>
+                                    </div>
+                                    <div class="single-input-item">
+                                        <button type="submit" class="sqr-btn">Gửi OTP</button>
+                                    </div>
+                                </form>
+                                <div id="step1Message"></div>
+                            </div>
+
+                            <!-- Step 2: Xác minh OTP và nhập mật khẩu mới -->
+                            <div id="step2" style="display: none;">
+                                <h3>Nhập mã OTP và mật khẩu mới</h3>
+                                <form id="resetPasswordForm">
+                                    <div class="single-input-item">
+                                        <input type="text" id="otp" name="otp" placeholder="Nhập mã OTP" required>
+                                    </div>
+                                    <div class="single-input-item">
+                                        <input type="password" id="newPassword" name="newPassword"
+                                               placeholder="Nhập mật khẩu mới" required>
+                                    </div>
+                                    <div class="single-input-item">
+                                        <button type="submit" class="sqr-btn">Đặt lại mật khẩu</button>
+                                    </div>
+                                </form>
+                                <div id="step2Message"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            // Handle "Gửi OTP" form submission
+            $('#sendOtpForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const email = $('#email').val();
+
+                // Gửi OTP tới backend
+                $.ajax({
+                    type: 'POST',
+                    url: '/auth/send-otp-reset', // URL của endpoint gửi OTP
+                    data: {email: email},
+                    success: function (response) {
+                        $('#step1Message').text('OTP đã được gửi tới email của bạn!').css('color', 'green');
+                        $('#step1').hide();
+                        $('#step2').show(); // Hiển thị bước nhập OTP
+                    },
+                    error: function (error) {
+                        $('#step1Message').text('Gửi OTP thất bại, vui lòng thử lại.').css('color', 'red');
+                    }
+                });
+            });
+
+            // Handle "Đặt lại mật khẩu" form submission
+            $('#resetPasswordForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const email = $('#email').val(); // Email đã nhập ở bước 1
+                const otp = $('#otp').val();
+                const newPassword = $('#newPassword').val();
+
+                // Gửi yêu cầu đặt lại mật khẩu
+                $.ajax({
+                    type: 'POST',
+                    url: '/auth/reset-password', // URL của endpoint đặt lại mật khẩu
+                    data: {
+                        email: email,
+                        otp: otp,
+                        newPassword: newPassword
+                    },
+                    success: function (response) {
+                        $('#step2Message').text('Mật khẩu của bạn đã được đặt lại thành công!').css('color', 'green');
+                    },
+                    error: function (error) {
+                        $('#step2Message').text('OTP không hợp lệ hoặc đã hết hạn.').css('color', 'red');
+                    }
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

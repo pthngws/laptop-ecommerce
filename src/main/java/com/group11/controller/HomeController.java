@@ -41,4 +41,9 @@ public class HomeController {
     public String inventory() {
         return "inventory";
     }
+
+    @GetMapping("/recover")
+    public String recover() {
+        return "recover";
+    }
 }

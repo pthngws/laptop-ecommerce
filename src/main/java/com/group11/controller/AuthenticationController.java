@@ -4,6 +4,8 @@ import com.group11.entity.UserEntity;
 import com.group11.model.LoginResponse;
 import com.group11.model.LoginUserModel;
 import com.group11.model.RegisterUserModel;
+import com.group11.service.IChatService;
+import com.group11.service.IUserService;
 import com.group11.service.impl.AuthenticationService;
 import com.group11.service.impl.JwtService;
 import com.group11.service.impl.EmailServiceImpl;
@@ -22,6 +24,9 @@ import java.util.Map;
 public class AuthenticationController {
     @Autowired
     AuthenticationService authenticationService;
+
+    @Autowired
+    IUserService userService;
 
     @Autowired
     private JwtService jwtService;
@@ -47,6 +52,8 @@ public class AuthenticationController {
         otpStorage.remove(registerUser.getEmail()); // Clear OTP after registration
         return ResponseEntity.ok("Registration successful!");
     }
+
+
 
     @PostMapping("/send-otp")
     public ResponseEntity<String> sendOtp(@RequestParam String email) {
@@ -89,4 +96,52 @@ public class AuthenticationController {
 
         return "Logged out successfully!";
     }
+
+    @PostMapping("/send-otp-reset")
+    public ResponseEntity<String> sendOtpForPasswordReset(@RequestParam String email) {
+        // Kiểm tra xem email có tồn tại trong hệ thống không
+        UserEntity user =userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Email không tồn tại trong hệ thống.");
+        }
+
+        // Tạo OTP
+        String otp = emailService.generateOtp();
+
+        // Tạo nội dung email
+        String subject = "Your OTP Code for Password Reset";
+        String message = "Your OTP code for resetting your password is: " + otp;
+
+        // Gửi email với OTP
+        emailService.sendEmail(email, subject, message);
+
+        // Lưu OTP tạm thời vào Map
+        otpStorage.put(email, otp);
+
+        // Trả về phản hồi thành công
+        return ResponseEntity.ok("OTP đã được gửi tới email của bạn.");
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email,
+                                                @RequestParam String otp,
+                                                @RequestParam String newPassword) {
+        // Kiểm tra OTP
+        String storedOtp = otpStorage.get(email);
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            return ResponseEntity.badRequest().body("OTP không hợp lệ hoặc đã hết hạn.");
+        }
+
+        // Tìm người dùng bằng email
+        UserEntity user = userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Người dùng không tồn tại.");
+        }
+        authenticationService.ChangePassword(email,newPassword);
+
+        // Xóa OTP sau khi sử dụng
+        otpStorage.remove(email);
+
+        return ResponseEntity.ok("Mật khẩu của bạn đã được đặt lại thành công.");
+    }
+
 }
