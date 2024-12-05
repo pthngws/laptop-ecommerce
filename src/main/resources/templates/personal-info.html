@@ -171,147 +171,127 @@
   <!-- Scroll to Top End -->
 
   <script th:src="@{/assets/js/address.js}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const token = localStorage.getItem('jwtToken');  // Lấy token từ localStorage
+    $(document).ready(function () {
+      const token = localStorage.getItem('jwtToken'); // Lấy token từ localStorage
 
       if (token) {
-        // Gửi yêu cầu GET đến API /my-info để điền thông tin vào form
-        fetch('/user/my-info', {
-          method: 'GET',
+        // Lấy thông tin người dùng và điền vào form
+        $.ajax({
+          url: '/user/my-info',
+          type: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`  // Đính kèm token vào header
-          }
-        })
-                .then(response => {
-                  if (!response.ok) {
-                    throw new Error('Unauthorized or expired token');
-                  }
-                  return response.json();  // Chuyển đổi dữ liệu trả về thành JSON
-                })
-                .then(user => {
-                  // Điền thông tin người dùng vào các trường trên form
-                  document.getElementById('name').value = user.name;
-                  document.getElementById('email').value = user.email;
-                  document.getElementById('phone').value = user.phone;
-                  document.getElementById('gender').value = user.gender;
-                  if (user.address) {
-                    document.getElementById('country').value = user.address.country;
-                    document.getElementById('province').value = user.address.province;
-                    document.getElementById('district').value = user.address.district;
-                    document.getElementById('commune').value = user.address.commune;
-                    document.getElementById('other').value = user.address.other;
-                  }
-                })
-                .catch(error => {
-                  console.error(error);
-                  // Nếu có lỗi, có thể hiển thị thông báo lỗi cho người dùng
-                });
+            'Authorization': `Bearer ${token}`
+          },
+          success: function (user) {
+            $('#name').val(user.name);
+            $('#email').val(user.email);
+            $('#phone').val(user.phone);
+            $('#gender').val(user.gender);
 
-        // Cập nhật thông tin người dùng khi nhấn "Lưu"
-        document.getElementById('save-profile-btn').addEventListener('click', function () {
-          const formData = new FormData(document.getElementById('update-profile-form'));
+            if (user.address) {
+              $('#country').val(user.address.country);
+              $('#province').val(user.address.province);
+              $('#district').val(user.address.district);
+              $('#commune').val(user.address.commune);
+              $('#other').val(user.address.other);
+            }
+          },
+          error: function () {
+            console.error('Unauthorized or expired token');
+          }
+        });
+
+        // Lưu thông tin người dùng
+        $('#save-profile-btn').on('click', function () {
           const updatedUser = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            gender: formData.get('gender'),
-            phone: formData.get('phone')
+            name: $('#name').val(),
+            email: $('#email').val(),
+            gender: $('#gender').val(),
+            phone: $('#phone').val()
           };
 
-          // Gửi yêu cầu POST đến API /my-info/update
-          fetch('/user/my-info/update', {
-            method: 'POST',
+          $.ajax({
+            url: '/user/my-info/update',
+            type: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedUser)  // Gửi dữ liệu cập nhật dưới dạng JSON
-          })
-                  .then(response => {
-                    if (!response.ok) {
-                      throw new Error('Failed to update user info');
-                    }
-                    alert('Cập nhật thông tin thành công');
-                  })
-                  .catch(error => {
-                    console.error(error);
-                    alert('Cập nhật thông tin thất bại');
-                  });
+            data: JSON.stringify(updatedUser),
+            success: function () {
+              alert('Cập nhật thông tin thành công');
+            },
+            error: function () {
+              alert('Cập nhật thông tin thất bại');
+            }
+          });
         });
 
-        // Cập nhật địa chỉ khi nhấn "Lưu địa chỉ"
-        document.getElementById('save-address-btn').addEventListener('click', function () {
-          const addressData = new FormData(document.getElementById('update-address-form'));
+        // Lưu địa chỉ
+        $('#save-address-btn').on('click', function () {
           const updatedAddress = {
-            country: addressData.get('country'),
-            province: addressData.get('province'),
-            district: addressData.get('district'),
-            commune: addressData.get('commune'),
-            other: addressData.get('other')
+            country: $('#country').val(),
+            province: $('#province').val(),
+            district: $('#district').val(),
+            commune: $('#commune').val(),
+            other: $('#other').val()
           };
 
-          // Gửi yêu cầu POST đến API /user/address/update
-          fetch('/user/my-info/update-address', {
-            method: 'POST',
+          $.ajax({
+            url: '/user/my-info/update-address',
+            type: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedAddress)  // Gửi dữ liệu cập nhật địa chỉ dưới dạng JSON
-          })
-                  .then(response => {
-                    if (!response.ok) {
-                      throw new Error('Failed to update address');
-                    }
-                    alert('Cập nhật địa chỉ thành công');
-                  })
-                  .catch(error => {
-                    console.error(error);
-                    alert('Cập nhật địa chỉ thất bại');
-                  });
+            data: JSON.stringify(updatedAddress),
+            success: function () {
+              alert('Cập nhật địa chỉ thành công');
+            },
+            error: function () {
+              alert('Cập nhật địa chỉ thất bại');
+            }
+          });
         });
 
-        // Cập nhật mật khẩu khi nhấn "Đổi mật khẩu"
-        document.getElementById('save-password-btn').addEventListener('click', function () {
-          const formData = new FormData(document.getElementById('change-password-form'));
-          const passwordData = {
-            oldPassword: formData.get('currentPassword'),
-            newPassword: formData.get('newPassword'),
-            confirmPassword: formData.get('confirmPassword')
-          };
+        // Đổi mật khẩu
+        $('#save-password-btn').on('click', function () {
+          const oldPassword = $('#currentPassword').val();
+          const newPassword = $('#newPassword').val();
+          const confirmPassword = $('#confirmPassword').val();
 
-          if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-            alert('Vui lòng điền đầy đủ thông tin!');
-            return;
-          }
 
-          if (passwordData.newPassword !== passwordData.confirmPassword) {
+          if (newPassword !== confirmPassword) {
             alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
             return;
           }
 
-          // Gửi yêu cầu POST đến API /user/my-info/update-password
-          fetch('/user/my-info/update-password', {
-            method: 'POST',
+          const passwordData = {
+            oldPassword: oldPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+          };
+
+          $.ajax({
+            url: '/user/my-info/update-password',
+            type: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(passwordData)  // Gửi dữ liệu mật khẩu dưới dạng JSON
-          })
-                  .then(response => {
-                    if (!response.ok) {
-                      throw new Error('Failed to update password');
-                    }
-                    alert('Mật khẩu đã được thay đổi thành công!');
-                  })
-                  .catch(error => {
-                    console.error(error);
-                    alert('Đổi mật khẩu không thành công!');
-                  });
+            data: JSON.stringify(passwordData),
+            success: function () {
+              alert('Mật khẩu đã được thay đổi thành công!');
+            },
+            error: function () {
+              alert('Đổi mật khẩu không thành công!');
+            }
+          });
         });
       } else {
-        // Nếu không có token, yêu cầu người dùng đăng nhập
+        // Nếu không có token, chuyển hướng người dùng đến trang đăng nhập
         window.location.href = '/login';
       }
     });

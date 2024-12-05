@@ -8,6 +8,20 @@ var userId = document.getElementById("userId").innerText; // Giá trị là chu�
 USERID = parseInt(userId, 10); // Chuyển đổi thành số nguyên (int)
 
 
+if (token) {
+    // Sử dụng jwt-decode để giải mã
+    const decodedToken = jwt_decode(token); // jwt-decode trả về object chứa payload
+
+    // Lấy thông tin từ payload
+    USERID = decodedToken.userid; // Gán USERID từ token
+    const role = decodedToken.role; // Gán role từ token
+
+    // Kiểm tra role để xác định isAdmin
+    if (role !== "Customer") {
+        USERID = 1; // Admin được mặc định có USERID là 1
+    }
+}
+
 isAdmin = USERID === 1;
 
 function toggleChatPopup() {
