@@ -1,111 +1,256 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <!-- Thay thế phần header bằng fragment -->
-    <th:block th:replace="~{fragments/head.html}"></th:block>
-</head>
-
-<body>
-<div class="wrapper box-layout">
-
-    <!-- header area start -->
-    <th:block th:replace="~{fragments/header.html}"></th:block>
-    <!-- header area end -->
-
-    <!-- breadcrumb area start -->
-    <th:block th:replace="~{fragments/breadcrumb.html}"></th:block>
-    <!-- breadcrumb area end -->
-
-    <div class="wrapper box-layout">
-
-        <div class="container" id="promotions-list">
-            <h2>Mã khuyến mãi</h2>
-            <!-- Add New Promotion Button -->
-            <a th:href="@{/admin/promotions/add}" class="btn btn-danger">Tạo mới mã khuyến mãi </a>
-
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th class="discount-amount">Giá trị của mã khuyến mãi</th>
-                    <th class="remaining-uses">Lượt sử dụng</th>
-                    <th class="valid-from">Ngày bắt đầu</th>
-                    <th class="valid-to">Ngày kết thúc</th>
-                    <th class="promotion-code">Mã khuyến mãi</th>
-                    <th class="description">Mô tả</th>
-                    <th class="actions">Actions</th>
-                </tr>
-                </thead>
-                <tr th:if="${#lists.isEmpty(promotions)}">
-                    <td colspan="8">Không có mã khuyến mãi nào.</td>
-                </tr>
-                <tbody>
-                <!-- Sử dụng Thymeleaf để lặp qua danh sách các promotion -->
-                <tr th:each="promotion : ${promotions}">
-                    <td th:text="${promotion.discountAmount}">10</td>
-                    <td th:text="${promotion.remainingUses}">10</td>
-                    <td th:text="${#dates.format(promotion.validFrom, 'yyyy-MM-dd')}">2024-01-01</td>
-                    <td th:text="${#dates.format(promotion.validTo, 'yyyy-MM-dd')}">2024-12-31</td>
-                    <td th:text="${promotion.promotionCode}">PROMO2024</td>
-                    <td th:text="${promotion.description}"></td>
-                    <td>
-                        <a th:href="@{/admin/promotions/edit/{id}(id=${promotion.promotionID})}" class="btn btn-primary">Cập nhật</a>
-                        <form th:action="@{/admin/promotions/delete/{id}(id=${promotion.promotionID})}" method="post" style="display:inline;">
-                            <input type="hidden" name="_method" value="delete"/>
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa mã khuyến mãi này không?');">Xóa</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-        </div>
-
-        <!-- Add New Promotion Form -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<div layout:fragment="content">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quản lý đơn hàng</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 
-        <!-- Pagination -->
-        <div class="paginatoin-area text-center pt-28">
-            <div class="row">
-                <div class="col-12">
-                    <ul class="pagination-box">
-                        <!-- Nút "Trang trước" -->
-                        <li th:if="${currentPage > 0}">
-                            <a class="Previous" th:href="@{/admin/promotions(page=${currentPage - 1})}">Trang trước</a>
-                        </li>
-                        <!-- Số trang -->
-                        <li th:each="page : ${#numbers.sequence(1, totalPages)}"
-                            th:classappend="${currentPage + 1 == page} ? 'active'">
-                            <a th:href="@{/admin/promotions(page=${page - 1})}"
-                               th:text="${page}">1</a>
-                        </li>
-                        <!-- Nút "Trang sau" -->
-                        <li th:if="${currentPage < totalPages - 1}">
-                            <a class="Next" th:href="@{/admin/promotions(page=${currentPage + 1})}">Trang sau</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- footer area -->
-        <th:block th:replace="~{fragments/footer.html}"></th:block>
+    </head>
+    <body>
+    <div class="container mt-4">
+        <h1 class="text-center">Danh sách mã khuyến mãi</h1>
+        <a th:href="@{/admin/promotions/add}" class="btn btn-add btn-danger btn-lg">Tạo mới mã khuyến mãi </a>
+        <br><br>
+        <!-- Bảng danh sách đơn hàng -->
+        <table class="table table-bordered table-striped text-center" id="promotionTable">
+            <thead class="table-custom-header">
+            <tr>
+                <th class="numerical ">STT</th>
+                <th class="discount-amount">Giảm giá(%)</th>
+                <th class="remaining-uses">Lượt sử dụng</th>
+                <th class="valid-from">Ngày bắt đầu</th>
+                <th class="valid-to">Ngày kết thúc</th>
+                <th class="promotion-code">Mã khuyến mãi</th>
+                <th class="description">Mô tả</th>
+                <th class="actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="name" name="name"></td>
+                <td id="id" name="id"></td>
+                <td id="discount" name="discount"></td>
+                <td id="remaining-uses" name="remaining-uses"></td>
+                <td id="valid-from" name="valid-from"></td>
+                <td id="valid-to" name="valid-to"></td>
+                <td id="code" name="code"></td>
+                <td id="description" name="description"></td>
+            </tr>
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Nút phân trang sẽ được tạo động -->
+            </ul>
+        </nav>
 
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('jwtToken');
+            const pageSize = 10; // Số lượng mục mỗi trang
+            let currentPage = 0; // Trang hiện tại
 
-    <!-- brand area start -->
-    <div class="brand-area pt-34 pb-30">
-    </div>
-    <!-- brand area end -->
+            function loadPromotions(page) {
+                if (token) {
+                    $.ajax({
+                        url: `/api/promotions?page=${page}&size=${pageSize}`,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        success: function (response) {
+                            const {content: promotionList, totalPages} = response;
+                            var tableBody = $('#promotionTable tbody');
+                            const pagination = $('#pagination');
+
+                            // Xóa dữ liệu cũ
+                            tableBody.empty();
+                            pagination.empty();
+                            if (promotionList.length === 0) {
+                                // Nếu không có dữ liệu, hiển thị dòng thông báo
+                                tableBody.append('<tr><td colspan="8" class="text-center">Không có mã khuyến mãi nào!</td></tr>');
+                            } else {
+                                promotionList.forEach(function (promotion, index) {
+                                    const row = `
+                                <tr data-id="${promotion.promotionID}">
+                                    <td>${index + 1}</td>
+                                    <td>${promotion.discountAmount}</td>
+                                    <td>${promotion.remainingUses}</td>
+                                    <td>${new Date(promotion.validFrom).toLocaleDateString()}</td>
+                                    <td>${new Date(promotion.validTo).toLocaleDateString()}</td>
+                                    <td>${promotion.promotionCode}</td>
+                                    <td>${promotion.description}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-edit">
+                                            <i class="bi bi-pencil"></i> <!-- Edit Icon -->
+                                        </button>
+                                        <button class="btn btn-danger btn-delete">
+                                            <i class="bi bi-trash"></i> <!-- Trash Icon -->
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                                    tableBody.append(row);
+                                });
+                            }
+                            // Tạo nút phân trang
+                            const prevButton = `<li class="page-item ${page === 0 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#">« Previous</a>
+                                    </li>`;
+
+                            const nextButton = `<li class="page-item ${page === totalPages - 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#">Next »</a>
+                                    </li>`;
+
+                            pagination.append(prevButton);
+
+                            // Create page number buttons
+                            for (let i = 0; i < totalPages; i++) {
+                                const activeClass = i === page ? 'active' : '';
+                                const pageButton = `<li class="page-item ${activeClass}"><a class="page-link" href="#">${i + 1}</a></li>`;
+                                pagination.append(pageButton);
+                            }
+
+                            pagination.append(nextButton);
+                            // Gắn sự kiện khi nhấn nút phân trang
+                            $('.page-link').on('click', function (e) {
+                                e.preventDefault();
+
+                                const selectedPage = $(this).text().trim();
+
+                                if (selectedPage === '« Previous') {
+                                    if (page > 0) loadPromotions(page - 1); // Go to previous page
+                                } else if (selectedPage === 'Next »') {
+                                    if (page < totalPages - 1) loadPromotions(page + 1); // Go to next page
+                                } else {
+                                    loadPromotions(parseInt(selectedPage) - 1); // Go to specific page
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching promotions:", error);
+                            alert("Không thể tải dữ liệu khuyến mãi. Vui lòng thử lại sau!");
+                        }
+                    })
+                }
+            }
+
+            // Sự kiện khi nhấn nút "Xóa"
+            $(document).on('click', '.btn-delete', function () {
+                const row = $(this).closest('tr');
+                const promotionID = row.data('id');
+                if (confirm("Bạn có chắc chắn muốn xóa mã khuyến mãi này?")) {
+                    $.ajax({
+                        url: '/api/promotions/' + promotionID, // API xóa khuyến mãi
+                        type: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        success: function () {
+                            alert("Xóa thành công!");
+                            location.reload(); // Reload lại trang để cập nhật bảng
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error deleting promotion:", error);
+                            alert("Không thể xóa mã khuyến mãi. Vui lòng thử lại sau!");
+                        }
+                    });
+                }
+            });
+
+            // Hiển thị form cập nhật dưới hàng được chọn
+            $(document).on('click', '.btn-edit', function () {
+                const row = $(this).closest('tr');
+                const promotionID = row.data('id');
+
+                // Lấy thông tin hiện tại của mã khuyến mãi
+                const discountAmount = row.find('td:nth-child(2)').text();
+                const remainingUses = row.find('td:nth-child(3)').text();
+                const validFrom = row.find('td:nth-child(4)').text();
+                const validTo = row.find('td:nth-child(5)').text();
+                const promotionCode = row.find('td:nth-child(6)').text();
+                const description = row.find('td:nth-child(7)').text();
+
+                // Xóa form cũ nếu tồn tại
+                $('.update-form-row').remove();
+
+                // Thêm form cập nhật ngay dưới hàng được chọn
+                const formRow = `
+            <tr class="update-form-row">
+                <td colspan="8">
+                    <form id="updateForm">
+                        <div class="row">
+                            <div class="col-md-2"><input type="number" class="form-control" id="discountAmount" value="${discountAmount}" required></div>
+                            <div class="col-md-2"><input type="number" class="form-control" id="remainingUses" value="${remainingUses}" required></div>
+                            <div class="col-md-2"><input type="datetime-local" class="form-control" id="validFrom" value="${validFrom}" required></div>
+                            <div class="col-md-2"><input type="datetime-local" class="form-control" id="validTo" value="${validTo}" required></div>
+                            <div class="col-md-2"><input type="text" class="form-control" id="promotionCode" value="${promotionCode}" required></div>
+                            <div class="col-md-2"><textarea type="text" class="form-control" id="description" value="${description}" required></textarea></div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary    ">Lưu</button>
+                        <button type="button" class="btn btn-secondary btn-danger">Hủy</button>
+                    </form>
+                </td>
+            </tr>
+        `;
+
+                row.after(formRow);
+
+                // Sự kiện khi nhấn "Hủy"
+                $('.btn-cancel').on('click', function () {
+                    $('.update-form-row').remove();
+                });
+
+                // Gửi dữ liệu cập nhật
+                $('#updateForm').on('submit', function (e) {
+                    e.preventDefault();
+
+                    const updatedData = {
+                        discountAmount: $('#discountAmount').val(),
+                        remainingUses: $('#remainingUses').val(),
+                        validFrom: $('#validFrom').val(),
+                        validTo: $('#validTo').val(),
+                        promotionCode: $('#promotionCode').val(),
+                        description: $('#description').val()
+                    };
+
+                    $.ajax({
+                        url: `/api/promotions/${promotionID}`,
+                        type: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(updatedData),
+                        success: function () {
+                            alert("Cập nhật thành công!");
+                            loadPromotions(currentPage); // Reload lại bảng
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching promotion:", error);
+                            alert("Cập nhật thất bại. Vui lòng thử lại!");
+                        }
+                    });
+                });
+            });
+
+            // Tải trang đầu tiên khi trang được load
+            loadPromotions(currentPage);
+        })
+    </script>
+
+
+    </body>
 </div>
-
-<!-- Scroll to top start -->
-<div class="scroll-top not-visible">
-    <i class="fa fa-angle-up"></i>
-</div>
-<!-- Scroll to Top End -->
-
-<script th:src="@{/assets/js/promotion.js}"></script>
-</body>
 </html>

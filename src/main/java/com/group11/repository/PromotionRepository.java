@@ -4,4 +4,5 @@ import com.group11.entity.PromotionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PromotionRepository extends JpaRepository<PromotionEntity, Long> {
+    public PromotionEntity findByPromotionCode(String promotionCode);
 }

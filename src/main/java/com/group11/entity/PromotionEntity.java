@@ -1,7 +1,10 @@
 package com.group11.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.*;
 
@@ -20,14 +23,16 @@ public class PromotionEntity {
     @Column(name = "discount_amount", nullable = false)
     private int discountAmount;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "remaining_uses", nullable = false)
     private int remainingUses;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "valid_from", nullable = false)
-    private Date validFrom;
+    private LocalDateTime validFrom;
 
     @Column(name = "valid_to", nullable = false)
-    private Date validTo;
+    private LocalDateTime  validTo;
 
     @Column(name = "promotion_code", columnDefinition = "nvarchar(50)", unique = true)
     @NotBlank(message = "Promotion code is required")
