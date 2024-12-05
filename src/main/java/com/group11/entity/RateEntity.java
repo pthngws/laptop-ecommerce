@@ -1,7 +1,6 @@
 package com.group11.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +37,6 @@ public class RateEntity {
 
     @OneToMany(mappedBy = "rate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<ImageRateEntity> images;
+    private List<MediaRateEntity> images;
 
 }
