@@ -1,14 +1,15 @@
 <header>
-    <div class="header-top-area bg-gray text-center text-md-left"  style="background-color: #D8373E; font-weight: bold ">
+    <!-- Header Top Area -->
+    <div class="header-top-area bg-danger text-center" style="font-weight: bold;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-5">
                     <div class="header-call-action">
-                        <a href="#">
+                        <a href="mailto:cnpm@laptop.com">
                             <i class="fa fa-envelope"></i>
                             cnpm@laptop.com
                         </a>
-                        <a href="#">
+                        <a href="tel:0123456789">
                             <i class="fa fa-phone"></i>
                             0123456789
                         </a>
@@ -20,78 +21,92 @@
                             <ul>
                                 <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
                                 <li id="user-info" style="display: none;">
-                                    <a th:href="@{/personal-info}" id="user-name"></a>
-                                    <a id="logout">Đăng xuất</a>
+                                    <a href="/personal-info" id="user-name"></a>
+                                    <a href="#" id="logout">Đăng xuất</a>
                                 </li>
 
                                 <!-- Hiển thị đăng nhập và đăng ký nếu chưa đăng nhập -->
                                 <li id="login-register">
-                                    <a th:href="@{/login}">Đăng nhập</a>
-                                    <a th:href="@{/signup}">Đăng ký</a>
+                                    <a href="/login">Đăng nhập</a>
+                                    <a href="/signup">Đăng ký</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-    <!-- header middle start -->
+
+    <!-- Header Middle Area -->
     <div class="header-middle-area pt-20 pb-20">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-3">
                     <div class="brand-logo">
                         <a href="/">
-                            <img th:src="@{/assets/img/logo/logo.png}" alt="brand logo">
+                            <img src="/assets/img/logo/logo.png" alt="brand logo">
                         </a>
                     </div>
-                </div> <!-- end logo area -->
+                </div>
             </div>
         </div>
     </div>
-    <!-- header middle end -->
 
-    <!-- main menu area start -->
+    <!-- Main Menu Area -->
     <div class="main-header-wrapper bdr-bottom1">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="main-header-inner">
+                        <!-- Category Toggle Section -->
                         <div class="category-toggle-wrap">
-                            <div class="category-toggle">
-                                CNPM
-                                <div class="cat-icon">
+                            <div class="category-toggle d-flex align-items-center">
+                                <span>CNPM</span>
+                                <div class="cat-icon ms-2">
                                     <i class="fa fa-laptop"></i>
                                 </div>
                             </div>
-
                         </div>
+
+                        <!-- Main Menu Section -->
                         <div class="main-menu">
-                            <nav id="mobile-menu">
-                                <ul>
-                                    <li class="active"><a th:href="@{/home}"><i class="fa fa-home"></i>Trang chủ </a></li>
-                                    <li class="static"><a th:href="@{/products}">Sản phẩm</a></li>
-                                    <li class="static" th:if="${session.roleName == 'Customer'}">
-                                        <a th:href="@{/history}">Lịch sử mua hàng</a></li>
-                                    <li th:if="${session.roleName == 'Admin'}">
-                                        <a>Quản Lý Sản Phẩm</a>
-                                        <ul class="dropdown">
-                                            <li><a href="/admin/products">Sản Phẩm</a></li>
-                                            <li><a href="/admin/manufacturers">Nhà Sản Xuất</a></li>
-                                            <li><a href="/admin/categories">Thể Loại</a></li>
-                                            <li><a href="/admin/inventory">Kho</a></li>
-                                            <li><a href="/admin/rate-list">Phản hồi đánh giá</a></li>
-                                            <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
-                                            <li><a href="/admin/customers">Quản lý khách hàng</a></li>
-                                        </ul>
-                                    </li>
-                                    <li th:if="${session.roleName == 'Admin'}">
-                                        <a th:href="@{/admin/dashboard}">Doanh Thu</a>
-                                    </li>
-                                </ul>
-                            </nav>
+                            <ul class="nav">
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="/home"><i class="fa fa-home"></i> Trang chủ</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/products">Sản phẩm</a>
+                                </li>
+                                <li class="nav-item" id="history-menu" style="display: none;">
+                                    <a class="nav-link" href="/history">Lịch sử mua hàng</a>
+                                </li>
+                                <!-- Admin Dropdown -->
+                                <!-- Admin Dropdown -->
+                                <li class="nav-item dropdown" id="admin-menu" style="display: none;">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Quản Lý Sản Phẩm
+                                    </a>
+                                    <ul class="dropdown">
+                                        <li ><a href="/admin/products">Sản Phẩm</a></li>
+                                        <li><a href="/admin/manufacturers">Nhà Sản Xuất</a></li>
+                                        <li><a href="/admin/categories">Thể Loại</a></li>
+                                        <li><a href="/admin/inventory">Kho</a></li>
+                                        <li><a href="/admin/rate-list">Phản hồi đánh giá</a></li>
+                                        <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
+                                        <li><a href="/admin/customers">Quản lý khách hàng</a></li>
+                                    </ul>
+                                </li>
+
+
+                                <li class="nav-item" id="admin-dashboard" style="display: none;">
+                                    <a class="nav-link" href="/admin/dashboard">Doanh thu</a>
+                                </li>
+                                <!-- Customer Menu -->
+                                <li class="nav-item" id="customer-menu" style="display: none;">
+                                    <a class="nav-link" href="/profile">Thông tin cá nhân</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -100,49 +115,40 @@
     </div>
 
     <script>
-        const token = localStorage.getItem('jwtToken');  // Lấy token từ localStorage
         document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('jwtToken');
 
             if (token) {
                 try {
-                    // Giải mã JWT
+                    // Decode JWT token
                     const decoded = jwt_decode(token);
-                    const userName = decoded.name; // Thay 'name' bằng key chứa tên người dùng trong JWT
+                    const userName = decoded.name;  // Adjust based on your JWT payload structure
+                    const role = decoded.role;  // Adjust based on your JWT payload structure
 
                     // Hiển thị tên người dùng
                     document.getElementById('user-name').innerText = userName;
                     document.getElementById('user-info').style.display = 'block';
-
-                    // Ẩn phần đăng nhập/đăng ký
                     document.getElementById('login-register').style.display = 'none';
+
+                    // Hiển thị menu dựa trên vai trò
+                    if (role === 'Customer') {
+                        document.getElementById('history-menu').style.display = 'block';
+                        document.getElementById('customer-menu').style.display = 'block';
+                    } else if (role === 'Admin') {
+                        document.getElementById('admin-menu').style.display = 'block';
+                        document.getElementById('admin-dashboard').style.display = 'block';
+                    }
                 } catch (error) {
-                    console.error('Lỗi khi giải mã JWT:', error);
+                    console.error('Error decoding JWT:', error);
                 }
             }
-        });
 
-        $('#logout').on('click', function (e) {
-            e.preventDefault();  // Ngừng hành động mặc định của link (chuyển trang)
-
-            // Xóa JWT từ localStorage hoặc sessionStorage
-            localStorage.removeItem('jwtToken');  // Nếu lưu JWT ở localStorage
-            // sessionStorage.removeItem('jwt');  // Nếu lưu JWT ở sessionStorage
-
-            // Gửi yêu cầu đăng xuất tới backend để xóa cookie JWT
-            $.ajax({
-                type: 'POST',
-                url: '/auth/logout',  // URL của backend để xử lý logout
-                success: function (response) {
-                    // Sau khi logout thành công, chuyển hướng người dùng đến trang login
-                    window.location.href = '/login';
-                },
-                error: function () {
-                    alert('Đăng xuất thất bại. Vui lòng thử lại.');
-                }
+            // Logout functionality
+            document.getElementById('logout').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('jwtToken');  // Remove JWT
+                window.location.href = '/login';  // Redirect to login page
             });
         });
     </script>
-
-    </script>
-
 </header>
