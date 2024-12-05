@@ -1,0 +1,120 @@
+<header>
+    <div class="header-top-area bg-gray text-center text-md-left"  style="background-color: white; font-weight: bold ">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-5">
+                    <div class="header-call-action">
+                        <a href="#">
+                            <i class="fa fa-envelope"></i>
+                            cnpm@laptop.com
+                        </a>
+                        <a href="#">
+                            <i class="fa fa-phone"></i>
+                            0123456789
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-7">
+                    <div class="header-top-right float-md-right float-none">
+                        <nav>
+                            <ul>
+<!--                                <li>-->
+<!--                                    <div class="dropdown header-top-dropdown">-->
+<!--                                        <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"-->
+<!--                                           aria-haspopup="true" aria-expanded="false">-->
+<!--                                            Tài khoản-->
+<!--                                            <i class="fa fa-angle-down"></i>-->
+<!--                                        </a>-->
+<!--                                        <div class="dropdown-menu" aria-labelledby="myaccount">-->
+<!--                                            <a class="dropdown-item" href="">Tài khoản</a>-->
+<!--                                            <a class="dropdown-item" href="/login"> Đăng nhập</a>-->
+<!--                                            <a class="dropdown-item" href="/register">Đăng ký</a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </li>-->
+
+                                <th:block th:if="${session.username}">
+                                    <li>
+                                        <a  href="/personal-info" th:text="${session.fullName}"></a>
+                                        <a href="/logout">Đăng xuất</a>
+                                    </li>
+                                </th:block>
+
+                                <th:block th:unless="${session.username}">
+                                    <li>
+                                        <a href="/login">Đăng nhập</a>
+                                    </li>
+                                    <li>
+                                        <a href="/register">Đăng ký</a>
+                                    </li>
+                                </th:block>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- header middle start -->
+    <div class="header-middle-area pt-20 pb-20">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-3">
+                    <div class="brand-logo">
+                        <a href="/">
+                            <img th:src="@{/assets/img/logo/logo.png}" alt="brand logo">
+                        </a>
+                    </div>
+                </div> <!-- end logo area -->
+            </div>
+        </div>
+    </div>
+    <!-- header middle end -->
+
+    <!-- main menu area start -->
+    <div class="main-header-wrapper bdr-bottom1">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="main-header-inner">
+                        <div class="category-toggle-wrap">
+                            <div class="category-toggle">
+                                CNPM
+                                <div class="cat-icon">
+                                    <i class="fa fa-laptop"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="main-menu">
+                            <nav id="mobile-menu">
+                                <ul>
+                                    <li class="active"><a th:href="@{/home}"><i class="fa fa-home"></i>Trang chủ </a></li>
+                                    <li class="static"><a th:href="@{/products}">Sản phẩm</a></li>
+                                    <li class="static" th:if="${session.roleName == 'Customer'}">
+                                        <a th:href="@{/history}">Lịch sử mua hàng</a></li>
+                                    <li th:if="${session.roleName == 'Admin'}">
+                                        <a>Quản Lý Sản Phẩm</a>
+                                        <ul class="dropdown">
+                                            <li><a href="/admin/products">Sản Phẩm</a></li>
+                                            <li><a href="/admin/manufacturers">Nhà Sản Xuất</a></li>
+                                            <li><a href="/admin/categories">Thể Loại</a></li>
+                                            <li><a href="/admin/inventory">Kho</a></li>
+                                            <li><a href="/admin/rate-list">Phản hồi đánh giá</a></li>
+                                            <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
+                                            <li><a href="/admin/customers">Quản lý khách hàng</a></li>
+                                        </ul>
+                                    </li>
+                                    <li th:if="${session.roleName == 'Admin'}">
+                                        <a th:href="@{/admin/dashboard}">Doanh Thu</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- main menu area end -->
+</header>

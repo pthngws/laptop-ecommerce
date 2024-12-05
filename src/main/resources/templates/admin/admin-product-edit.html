@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      	layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="/assets/css/admin/admin-product-edit.css">
+</head>
+<body>
+	<section class="row" layout:fragment="content">
+	
+	
+    <div class="container">
+        <h2>Chỉnh Sửa Sản Phẩm</h2>
+
+        <!-- Hiển thị thông báo lỗi nếu có -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/admin/products/edit{id}(id=${product.productID})}"
+              method="post" th:object="${product}">
+            <!-- Product Information -->
+            <div class="form-group">
+                <label for="name">Tên Sản Phẩm:</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Giá:</label>
+                <input type="number" id="price" th:field="*{price}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Thể Loại:</label>
+                <select id="category" th:field="*{category.categoryID}" class="form-control" required>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.categoryID}" th:text="${category.name}"
+                            th:selected="${category.categoryID == product.category.categoryID}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="manufacturer">Nhà Sản Xuất:</label>
+                <select id="manufacturer" th:field="*{manufacturer.id}" class="form-control" required>
+                    <option th:each="manufacturer : ${manufacturers}"
+                            th:value="${manufacturer.id}" th:text="${manufacturer.name}"
+                            th:selected="${manufacturer.id == product.manufacturer.id}"></option>
+                </select>
+            </div>
+
+            <!-- Product Details (RAM, CPU, etc.) -->
+            <div class="form-group">
+                <label for="ram">RAM:</label>
+                <input type="text" id="ram" th:field="*{detail.RAM}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="cpu">CPU:</label>
+                <input type="text" id="cpu" th:field="*{detail.CPU}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="gpu">GPU:</label>
+                <input type="text" id="gpu" th:field="*{detail.GPU}" class="form-control">
+            </div>
+
+            <!-- Các trường khác như monitor, color, wifi, etc. -->
+            <div class="form-group">
+                <label for="monitor">Màn Hình:</label>
+                <input type="text" id="monitor" th:field="*{detail.monitor}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="color">Màu Sắc:</label>
+                <input type="text" id="color" th:field="*{detail.color}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="lan">LAN:</label>
+                <input type="text" id="lan" th:field="*{detail.LAN}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="wifi">WiFi:</label>
+                <input type="text" id="wifi" th:field="*{detail.WIFI}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="audio">Loa:</label>
+                <input type="text" id="audio" th:field="*{detail.audio}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="bluetooth">Bluetooth:</label>
+                <input type="text" id="bluetooth" th:field="*{detail.bluetooth}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="charger">Bộ Sạc:</label>
+                <input type="text" id="charger" th:field="*{detail.charger}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="connect">Cổng Kết Nối:</label>
+                <input type="text" id="connect" th:field="*{detail.connect}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Mô Tả:</label>
+                <input type="text" id="description" th:field="*{detail.description}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="disk">Ổ Đĩa:</label>
+                <input type="text" id="disk" th:field="*{detail.disk}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="operationSystem">Hệ Điều Hành:</label>
+                <input type="text" id="operationSystem" th:field="*{detail.operationSystem}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="size">Kích Thước:</label>
+                <input type="text" id="size" th:field="*{detail.size}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="webcam">Webcam:</label>
+                <input type="text" id="webcam" th:field="*{detail.webcam}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Cân Nặng:</label>
+                <input type="text" id="weight" th:field="*{detail.weight}" class="form-control">
+            </div>
+
+            <!-- Image fields (hiển thị nhiều ảnh nếu có) -->
+            <div class="form-group" th:each="imageItem, iterStat : ${product.detail.images}">
+                <label for="imageName">Tên Ảnh:</label>
+                <input type="text" th:field="*{detail.images[__${iterStat.index}__].name}" class="form-control">
+                <div><img th:src="*{detail.images[__${iterStat.index}__].imageUrl}" alt="image laptop"></div>
+                <label for="imageURI">URL Ảnh:</label>
+                <input type="text" th:field="*{detail.images[__${iterStat.index}__].imageUrl}" class="form-control">
+            </div>
+
+            <!-- Save Changes button -->
+            <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+        </form>
+
+        <a href="/admin/products" class="btn btn-secondary">Quay Lại</a>
+    </div>
+
+
+    <script src="/assets/js/admin/admin-product-edit.js"></script>
+    </section>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      	layout:decorate="~{layout.html}">
+<head>
+    <title>Admin - Products</title>
+   <link rel="stylesheet" href="/assets/css/admin/admin-product-list.css"> 
+</head>
+<body>
+	<section class="row" layout:fragment="content">
+	
+	<!-- Hiển thị thông báo lỗi, thông báo thành công, hoặc thông báo thông tin -->
+    <div th:if="${errorMessage}" class="alert alert-danger">
+           <p th:text="${errorMessage}"></p>
+    </div>
+
+    <div th:if="${infoMessage}" class="alert alert-info">
+        <p th:text="${infoMessage}"></p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}"></p>
+    </div>
+
+    <h1>Danh Sách Sản Phẩm</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Tên</th>
+                <th>Giá</th>
+                <th>Trạng Thái</th>
+                <th>Thể Loại</th>
+                <th>Nhà Sản Xuất</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.productID}"></td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.price}"></td>
+                <td th:text="${product.status}"></td>
+                <td th:text="${product.category.name}"></td>
+                <td th:text="${product.manufacturer.name}"></td>
+                <td>
+                    <!-- Nút Edit -->
+                    <a th:href="@{/admin/products/edit{id}(id=${product.productID})}">Chỉnh sửa</a>
+                    
+                    <!-- Nút Delete -->
+                    <a th:href="@{/admin/products/delete{id}(id=${product.productID})}" 
+                       onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">Xóa</a>
+                    
+                    <!-- Nút Details -->
+                    <a th:href="@{/admin/products/details/{id}(id=${product.productID})}">Xem Chi Tiết</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div>
+    <!--    <button th:if="${currentPage > 1}" th:href="@{/admin/products(page=${currentPage - 1})}">Previous</button> -->
+
+        <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <a th:href="@{/admin/products(page=${i})}" th:text="${i}"
+               th:classappend="${i == currentPage} ? 'active' : ''"></a>
+        </span>
+
+     <!--   <button th:if="${currentPage < totalPages}" th:href="@{/admin/products(page=${currentPage + 1})}">Next</button> -->
+    </div>
+    
+    
+    <div class="center">
+        <button class="btn-red" onclick="window.location.href='/admin/products/add'">Thêm Sản Phẩm</button>
+    </div>
+    
+    
+    <!-- Liên kết tới JS -->
+    <script src="/assets/js/admin/admin-product-list.js"></script>
+   	</section>
+</body>
+</html>
