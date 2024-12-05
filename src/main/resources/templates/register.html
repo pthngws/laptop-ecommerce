@@ -1,137 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout.html}">
-
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="meta description">
-
-    <!-- Site title -->
-    <title>Đăng ký</title>
+    <title>Sign Up</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
-<div layout:fragment="content">
-    <!-- login register wrapper start -->
-    <div class="login-register-wrapper">
-        <div class="container">
-            <div class="member-area-from-wrap">
-                <div class="row">
-                    <!-- Register Content Start -->
-                    <div class="col-lg-6">
-                        <div class="login-reg-form-wrap mt-md-34 mt-sm-34">
-                            <h2>Đăng ký</h2>
-                            <div th:if="${mess}" class="alert alert-danger">
-                                <p th:text="${mess}"></p>
-                            </div>
-                            <form action="#" th:action="@{/save}" th:object="${user}" method="post" id="myForm" onsubmit="return validateForm();">
-                                <div class="single-input-item">
-                                    <input type="text" th:field="*{name}" placeholder="Họ tên đầy đủ" required />
-                                </div>
-                                <div class="single-input-item">
-                                    <input type="email"
-                                           placeholder="Email"
-                                           th:field="*{email}"
-                                           name="username"
-                                           required
-                                           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                                           title="Nhập đúng định dạng email!" />
-                                </div>
 
-                                <script>
-                                    var check = function () {
-                                        if (document.getElementById('password').value.trim() !== '' && !isValidPassword(document.getElementById('password').value)) {
-                                            document.querySelector('.error-password').innerText = 'Mật khẩu phải là dạng trống hoặc bao gồm ít nhất 6 kí tự, có cả chữ hoa, chữ thường, số và kí tự đặc biệt';
-                                        }
-                                        else {
-                                            document.querySelector('.error-password').innerText = "";
-                                        }
+<h2>Sign Up</h2>
 
-                                        if (document.getElementById('password').value ===
-                                            document.getElementById('confirm_password').value) {
-                                            document.getElementById('message').style.color = 'green';
-                                            document.getElementById('message').innerHTML = 'Mật Khẩu Trùng Khớp!';
-                                        } else {
-                                            document.getElementById('message').style.color = 'red';
-                                            document.getElementById('message').innerHTML = 'Mật Khẩu Không Trùng Khớp!';
-                                        }
-                                    }
+<form id="signupForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
 
-                                    // Validate the form before submitting
-                                    function validateForm() {
-                                        var password = document.getElementById('password').value;
-                                        var confirmPassword = document.getElementById('confirm_password').value;
-                                        console.log(password)
-                                        console.log(confirmPassword)
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
 
-                                        if (password !== confirmPassword) {
-                                            alert('Mật khẩu và mật khẩu xác nhận không khớp!');
-                                            return false;
-                                        }
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br>
 
-                                        if (!isValidPassword(password)) {
-                                            alert('Mật khẩu phải có ít nhất 6 ký tự, bao gồm cả chữ hoa, chữ thường, số và ký tự đặc biệt!');
-                                            return false;
-                                        }
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required><br>
 
-                                        return true;
-                                    }
+    <button type="submit">Sign Up</button>
+</form>
 
-                                    function isValidPassword(password) {
-                                        var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-                                        return regex.test(password);
-                                    }
-                                </script>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="single-input-item">
-                                            <input type="password" th:field="*{password}" placeholder="Mật khẩu"
-                                                   required id="password" name="password"
-                                                   onkeyup='check();' />
-                                            <small class="text-danger error-password"></small>
-
-                                        </div>
-
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="single-input-item">
-                                            <input type="password" name="confirm_password" id="confirm_password"
-                                                   onkeyup='check();' placeholder="Nhập lại Mật khẩu" required />
-                                            <span id='message'></span>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-input-item">
-                                    <div class="login-reg-form-meta">
-                                        <div class="remember-meta">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="subnewsletter">
-                                                <label class="custom-control-label" for="subnewsletter">Đăng ký bản tin</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-input-item">
-                                    <button type="submit" class="sqr-btn">Đăng ký</button>
-                                </div>
-                            </form>
-                            <a th:href="@{/login}" class="forget-pwd">Đăng nhập</a>
-
-                        </div>
-                    </div>
-                    <!-- Register Content End -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- login register wrapper end -->
-
+<div id="otpForm" style="display:none;">
+    <h3>Enter OTP sent to your email</h3>
+    <label for="otp">OTP:</label>
+    <input type="text" id="otp" name="otp" required><br>
+    <button id="verifyOtpButton">Verify OTP</button>
 </div>
+
+<div id="signupError" style="color: red; display: none;"></div>
+<div id="signupSuccess" style="color: green; display: none;"></div>
+
+<script>
+    $(document).ready(function() {
+        // Handle sign-up form submission
+        $('#signupForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const name = $('#name').val();
+            const email = $('#email').val();
+            const password = $('#password').val();
+            const confirmPassword = $('#confirmPassword').val();
+
+            if (password !== confirmPassword) {
+                $('#signupError').text('Passwords do not match.');
+                $('#signupError').show();
+                return;
+            }
+
+            // Send OTP before proceeding with sign-up
+            $.ajax({
+                type: 'POST',
+                url: '/auth/send-otp',
+                data: { email: email },
+                success: function(response) {
+                    $('#otpForm').show();
+                    $('#signupSuccess').text(response).show();
+                    $('#signupError').hide();
+                },
+                error: function(error) {
+                    $('#signupError').text('Error sending OTP. Please try again.').show();
+                    $('#signupSuccess').hide();
+                }
+            });
+        });
+
+        // Handle OTP verification
+        $('#verifyOtpButton').on('click', function() {
+            const email = $('#email').val();
+            const otp = $('#otp').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/auth/signup',
+                contentType: 'application/json',
+                data: JSON.stringify({ email: email, otp: otp, name: $('#name').val(), password: $('#password').val() }),
+                success: function(response) {
+                    $('#signupSuccess').text(response).show();
+                    $('#signupError').hide();
+                },
+                error: function(error) {
+                    $('#signupError').text('Invalid OTP. Please try again.').show();
+                    $('#signupSuccess').hide();
+                }
+            });
+        });
+    });
+</script>
+
 </body>
-
-
 </html>

@@ -25,4 +25,7 @@ public class AddressEntity {
 
     @Column(columnDefinition = "nvarchar(250)")
     private String commune;
+
+    @Column(columnDefinition = "nvarchar(250)")
+    private String other;
 }
