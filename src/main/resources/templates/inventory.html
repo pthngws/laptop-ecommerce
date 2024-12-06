@@ -9,26 +9,26 @@
     <style>
         /* Search Bar Styling */
         #search {
-            width: 300px; /* Làm ô search nhỏ lại */
+            width: 300px; /* Make the search input smaller */
             margin-bottom: 20px;
         }
 
         /* Table Styling Adjustments */
         .table thead {
-            background-color: #d8373e; /* Màu đỏ */
-            color: #fff; /* Chữ màu trắng */
+            background-color: #d8373e; /* Red color */
+            color: #fff; /* White text */
         }
 
-        .table td:nth-child(1) { /* Tên sản phẩm */
+        .table td:nth-child(1) { /* Product name */
             width: 50%;
         }
 
-        .table td:nth-child(2) input { /* Số lượng */
-            width: 80px; /* Làm ô số lượng nhỏ lại */
+        .table td:nth-child(2) input { /* Quantity input */
+            width: 80px; /* Make quantity field smaller */
         }
 
-        .table td:nth-child(3) button { /* Nút Cập nhật */
-            background-color: #d8373e; /* Màu đỏ */
+        .table td:nth-child(3) button { /* Update button */
+            background-color: #d8373e; /* Red color */
             color: white;
             border: none;
             padding: 6px 12px;
@@ -38,7 +38,7 @@
         }
 
         .table td:nth-child(3) button:hover {
-            background-color: #a32b31; /* Màu đỏ đậm hơn khi hover */
+            background-color: #a32b31; /* Darker red on hover */
         }
 
         /* Notification Styling */
@@ -50,15 +50,48 @@
         }
 
         #notification.success {
-            color: #28a745; /* Màu xanh */
-            background-color: #d4edda; /* Nền xanh nhạt */
+            color: #28a745; /* Green text */
+            background-color: #d4edda; /* Light green background */
             border: 1px solid #c3e6cb;
         }
 
         #notification.error {
-            color: #dc3545; /* Màu đỏ */
-            background-color: #f8d7da; /* Nền đỏ nhạt */
+            color: #dc3545; /* Red text */
+            background-color: #f8d7da; /* Light red background */
             border: 1px solid #f5c6cb;
+        }
+
+        /* Pagination Styling */
+        #paginationControls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        #paginationControls a {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #paginationControls a:hover {
+            background-color: #d8373e; /* Red on hover */
+            color: white;
+        }
+
+        #paginationControls a.active {
+            background-color: #d8373e; /* Red for active page */
+            color: white;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -160,7 +193,7 @@
                 setTimeout(() => {
                     notificationDiv.style.display = 'none';
                 }, 5000);
-                return; // Dừng thực hiện nếu không hợp lệ
+                return; // Stop execution if invalid
             }
             try {
                 const response = await $.ajax({
@@ -169,7 +202,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ quantity: quantity }),
                     success: function(response) {
-                        // Hiển thị thông báo thành công
+                        // Show success notification
                         notificationDiv.textContent = 'Cập nhật thành công!';
                         notificationDiv.className = 'success';
                         notificationDiv.style.display = 'block';
@@ -180,7 +213,7 @@
                         fetchInventory();
                     },
                     error: function(error) {
-                        // Hiển thị thông báo thất bại
+                        // Show error notification
                         notificationDiv.textContent = 'Cập nhật không thành công!';
                         notificationDiv.className = 'error';
                         notificationDiv.style.display = 'block';
@@ -191,7 +224,7 @@
                 });
             } catch (error) {
                 console.error('Error updating quantity:', error);
-                // Hiển thị thông báo lỗi
+                // Show error notification
                 notificationDiv.textContent = 'Có lỗi xảy ra khi cập nhật!';
                 notificationDiv.className = 'error';
             }
@@ -208,6 +241,7 @@
                     const pageLink = document.createElement('a');
                     pageLink.href = '#';
                     pageLink.textContent = i;
+                    pageLink.className = currentPage === i ? 'active' : ''; // Highlight the active page
                     pageLink.onclick = () => goToPage(i);
                     paginationDiv.appendChild(pageLink);
                 }
@@ -220,7 +254,7 @@
             fetchInventory(); // Fetch inventory for the selected page
         }
 
-        // Search functionality (only trigger on button click)
+        // Search functionality (trigger on input change)
         function searchInventory() {
             const searchQuery = document.getElementById('search').value;
             fetchInventory(searchQuery); // Fetch inventory with the search query

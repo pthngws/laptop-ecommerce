@@ -7593,3 +7593,18 @@ body.image-bg .wrapper {
 .fixed-cart-btn .cart-btn:hover i {
     color: #fff; /* Đảm bảo màu icon trắng khi hover */
 }
+
+header {
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Đẩy body xuống theo chiều cao header */
+body {
+    margin: 0;
+    padding-top: 210px; /* Điều chỉnh theo tổng chiều cao của header */
+}

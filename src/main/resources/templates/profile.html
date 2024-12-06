@@ -57,6 +57,7 @@
                                   <option value="Nữ">Nữ</option>
                                   <option value="Khác">Khác</option>
                                 </select>
+
                               </div>
                             </div>
                             <div class="col-lg-6">
@@ -188,7 +189,7 @@
             $('#name').val(user.name);
             $('#email').val(user.email);
             $('#phone').val(user.phone);
-            $('#gender').val(user.gender);
+            $('#gender').val(user.gender || "Nam");
 
             if (user.address) {
               $('#country').val(user.address.country);
@@ -213,7 +214,7 @@
           };
 
           $.ajax({
-            url: '/user/my-info/update',
+            url: '/api/profile/update-info',
             type: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -240,7 +241,7 @@
           };
 
           $.ajax({
-            url: '/user/my-info/update-address',
+            url: '/api/profile/update-address',
             type: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -275,7 +276,7 @@
           };
 
           $.ajax({
-            url: '/user/my-info/update-password',
+            url: '/api/profile/update-password',
             type: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,

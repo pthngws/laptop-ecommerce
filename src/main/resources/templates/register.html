@@ -8,34 +8,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="meta description">
-<style>
-    .modal-content {
-        border-radius: 10px;
-        padding: 20px;
-    }
+    <style>
+        .modal-content {
+            border-radius: 10px;
+            padding: 20px;
+        }
 
-    .modal-header {
-        border-bottom: 1px solid #dee2e6;
-    }
+        .modal-header {
+            border-bottom: 1px solid #dee2e6;
+        }
 
-    .modal-body {
-        padding: 15px 30px;
-    }
+        .modal-body {
+            padding: 15px 30px;
+        }
 
-    #otpError, #otpSuccess {
-        font-size: 14px;
-        text-align: center;
-    }
+        #otpError, #otpSuccess, #signupError, #signupSuccess, #sendingOtpMessage {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            transition: opacity 0.5s ease-out;
+        }
 
-    #verifyOtpButton {
-        width: 100%;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: bold;
-    }
+        #verifyOtpButton {
+            width: 100%;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
 
-</style>
-    <!-- Site title -->
+        .loading {
+            font-size: 14px;
+            color: orange;
+            display: none;
+        }
+    </style>
     <title>Đăng ký</title>
 </head>
 <body>
@@ -49,14 +55,17 @@
                     <div class="col-lg-6">
                         <div class="login-reg-form-wrap mt-md-34 mt-sm-34">
                             <h2>Đăng ký</h2>
-                            <div th:if="${mess}" class="alert alert-danger">
-                                <p th:text="${mess}"></p>
-                            </div>
+
+                            <!-- Thông báo lỗi -->
+                            <div id="signupError" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+                            <!-- Thông báo thành công -->
+                            <div id="signupSuccess" class="alert alert-success" role="alert" style="display: none;"></div>
+
                             <form id="signupForm">
                                 <div class="single-input-item">
                                     <input type="text" id="name" name="name" placeholder="Họ tên đầy đủ" required/>
                                 </div>
-
                                 <div class="single-input-item">
                                     <input type="email"
                                            placeholder="Email"
@@ -86,24 +95,22 @@
                                                    required id="password" name="password"
                                                    onkeyup='check();'/>
                                             <small class="text-danger error-password"></small>
-
                                         </div>
-
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="single-input-item">
                                             <input type="password" name="confirmPassword" id="confirmPassword"
                                                    onkeyup='check();' placeholder="Nhập lại Mật khẩu" required/>
                                             <span id='message'></span>
-
                                         </div>
                                     </div>
                                 </div>
                                 <div class="single-input-item">
-                                    <button type="submit" class="sqr-btn">Đăng ký</button>
+                                    <button type="submit" class="sqr-btn" id="signupButton">Đăng ký</button>
                                 </div>
                             </form>
                             <a th:href="@{/login}" class="forget-pwd">Đăng nhập</a>
+                            <div id="loadingMessage" class="loading">Đang gửi OTP, vui lòng chờ...</div>
                         </div>
                     </div>
                 </div>
@@ -111,91 +118,105 @@
         </div>
     </div>
 
-
     <!-- OTP Modal -->
     <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-
                 <div class="modal-body">
                     <form id="otpForm">
                         <div class="mb-3">
                             <input type="text" id="otp" name="otp" class="form-control" placeholder="Nhập OTP" required>
                         </div>
                         <div class="text-center">
-                            <button type="button" id="verifyOtpButton" class="btn btn-primary">Xác nhận</button>
+                            <button type="button" id="verifyOtpButton" class="sqr-btn">Xác nhận</button>
                         </div>
-                        <div id="otpError" class="mt-2 text-danger" style="display: none;"></div>
-                        <div id="otpSuccess" class="mt-2 text-success" style="display: none;"></div>
+                        <div id="otpError" class="alert alert-danger mt-2" style="display: none;"></div>
+                        <div id="otpSuccess" class="alert alert-success mt-2" style="display: none;"></div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('jwtToken');
 
+            if (token) {
+                // Nếu token tồn tại, chuyển hướng đến trang /home
+                window.location.href = "/home";
+            }
 
-        <script>
-            $(document).ready(function () {
-                // Hiển thị popup OTP sau khi gửi email thành công
-                $('#signupForm').on('submit', function (e) {
-                    e.preventDefault();
+            // Hiển thị popup OTP sau khi gửi email thành công
+            $('#signupForm').on('submit', function (e) {
+                e.preventDefault();
 
-                    const email = $('#email').val();
-                    const name = $('#name').val();
-                    const password = $('#password').val();
-                    const confirmPassword = $('#confirmPassword').val();
+                const email = $('#email').val();
+                const name = $('#name').val();
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
 
-                    if (password !== confirmPassword) {
-                        $('#signupError').text('Passwords do not match.').show();
-                        return;
+                if (password !== confirmPassword) {
+                    $('#signupError').text('Mật khẩu không trùng khớp. Vui lòng kiểm tra lại.').show();
+                    setTimeout(() => $('#signupError').fadeOut(), 5000);
+                    return;
+                }
+                $('#loadingMessage').show();
+                $('#signupButton').prop('disabled', true);  // Vô hiệu hóa nút đăng ký
+
+                // Gửi yêu cầu OTP
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/auth/send-otp',
+                    data: {email: email},
+                    success: function (response) {
+                        $('#loadingMessage').hide();
+                        $('#otpModal').modal('show');
+                        $('#signupSuccess').text('Mã OTP đã được gửi. Vui lòng kiểm tra email.').show();
+                        setTimeout(() => $('#signupSuccess').fadeOut(), 5000);
+                    },
+                    error: function () {
+                        $('#loadingMessage').hide();
+                        $('#signupError').text('Không thể gửi OTP. Vui lòng thử lại.').show();
+                        setTimeout(() => $('#signupError').fadeOut(), 5000);
+                    },
+                    complete: function () {
+                        $('#loadingMessage').hide();
+                        $('#signupButton').prop('disabled', false);  // Kích hoạt lại nút đăng ký
                     }
-
-                    // Gửi yêu cầu OTP
-                    $.ajax({
-                        type: 'POST',
-                        url: '/auth/send-otp',
-                        data: {email: email},
-                        success: function (response) {
-                            $('#otpModal').modal('show'); // Hiển thị modal OTP
-                            $('#signupSuccess').text(response).show();
-                            $('#signupError').hide();
-                        },
-                        error: function () {
-                            $('#signupError').text('Error sending OTP. Please try again.').show();
-                            $('#signupSuccess').hide();
-                        }
-                    });
-                });
-
-
-                // Handle OTP verification
-                $('#verifyOtpButton').on('click', function () {
-                    const email = $('#email').val();
-                    const otp = $('#otp').val();
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '/auth/signup',
-                        contentType: 'application/json',
-                        data: JSON.stringify({
-                            email: email,
-                            otp: otp,
-                            name: $('#name').val(),
-                            password: $('#password').val()
-                        }),
-                        success: function (response) {
-                            $('#signupSuccess').text(response).show();
-                            $('#signupError').hide();
-                        },
-                        error: function (error) {
-                            $('#signupError').text('Invalid OTP. Please try again.').show();
-                            $('#signupSuccess').hide();
-                        }
-                    });
                 });
             });
-        </script>
-    </div>
+
+            // Xử lý xác nhận OTP
+            $('#verifyOtpButton').on('click', function () {
+                const email = $('#email').val();
+                const otp = $('#otp').val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/auth/signup',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        email: email,
+                        otp: otp,
+                        name: $('#name').val(),
+                        password: $('#password').val()
+                    }),
+                    success: function (response) {
+                        $('#otpSuccess').text('Đăng ký thành công!').show();
+                        setTimeout(() => {
+                            $('#otpSuccess').fadeOut();
+                            window.location.href = "/login";
+                        }, 5000);
+                    },
+                    error: function (error) {
+                        $('#otpError').text('OTP không chính xác hoặc đã hết hạn. Vui lòng thử lại.').show();
+                        setTimeout(() => $('#otpError').fadeOut(), 5000);
+                    }
+                });
+            });
+        });
+    </script>
+</div>
 </body>
 </html>

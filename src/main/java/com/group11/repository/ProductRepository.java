@@ -11,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
+
+
     // Tìm kiếm theo tên
     List<ProductEntity> findByNameContainingIgnoreCase(String name);
 
@@ -66,18 +68,19 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query("SELECT p.manufacturer.name, COUNT(p) FROM ProductEntity p GROUP BY p.manufacturer.name")
     Page<Object[]> countProductsGroupedByManufacturerName(Pageable pageable);
 
-
-
-
     @Query("SELECT p FROM ProductEntity p WHERE p.name = :productName")
     List<ProductEntity> findByName(@Param("productName") String productName);
-
-
+    
+    
     // Truy vấn để lấy sản phẩm đầu tiên với mỗi tên (không trùng lặp tên)
     @Query("SELECT p FROM ProductEntity p WHERE p.name IN (SELECT DISTINCT p1.name FROM ProductEntity p1)")
     Page<ProductEntity> findAllDistinctByName(Pageable pageable);
 
     Page<ProductEntity> findAll(Pageable pageable);
+
+    // Truy vấn lấy 10 sản phẩm mới nhất
+    @Query("SELECT p FROM ProductEntity p ORDER BY p.productID DESC")
+    List<ProductEntity> findTop10NewestProducts();
 
 
 }

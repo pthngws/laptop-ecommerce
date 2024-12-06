@@ -30,13 +30,11 @@ public class HomeController {
 
         // Gửi ID tạm vào model để hiển thị lên trang
         model.addAttribute("GID", guestId);
-        return "Mainhome"; // trả về view home (home.html hoặc home.jsp)
+        return "home"; // trả về view home (home.html hoặc home.jsp)
     }
 
     @RequestMapping("/home")
-    public String home(Model model) {
-        List<ProductEntity> products = productService.findAll();
-        model.addAttribute("products", products);
+    public String home() {
         return "home";
     }
 
@@ -46,13 +44,13 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String home() {
+    public String login() {
         return "login";
     }
 
-    @GetMapping("/personal-info")
+    @GetMapping("/profile")
     public String personalInfo() {
-        return "personal-info";
+        return "profile";
     }
 
     @GetMapping("/inventory")

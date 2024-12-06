@@ -7,35 +7,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel="stylesheet">
-    <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        .product-content h4 {
-            height: 48px; /* Đặt chiều cao cố định (tùy chỉnh theo thiết kế của bạn) */
-            overflow: hidden; /* Ẩn phần chữ vượt quá chiều cao */
-            text-overflow: ellipsis; /* Thêm dấu "..." nếu vượt quá không gian */
-            display: -webkit-box; /* Sử dụng cấu trúc box để giới hạn số dòng */
-            -webkit-line-clamp: 3; /* Giới hạn hiển thị tối đa 2 dòng */
-            -webkit-box-orient: vertical; /* Đặt hướng box là dọc */
-            font-size: 16px; /* Kích thước chữ (tuỳ chỉnh theo ý bạn) */
-            line-height: 1.5; /* Giãn dòng để đảm bảo đẹp mắt */
-            text-align: center; /* Canh giữa nội dung */
-        }
-        .product-custom {
-            flex: 0 0 19%; /* Chiếm khoảng 19% chiều rộng (tương đương 5 sản phẩm trên 1 hàng) */
-            max-width: 19%;
-            margin: 0.5%; /* Tạo khoảng cách giữa các sản phẩm */
-            box-sizing: border-box; /* Đảm bảo padding và border không ảnh hưởng đến kích thước sản phẩm */
+        /* Đảm bảo .latest-product sử dụng đầy đủ chiều rộng của container */
+        .latest-product .container {
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Đảm bảo sản phẩm được hiển thị theo hàng 5 sản phẩm */
+        #product-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between; /* Căn đều các sản phẩm trong mỗi hàng */
+        }
+
+        /* Mỗi sản phẩm chiếm 20% chiều rộng của container (5 sản phẩm trên mỗi hàng) */
+        .product-item {
+            flex: 0 0 20%; /* Chiếm 20% chiều rộng, 5 sản phẩm mỗi hàng */
+            max-width: 20%; /* Giới hạn chiều rộng tối đa */
+            margin-bottom: 20px; /* Khoảng cách dưới mỗi sản phẩm */
+        }
+
+        /* Điều chỉnh cho màn hình nhỏ hơn (2 cột trên điện thoại) */
+        @media (max-width: 768px) {
+            .product-item {
+                flex: 0 0 48%; /* 2 cột trên màn hình nhỏ */
+                max-width: 48%;
+            }
+        }
+
+        /* Điều chỉnh cho màn hình cực nhỏ (1 cột trên điện thoại rất nhỏ) */
+        @media (max-width: 480px) {
+            .product-item {
+                flex: 0 0 100%; /* 1 cột trên màn hình rất nhỏ */
+                max-width: 100%;
+            }
+        }
+
+
     </style>
+    <!-- Thêm jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Thêm Bootstrap (cho tooltip) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </head>
 <body>
-<section class="row" layout:fragment="content">
+<div layout:fragment="content">
     <div class="wrapper box-layout">
         <!-- hero slider start -->
         <div class="hero-slider-area mb-5">
@@ -70,56 +91,7 @@
         </div>
         <!-- hero slider end -->
 
-        <!-- latest product start -->
-        <!--        <div class="latest-product pt-md-30 pt-lg-30 pt-sm-30">-->
-        <!--            <div class="container">-->
-        <!--                <div class="section-title mb-30">-->
-        <!--                    <div class="title-icon">-->
-        <!--                        <i class="fa fa-flash"></i>-->
-        <!--                    </div>-->
-        <!--                    <h3>Sản Phẩm Mới Nhất</h3>-->
-        <!--                </div>-->
-        <!--                &lt;!&ndash; featured category start &ndash;&gt;-->
-        <!--                <div class="latest-product-active slick-padding slick-arrow-style">-->
-        <!--                    &lt;!&ndash; Lặp qua danh sách sản phẩm &ndash;&gt;-->
-        <!--                    <div th:each="product : ${products}" class="product-item fix">-->
-        <!--                        <div class="product-thumb">-->
-        <!--                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">-->
-        <!--                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">-->
-        <!--&lt;!&ndash;                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-sec" alt="">&ndash;&gt;-->
-        <!--                            </a>-->
-        <!--                            <div class="product-label">-->
-        <!--&lt;!&ndash;                                <span th:text="${product.getName()}"></span>&ndash;&gt;-->
-        <!--                            </div>-->
-        <!--                            <div class="product-action-link">-->
-        <!--                                <a href="#" data-toggle="modal" data-target="#quick_view">-->
-        <!--                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>-->
-        <!--                                </a>-->
-        <!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>-->
-        <!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>-->
-        <!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>-->
-        <!--                            </div>-->
-        <!--                        </div>-->
-        <!--                        <div class="product-content">-->
-        <!--                            <h4><a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a></h4>-->
-        <!--                            <div class="pricebox">-->
-        <!--                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>-->
-        <!--                                <div class="ratings">-->
-        <!--                                    <div class="pro-review">-->
-        <!--                                        <span th:text="${1 + ' review(s)'}"></span>-->
-        <!--                                    </div>-->
-        <!--                                </div>-->
-        <!--                            </div>-->
-        <!--                        </div>-->
-        <!--                    </div>-->
-        <!--                    &lt;!&ndash; Kết thúc lặp &ndash;&gt;-->
-        <!--                </div>-->
-        <!--                &lt;!&ndash; featured category end &ndash;&gt;-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!-- latest product end -->
-
-        <!--         latest product start-->
+        <!-- latest product start-->
         <div class="latest-product pt-md-30 pt-lg-30 pt-sm-30 mb-5">
             <div class="container">
                 <div class="section-title mb-30">
@@ -128,89 +100,11 @@
                     </div>
                     <h3>Sản Phẩm Mới Nhất</h3>
                 </div>
-                <div class="row d-flex flex-wrap justify-content-start">
-                    <!-- Lặp qua danh sách sản phẩm -->
-                    <div th:each="product : ${products}" class="product-item fix product-custom">
-                        <div class="product-thumb">
-                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">
-                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">
-                            </a>
-                            <div class="product-action-link">
-<!--                                <a href="#" data-toggle="modal" data-target="#quick_view">-->
-<!--                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>-->
-<!--                                </a>-->
-<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>-->
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h4>
-                                <a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a>
-                            </h4>
-                            <div class="pricebox">
-                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>
-                                <div class="ratings">
-                                    <div class="pro-review">
-                                        <span th:text="${1 + ' review(s)'}"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Kết thúc lặp -->
-                </div>
-            </div>
-
-
-        </div>
-        <!-- latest product end -->
-
-        <!-- San Pham Ban Chay Nhat -->
-        <div class="latest-product pt-md-30 pt-lg-30 pt-sm-30">
-            <div class="container">
-                <div class="section-title mb-30">
-                    <div class="title-icon">
-                        <i class="fa fa-flash"></i>
-                    </div>
-                    <h3>Sản Phẩm Bán chạy nhất</h3>
-                </div>
-                <div class="row d-flex flex-wrap justify-content-start">
-                    <!-- Lặp qua danh sách sản phẩm -->
-                    <div th:each="product : ${products}" class="product-item fix product-custom">
-                        <div class="product-thumb">
-                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">
-                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">
-                            </a>
-                            <div class="product-action-link">
-                                <!--                                <a href="#" data-toggle="modal" data-target="#quick_view">-->
-                                <!--                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>-->
-                                <!--                                </a>-->
-                                <!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>-->
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h4>
-                                <a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a>
-                            </h4>
-                            <div class="pricebox">
-                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>
-                                <div class="ratings">
-                                    <div class="pro-review">
-                                        <span th:text="${1 + ' review(s)'}"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Kết thúc lặp -->
+                <div class="row d-flex flex-wrap justify-content-start" id="product-container">
+                    <!-- Các sản phẩm sẽ được thêm vào đây qua JavaScript -->
                 </div>
             </div>
         </div>
-        <!-- San Pham Ban Chay Nhat end -->
-
 
         <!-- brand area start -->
         <div class="brand-area pt-26 pb-30">
@@ -257,6 +151,84 @@
         <!-- brand area end -->
     </div>
 
-</section>
+    <script>
+        // Hàm load danh sách sản phẩm
+        function loadProducts() {
+            $.ajax({
+                url: '/api/products/newest', // Đảm bảo URL này đúng
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                success: function (products) {
+                    console.log('Dữ liệu sản phẩm trả về:', products);
+                    const productContainer = $('#product-container');
+                    productContainer.empty(); // Xóa nội dung cũ
+
+                    // Kiểm tra nếu không có sản phẩm
+                    if (!products || products.length === 0) {
+                        productContainer.append('<p>Không có sản phẩm nào để hiển thị.</p>');
+                        return;
+                    }
+
+                    // Lặp qua danh sách sản phẩm và hiển thị
+                    products.forEach((product) => {
+                        // Xử lý ảnh (nếu không có ảnh, sử dụng ảnh mặc định)
+                        const imageUrl = product.detail.images[0]?.imageUrl || '/images/default-image.jpg';
+
+                        // Tạo HTML cho từng sản phẩm
+                        const productHtml = `
+                    <div class="product-item fix product-custom">
+                        <div class="product-thumb">
+                            <a href="/product-details/${product.productID}">
+                                <img src="${imageUrl}" class="img-pri" alt="${product.name}">
+                            </a>
+                            <div class="product-action-link">
+                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare">
+                                    <i class="fa fa-refresh"></i>
+                                </a>
+                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h4>
+                                <a href="/product-details/${product.productID}">${product.name}</a>
+                            </h4>
+                            <div class="pricebox">
+                                <span class="regular-price">${formatPrice(product.price)} đ</span>
+                            </div>
+                        </div>
+                    </div>`;
+                        productContainer.append(productHtml);
+                    });
+
+                    // Kích hoạt lại tooltip sau khi các sản phẩm được thêm
+                    $('[data-toggle="tooltip"]').tooltip();
+                },
+                error: function () {
+                    alert('Lỗi khi tải danh sách sản phẩm! Vui lòng thử lại sau.');
+                }
+            });
+        }
+
+        // Hàm định dạng giá tiền (thêm dấu chấm phân cách hàng nghìn)
+        function formatPrice(price) {
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // Gọi hàm load sản phẩm khi trang được load
+        $(document).ready(function () {
+            loadProducts();
+        });
+
+
+    </script>
+
+</div>
+
 </body>
+
 </html>

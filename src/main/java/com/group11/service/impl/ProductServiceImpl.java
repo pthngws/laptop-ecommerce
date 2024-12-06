@@ -68,7 +68,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Optional<ProductEntity> findById(Long id) {
+    public Optional<ProductEntity> findProductById(Long id) {
         return productRepository.findById(id);
     }
 
@@ -123,5 +123,11 @@ public class ProductServiceImpl implements IProductService {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable);
     }
+
+    @Override
+    public List<ProductEntity> getNewestProducts() {
+        return productRepository.findTop10NewestProducts();
+    }
+
 
 }

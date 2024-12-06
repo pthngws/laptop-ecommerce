@@ -4,6 +4,9 @@ import com.group11.entity.UserEntity;
 import com.group11.repository.UserRepository;
 import com.group11.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,5 +49,28 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<UserEntity> allUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserEntity findById(Long id) {
+        return userRepository.findById(id).get();
+    }
+
+    @Override
+    public Page<UserEntity> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public boolean activeUser(Long id, boolean active) {
+        int updatedRows = userRepository.updateUserStatus(id, active);
+        return updatedRows > 0; // Trả về true nếu cập nhật thành công
+    }
+
+    @Override
+    public Page<UserEntity> searchUser(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.searchUser(keyword, pageable);
     }
 }
