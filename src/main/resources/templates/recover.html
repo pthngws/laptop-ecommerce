@@ -8,18 +8,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="meta description">
+    <title>Đặt lại mật khẩu</title>
+    <style>
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            transition: opacity 0.5s ease-out;
+        }
 
-    <!-- Site title -->
-    <title>Đăng ký</title>
+        .loading {
+            font-size: 14px;
+            color: orange;
+            text-align: center;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <!-- login register wrapper start -->
     <div class="login-register-wrapper">
         <div class="container">
             <div class="member-area-from-wrap">
                 <div class="row">
-                    <!-- Register Content Start -->
                     <div class="col-lg-6">
                         <div class="login-reg-form-wrap mt-md-34 mt-sm-34">
 
@@ -31,10 +42,12 @@
                                         <input type="email" id="email" name="email" placeholder="Nhập email" required>
                                     </div>
                                     <div class="single-input-item">
-                                        <button type="submit" class="sqr-btn">Gửi OTP</button>
+                                        <button type="submit" class="sqr-btn" id="sendOtpButton">Gửi OTP</button>
                                     </div>
                                 </form>
-                                <div id="step1Message"></div>
+                                <a th:href="@{/login}" class="forget-pwd">Đăng nhập</a>
+                                <div id="step1Message" class="message"></div>
+                                <div id="loadingMessage" class="loading">Đang gửi OTP, vui lòng chờ...</div>
                             </div>
 
                             <!-- Step 2: Xác minh OTP và nhập mật khẩu mới -->
@@ -52,34 +65,46 @@
                                         <button type="submit" class="sqr-btn">Đặt lại mật khẩu</button>
                                     </div>
                                 </form>
-                                <div id="step2Message"></div>
+                                <div id="step2Message" class="message"></div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         $(document).ready(function () {
             // Handle "Gửi OTP" form submission
             $('#sendOtpForm').on('submit', function (e) {
                 e.preventDefault();
-
                 const email = $('#email').val();
+
+                // Hiển thị thông báo "Đang gửi OTP"
+                $('#loadingMessage').show();
+                $('#sendOtpButton').prop('disabled', true);  // Vô hiệu hóa nút gửi để tránh nhấn nhiều lần
 
                 // Gửi OTP tới backend
                 $.ajax({
                     type: 'POST',
-                    url: '/auth/send-otp-reset', // URL của endpoint gửi OTP
+                    url: '/api/auth/send-otp-reset', // URL của endpoint gửi OTP
                     data: {email: email},
-                    success: function (response) {
-                        $('#step1Message').text('OTP đã được gửi tới email của bạn!').css('color', 'green');
+                    success: function () {
+                        $('#loadingMessage').hide();  // Ẩn thông báo "Đang gửi OTP"
+                        $('#step1Message').text('OTP đã được gửi tới email của bạn!').css('color', 'green').show();
                         $('#step1').hide();
-                        $('#step2').show(); // Hiển thị bước nhập OTP
+                        $('#step2').show();
+                        setTimeout(() => $('#step1Message').fadeOut(), 5000);
                     },
-                    error: function (error) {
-                        $('#step1Message').text('Gửi OTP thất bại, vui lòng thử lại.').css('color', 'red');
+                    error: function () {
+                        $('#loadingMessage').hide();  // Ẩn thông báo "Đang gửi OTP"
+                        $('#step1Message').text('Gửi OTP thất bại, vui lòng thử lại.').css('color', 'red').show();
+                        setTimeout(() => $('#step1Message').fadeOut(), 5000);
+                    },
+                    complete: function () {
+                        $('#sendOtpButton').prop('disabled', false);  // Kích hoạt lại nút gửi sau khi hoàn tất
                     }
                 });
             });
@@ -87,25 +112,29 @@
             // Handle "Đặt lại mật khẩu" form submission
             $('#resetPasswordForm').on('submit', function (e) {
                 e.preventDefault();
-
-                const email = $('#email').val(); // Email đã nhập ở bước 1
+                const email = $('#email').val();
                 const otp = $('#otp').val();
                 const newPassword = $('#newPassword').val();
 
                 // Gửi yêu cầu đặt lại mật khẩu
                 $.ajax({
                     type: 'POST',
-                    url: '/auth/reset-password', // URL của endpoint đặt lại mật khẩu
+                    url: '/api/auth/reset-password', // URL của endpoint đặt lại mật khẩu
                     data: {
                         email: email,
                         otp: otp,
                         newPassword: newPassword
                     },
-                    success: function (response) {
-                        $('#step2Message').text('Mật khẩu của bạn đã được đặt lại thành công!').css('color', 'green');
+                    success: function () {
+                        $('#step2Message').text('Mật khẩu của bạn đã được đặt lại thành công!').css('color', 'green').show();
+                        setTimeout(() => {
+                            $('#step2Message').fadeOut();
+                            window.location.href = "/login"; // Redirect về trang đăng nhập
+                        }, 5000);
                     },
-                    error: function (error) {
-                        $('#step2Message').text('OTP không hợp lệ hoặc đã hết hạn.').css('color', 'red');
+                    error: function () {
+                        $('#step2Message').text('OTP không hợp lệ hoặc đã hết hạn.').css('color', 'red').show();
+                        setTimeout(() => $('#step2Message').fadeOut(), 5000);
                     }
                 });
             });

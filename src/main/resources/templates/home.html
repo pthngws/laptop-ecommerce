@@ -7,11 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel="stylesheet">
-    <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .product-content h4 {
             height: 48px; /* Đặt chiều cao cố định (tùy chỉnh theo thiết kế của bạn) */
@@ -128,39 +123,37 @@
                     </div>
                     <h3>Sản Phẩm Mới Nhất</h3>
                 </div>
-                <div class="row d-flex flex-wrap justify-content-start" id="product-list">
-<!--                    &lt;!&ndash; Lặp qua danh sách sản phẩm &ndash;&gt;-->
-<!--                    <div th:each="product : ${products}" class="product-item fix product-custom">-->
-<!--                        <div class="product-thumb">-->
-<!--                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">-->
-<!--                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">-->
-<!--                            </a>-->
-<!--                            <div class="product-action-link">-->
-<!--&lt;!&ndash;                                <a href="#" data-toggle="modal" data-target="#quick_view">&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </a>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>&ndash;&gt;-->
-<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>-->
-<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="product-content">-->
-<!--                            <h4>-->
-<!--                                <a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a>-->
-<!--                            </h4>-->
-<!--                            <div class="pricebox">-->
-<!--                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>-->
-<!--                                <div class="ratings">-->
-<!--                                    <div class="pro-review">-->
-<!--                                        <span th:text="${1 + ' review(s)'}"></span>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    &lt;!&ndash; Kết thúc lặp &ndash;&gt;-->
-
-
+                <div class="row d-flex flex-wrap justify-content-start">
+                    <!-- Lặp qua danh sách sản phẩm -->
+                    <div th:each="product : ${products}" class="product-item fix product-custom">
+                        <div class="product-thumb">
+                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">
+                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">
+                            </a>
+                            <div class="product-action-link">
+<!--                                <a href="#" data-toggle="modal" data-target="#quick_view">-->
+<!--                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>-->
+<!--                                </a>-->
+<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>-->
+                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>
+                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h4>
+                                <a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a>
+                            </h4>
+                            <div class="pricebox">
+                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>
+                                <div class="ratings">
+                                    <div class="pro-review">
+                                        <span th:text="${1 + ' review(s)'}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Kết thúc lặp -->
                 </div>
             </div>
 
@@ -309,4 +302,5 @@
 
 </script>
 </body>
+
 </html>
