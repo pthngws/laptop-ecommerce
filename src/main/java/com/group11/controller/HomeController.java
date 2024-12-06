@@ -30,7 +30,7 @@ public class HomeController {
 
         // Gửi ID tạm vào model để hiển thị lên trang
         model.addAttribute("GID", guestId);
-        return "Mainhome"; // trả về view home (home.html hoặc home.jsp)
+        return "home"; // trả về view home (home.html hoặc home.jsp)
     }
 
     @RequestMapping("/home")
@@ -50,9 +50,9 @@ public class HomeController {
         return "login";
     }
 
-    @GetMapping("/personal-info")
+    @GetMapping("/profile")
     public String personalInfo() {
-        return "personal-info";
+        return "profile";
     }
 
     @GetMapping("/inventory")

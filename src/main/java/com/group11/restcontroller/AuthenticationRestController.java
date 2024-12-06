@@ -1,4 +1,4 @@
-package com.group11.controller;
+package com.group11.restcontroller;
 
 import com.group11.entity.UserEntity;
 import com.group11.model.LoginResponse;
@@ -7,7 +7,6 @@ import com.group11.model.RegisterUserModel;
 import com.group11.service.IAuthenticationService;
 import com.group11.service.IJwtService;
 import com.group11.service.IUserService;
-import com.group11.service.impl.JwtServiceImpl;
 import com.group11.service.impl.EmailServiceImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthenticationController {
+@RequestMapping("/api/auth")
+public class AuthenticationRestController {
     @Autowired
     IAuthenticationService authenticationService;
 
