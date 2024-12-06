@@ -76,6 +76,7 @@ function openChat(customerId,customerName) {
     $("#chat-room").show();
     connect();
     loadMessages();
+
 }
 
 function connect() {
@@ -96,14 +97,27 @@ function loadMessages() {
         type: 'GET',
         data: { senderId: SENDERID, receiverId: RECEIVERID },
         success: function (messages) {
-            $("#chat-box").empty();
-            messages.forEach(showMessage);
+            $("#chat-box").empty();  // Xóa nội dung cũ trong hộp chat
+            if (messages.length === 0) {
+                // Nếu không có tin nhắn, hiển thị tin nhắn mặc định
+                if (!isAdmin) {
+                    showMessage({
+                        contentMessage: "LaptopT4 đang có nhiều chương trình khuyến mãi và ưu đãi hấp dẫn. Anh/Chị có thể nhắn tin để được tư vấn chi tiết.",
+                        senderID: 1,  // Admin mặc định có ID là 1
+                        timestamp: new Date().toISOString()  // Thời gian hiện tại
+                    });
+                }
+            } else {
+                // Nếu có tin nhắn, hiển thị tất cả tin nhắn
+                messages.forEach(showMessage);
+            }
         },
         error: function (error) {
             console.error('Error loading messages:', error);
         }
     });
 }
+
 
 function showMessage(message) {
     const chatBox = $("#chat-box");

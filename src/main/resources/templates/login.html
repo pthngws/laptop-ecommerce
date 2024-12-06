@@ -63,6 +63,13 @@
         </div>
     </div>
     <script>
+        const token = localStorage.getItem('jwtToken');
+
+        if (token) {
+            // Nếu token tồn tại, chuyển hướng đến trang /home
+            window.location.href = "/home";
+        }
+
         // AJAX request to login
         $(document).ready(function () {
             $('#loginForm').on('submit', function (e) {

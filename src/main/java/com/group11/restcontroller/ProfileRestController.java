@@ -10,12 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/profile")
-public class UserRestController {
+public class ProfileRestController {
 
     @Autowired
     private IUserService userService;
@@ -23,9 +22,6 @@ public class UserRestController {
     private IJwtService jwtService;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    public UserRestController(UserServiceImpl userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public ResponseEntity<UserEntity> authenticatedUser(@RequestHeader("Authorization") String token) {
@@ -35,7 +31,7 @@ public class UserRestController {
         }
 
         // Giải mã JWT để lấy email
-        String email = jwtService.extractClaim(token,claims -> claims.getSubject());
+        String email = jwtService.extractClaim(token, claims -> claims.getSubject());
 
         // Tìm người dùng theo email
         UserEntity currentUser = userService.findByEmail(email);
@@ -55,13 +51,14 @@ public class UserRestController {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        String email = jwtService.extractClaim(token,claims -> claims.getSubject());
+        String email = jwtService.extractClaim(token, claims -> claims.getSubject());
         UserEntity currentUser = userService.findByEmail(email);
         currentUser.setName(user.getName());
         currentUser.setGender(user.getGender());
         currentUser.setPhone(user.getPhone());
         userService.save(currentUser);
     }
+
     @PostMapping("/update-address")
     public void updateAddress(@RequestHeader("Authorization") String token, @RequestBody AddressEntity address) {
         if (token.startsWith("Bearer ")) {
@@ -113,7 +110,6 @@ public class UserRestController {
         // Save the user with the updated password
         userService.save(currentUser);
     }
-
 
 
 }
