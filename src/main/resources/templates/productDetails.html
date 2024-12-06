@@ -710,6 +710,10 @@
 			$.ajax({
 				url: `/api/product/${id}`, // API lấy chi tiết sản phẩm
 				type: "GET",
+				headers: {
+					'Authorization': `Bearer ${token}`,
+					'Content-Type': 'application/json'
+				},
 				success: function (product) {
 					// Hiển thị thông tin sản phẩm
 					$("#product-title").text(product.name);
