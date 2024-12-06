@@ -1,16 +1,13 @@
 package com.group11.restcontroller;
 
-import com.group11.entity.ProductEntity;
-import com.group11.entity.ProductStatus;
+import com.group11.entity.*;
+import com.group11.repository.*;
 import com.group11.service.IProductService;
 import com.group11.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,6 +16,20 @@ import java.util.List;
 public class ProductRestController {
     @Autowired
     IProductService productService = new ProductServiceImpl();
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ManufacturerRepository manufacturerRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    private ImageItemRepository imageItemRepository;
     @RequestMapping("/newest")
     public ResponseEntity<List<ProductEntity>> getNewestProducts() {
         List<ProductEntity> newestProducts = productService.getNewestProducts();
@@ -30,5 +41,39 @@ public class ProductRestController {
         List<ProductEntity> products = productService.findAll();
         return ResponseEntity.ok(products);
     }
+
+    @PostMapping("/add")
+    public ProductEntity addProduct(@RequestBody ProductEntity productEntity) {
+        // Lấy thông tin Category và Manufacturer
+        CategoryEntity category = categoryRepository.findById(productEntity.getCategory().getCategoryID())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        ManufacturerEntity manufacturer = manufacturerRepository.findById(productEntity.getManufacturer().getId())
+                .orElseThrow(() -> new RuntimeException("Manufacturer not found"));
+
+        // Lưu ProductDetail nếu có thông tin chi tiết
+        ProductDetailEntity productDetail = productEntity.getDetail();
+        if (productDetail != null) {
+            // Lưu thông tin chi tiết sản phẩm
+            productDetailRepository.save(productDetail);
+
+            // Lưu danh sách hình ảnh nếu có
+            List<ImageItemEntity> images = productDetail.getImages();
+            if (images != null && !images.isEmpty()) {
+                for (ImageItemEntity image : images) {
+                    image.setProductDetail(productDetail); // Gắn chi tiết sản phẩm cho mỗi hình ảnh
+                    imageItemRepository.save(image);
+                }
+            }
+        }
+
+        // Cập nhật thông tin category, manufacturer cho sản phẩm
+        productEntity.setCategory(category);
+        productEntity.setManufacturer(manufacturer);
+
+        // Lưu sản phẩm vào cơ sở dữ liệu
+        return productRepository.save(productEntity);
+    }
+
 
 }
