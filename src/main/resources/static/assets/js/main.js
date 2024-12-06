@@ -20,6 +20,18 @@
 			$('.scroll-top').addClass('not-visible');
 		}
 	});
+		window.addEventListener('scroll', function () {
+		const header = document.querySelector('.main-header-wrapper');
+		const headerOffset = header.offsetTop; // Vị trí ban đầu của header
+		const scrollPosition = window.pageYOffset; // Vị trí hiện tại của trang khi cuộn
+
+		if (scrollPosition > headerOffset) {
+		header.classList.add('sticky'); // Thêm lớp sticky khi cuộn tới
+	} else {
+		header.classList.remove('sticky'); // Loại bỏ sticky khi ở trên
+	}
+	});
+
 
 	// slide effect dropdown
 	function dropdownAnimation() {
@@ -31,6 +43,7 @@
 			$(this).find('.dropdown-menu').first().stop(true, true).slideUp(500);
 		});
 	}
+
 	dropdownAnimation();
 
 	// mini cart toggler
@@ -66,11 +79,12 @@
 			$('.category-menu .menu-item-has-children ul').slideDown();
 		}
 	}
+
 	$(window).on({
-		load: function(){
+		load: function () {
 			categorySubMenuToggle();
 		},
-		resize: function(){
+		resize: function () {
 			categorySubMenuToggle();
 		}
 	});
@@ -133,11 +147,11 @@
 		nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
 		appendArrows: ".slick-append",
 		responsive: [{
-				breakpoint: 992,
-				settings: {
-					slidesToShow: 2,
-				}
-			},
+			breakpoint: 992,
+			settings: {
+				slidesToShow: 2,
+			}
+		},
 			{
 				breakpoint: 480,
 				settings: {
@@ -167,7 +181,7 @@
 				settings: {
 					slidesToShow: 1,
 				}
-			}, ]
+			},]
 		});
 	});
 
@@ -205,12 +219,12 @@
 			nextArrow: '<button class="slick-next"><i class="fa fa-angle-right"></i></button>',
 			appendArrows: $arrowContainer,
 			responsive: [{
-					breakpoint: 992,
-					settings: {
-						slidesToShow: 2,
-						rows: 3,
-					}
-				},
+				breakpoint: 992,
+				settings: {
+					slidesToShow: 2,
+					rows: 3,
+				}
+			},
 				{
 					breakpoint: 576,
 					settings: {
@@ -233,11 +247,11 @@
 		nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
 		slidesToShow: 4,
 		responsive: [{
-				breakpoint: 1200,
-				settings: {
-					slidesToShow: 3,
-				}
-			},
+			breakpoint: 1200,
+			settings: {
+				slidesToShow: 3,
+			}
+		},
 			{
 				breakpoint: 768,
 				settings: {
@@ -268,11 +282,11 @@
 			prevArrow: '<button class="slick-prev"><i class="fa fa-angle-left"></i></button>',
 			nextArrow: '<button class="slick-next"><i class="fa fa-angle-right"></i></button>',
 			responsive: [{
-					breakpoint: 1200,
-					settings: {
-						slidesToShow: 3,
-					}
-				},
+				breakpoint: 1200,
+				settings: {
+					slidesToShow: 3,
+				}
+			},
 				{
 					breakpoint: 768,
 					settings: {
@@ -301,11 +315,11 @@
 		nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
 		slidesToShow: 5,
 		responsive: [{
-				breakpoint: 992,
-				settings: {
-					slidesToShow: 3,
-				}
-			},
+			breakpoint: 992,
+			settings: {
+				slidesToShow: 3,
+			}
+		},
 			{
 				breakpoint: 768,
 				settings: {
@@ -344,11 +358,11 @@
 		prevArrow: '<button type="button" class="slick-prev"><i class="fa fa-angle-left"></i></button>',
 		nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
 		responsive: [{
-				breakpoint: 992,
-				settings: {
-					slidesToShow: 4,
-				}
-			},
+			breakpoint: 992,
+			settings: {
+				slidesToShow: 4,
+			}
+		},
 			{
 				breakpoint: 768,
 				settings: {
@@ -384,11 +398,11 @@
 		nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
 		slidesToShow: 4,
 		responsive: [{
-				breakpoint: 991,
-				settings: {
-					slidesToShow: 3,
-				}
-			},
+			breakpoint: 991,
+			settings: {
+				slidesToShow: 3,
+			}
+		},
 			{
 				breakpoint: 768,
 				settings: {
@@ -424,7 +438,7 @@
 				settings: {
 					slidesToShow: 1,
 				}
-			}, ]
+			},]
 		});
 	});
 
@@ -463,11 +477,11 @@
 		nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
 		slidesToShow: 3,
 		responsive: [{
-				breakpoint: 768,
-				settings: {
-					slidesToShow: 2,
-				}
-			},
+			breakpoint: 768,
+			settings: {
+				slidesToShow: 2,
+			}
+		},
 			{
 				breakpoint: 480,
 				settings: {
@@ -497,7 +511,7 @@
 	$('.img-zoom').zoom();
 
 	// quantity change js
-    var proQty = $('.pro-qty');
+	var proQty = $('.pro-qty');
 	proQty.prepend('<span class="dec qtybtn">-</span>');
 	proQty.append('<span class="inc qtybtn">+</span>');
 	proQty.on('click', '.qtybtn', function () {
@@ -521,7 +535,7 @@
 
 	// modal fix
 	$('.modal').on('shown.bs.modal', function (e) {
-        e.preventDefault();
+		e.preventDefault();
 		$('.pro-nav').resize();
 	});
 
@@ -570,7 +584,7 @@
 
 	// scroll to top
 	$('body').on('click', '.scroll-top', function (e) {
-        e.preventDefault();
+		e.preventDefault();
 		$('html,body').animate({
 			scrollTop: 0
 		}, 1000);

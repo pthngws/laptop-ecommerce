@@ -2,53 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout.html}">
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý đơn hàng</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
-    <style>
-        /* CSS tùy chỉnh cho nút Khóa tài khoản */
-        .btn-danger.custom-hover {
-            background-color: #dc3545; /* Màu đỏ */
-            border-color: #dc3545;    /* Viền màu đỏ */
-            color: #fff;              /* Chữ màu trắng */
-        }
 
-        /* Hiệu ứng hover */
-        .btn-danger.custom-hover:hover {
-            background-color: #444444; /* Màu xám khi hover */
-            border-color: #444444;     /* Viền màu xám khi hover */
-            color: #fff;               /* Chữ giữ nguyên màu trắng */
-        }
-    </style>
-</head>
-<body>
-<section class="row" layout:fragment="content">
-    <div class="container mt-3">
-        <div th:if="${successMessage}" class="alert alert-success" role="alert">
-            <span th:text="${successMessage}"></span>
-        </div>
-        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-            <span th:text="${errorMessage}"></span>
-        </div>
-    </div>
+<div class="row" layout:fragment="content">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quản lý đơn hàng</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+        <style>
+            /* CSS tùy chỉnh cho nút Khóa tài khoản */
+            .btn-danger.custom-hover {
+                background-color: #dc3545; /* Màu đỏ */
+                border-color: #dc3545; /* Viền màu đỏ */
+                color: #fff; /* Chữ màu trắng */
+            }
 
+            /* Hiệu ứng hover */
+            .btn-danger.custom-hover:hover {
+                background-color: #444444; /* Màu xám khi hover */
+                border-color: #444444; /* Viền màu xám khi hover */
+                color: #fff; /* Chữ giữ nguyên màu trắng */
+            }
+        </style>
+    </head>
+    <body>
     <div class="container mt-4">
         <h1 class="text-center">Danh sách đơn hàng</h1>
 
         <!-- Tìm kiếm và lọc -->
-        <form th:action="@{/admin/orders/search}" method="get" class="d-flex justify-content-between mb-3">
-            <input type="text" name="search" class="form-control me-2"
-                   placeholder="Nhập mã đơn hàng" th:value="${searchKeyword}">
-            <select name="status" >
+        <form id="searchForm" class="d-flex justify-content-between mb-3">
+            <!-- Trường nhập từ khóa tìm kiếm -->
+            <input type="text" id="keyword" name="search" class="form-control me-2" placeholder="Nhập mã đơn hàng">
+            <!-- Dropdown chọn trạng thái -->
+            <select id="status" name="status" class="form-select me-2">
                 <option value="">Tất cả</option>
-<!--                <option value="Yêu cầu huỷ" th:selected="${status == 'Yêu cầu huỷ'}">Yêu cầu huỷ</option>-->
-                <option value="CANCELED" th:selected="${status == 'CANCELED'}">Đã huỷ</option>
-                <option value="SPENDING" th:selected="${status == 'SPENDING'}">Đang giao</option>
-                <option value="SHIPPED" th:selected="${status == 'SHIPPED'}">Đã giao</option>
+                <option value="CANCELED">Đã huỷ</option>
+                <option value="DELIVERYING">Đang giao</option>
+                <option value="DELIVERIED">Đã giao</option>
             </select>
             <!-- Nút tìm kiếm -->
             <button type="submit" class="search-btn"
@@ -59,9 +51,8 @@
             </button>
         </form>
 
-
         <!-- Bảng danh sách đơn hàng -->
-        <table class="table table-bordered table-striped text-center">
+        <table class="table table-bordered table-striped text-center" id="orderTable">
             <thead class="table-custom-header">
             <tr>
                 <th>STT</th>
@@ -74,24 +65,127 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="order, stat : ${orders}">
-<!--                th:classappend="${order.shippingStatus == 'Yêu cầu hủy'} ? 'table-warning' : ''">-->
-                <td th:text="${stat.index + 1}">1</td>
-                <td th:text="${order.orderId}">12345</td>
-                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
-                <td th:text="${order.customer.name}">Nguyễn Văn A</td>
-                <td th:text="${orderTotalValues[order.orderId]}">1000000</td>
-                <td th:text="${order.shippingStatus}">Đang xử lý</td>
-                <td>
-                    <a th:href="@{/admin/orders/{id}(id=${order.orderId})}" class="btn btn-danger custom-hover">Chi tiết</a>
-                </td>
-            </tr>
-            <tr th:if="${orders.isEmpty()}">
-                <td colspan="7">Chưa có đơn hàng nào!</td>
-            </tr>
+
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Nút phân trang sẽ được tạo động -->
+            </ul>
+        </nav>
     </div>
-</section>
-</body>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('jwtToken');
+            const pageSize = 10; // Số lượng mục mỗi trang
+            let currentPage = 0; // Trang hiện tại
+
+            function loadOrders(page, keyword = "", status = "") {
+                console.log(status)
+                var url = `/api/orders?page=${page}&size=${pageSize}`
+                if (keyword !=="") url = `/api/orders/search/${keyword}?page=${page}&size=${pageSize}`
+                if (status !=="") url = `/api/orders/search/${status}?page=${page}&size=${pageSize}`
+
+                console.log(url)
+
+                if (token) {
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        success: function (response) {
+                            const {content: orderList, totalPages} = response;
+                            var tableBody = $('#orderTable tbody');
+                            const pagination = $('#pagination');
+
+                            // Xóa dữ liệu cũ
+                            tableBody.empty();
+                            pagination.empty();
+                            if (orderList.length === 0) {
+                                // Nếu không có dữ liệu, hiển thị dòng thông báo
+                                tableBody.append('<tr><td colspan="8" class="text-center">Không có khách hàng nào!</td></tr>');
+                            } else {
+                                orderList.forEach(function (order, index) {
+                                    const row = `
+                                <tr data-id="${order.orderId}">
+                                    <td>${index + 1}</td>
+                                    <td>${order.orderId}</td>
+                                    <td>${order.orderDate}</td>
+                                    <td>${order.name}</td>
+                                    <td>${order.totalAmount}</td>
+                                    <td>${order.shippingStatus}</td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <a href="/admin/orders/${order.orderId}" class="btn btn-danger custom-hover">Chi tiết</a>
+                                    </td>
+                                </tr> `;
+                                    tableBody.append(row);
+                                });
+                            }
+                            // Tạo nút phân trang
+                            const prevButton = `<li class="page-item ${page === 0 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#">« Previous</a>
+                                    </li>`;
+
+                            const nextButton = `<li class="page-item ${page === totalPages - 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#">Next »</a>
+                                    </li>`;
+
+                            pagination.append(prevButton);
+
+                            // Create page number buttons
+                            for (let i = 0; i < totalPages; i++) {
+                                const activeClass = i === page ? 'active' : '';
+                                const pageButton = `<li class="page-item ${activeClass}"><a class="page-link" href="#">${i + 1}</a></li>`;
+                                pagination.append(pageButton);
+                            }
+
+                            pagination.append(nextButton);
+                            // Gắn sự kiện khi nhấn nút phân trang
+                            $('.page-link').on('click', function (e) {
+                                e.preventDefault();
+
+                                const selectedPage = $(this).text().trim();
+
+                                if (selectedPage === '« Previous') {
+                                    if (page > 0) loadOrders(page - 1); // Go to previous page
+                                } else if (selectedPage === 'Next »') {
+                                    if (page < totalPages - 1) loadOrders(page + 1); // Go to next page
+                                } else {
+                                    loadOrders(parseInt(selectedPage) - 1); // Go to specific page
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching promotions:", error);
+                            alert("Không thể tải dữ liệu khuyến mãi. Vui lòng thử lại sau!");
+                        }
+                    })
+                }
+            }
+
+            // Xử lý sự kiện tìm kiếm
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const keyword = $('#keyword').val().trim();
+                const status = $('#status').val();
+
+                currentPage = 0; // Reset về trang đầu tiên
+                loadOrders(currentPage, keyword, status); // Gọi API với từ khóa tìm kiếm và trạng thái
+            });
+
+            // Tải trang đầu tiên khi trang được load
+            loadOrders(currentPage);
+        })
+    </script>
+
+
+
+    </body>
+</div>
 </html>

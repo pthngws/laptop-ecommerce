@@ -18,11 +18,14 @@ public class OrderRestController {
     @GetMapping
     public Page<OrderResponse> getOrders(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         return orderService.getAllOrders(page, size);
     }
 
+    @GetMapping("/{id}")
+    public OrderResponse getOrder(@PathVariable Long id) {
+        return orderService.getOrderById(id);
+    }
 
     @GetMapping("/user/{id}")
     public Page<OrderResponse> getOrdersByUserId(
@@ -31,6 +34,13 @@ public class OrderRestController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return orderService.getAllOrdersByUserId(id, page, size);
+    }
+
+    @GetMapping("/search/{keyword}")
+    public Page<OrderResponse> searchOrders(@PathVariable String keyword,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
+        return orderService.searchOrders(keyword, page, size);
     }
 
 }
