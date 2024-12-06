@@ -2,133 +2,192 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout.html}">
-<section class="row" layout:fragment="content">
 
-<head>
-    <meta charset="utf-8">
-    <title>Lịch sử mua hàng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<section class="row" layout:fragment="content">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lịch sử mua hàng</title>
+        <style>
+            /* Đổi màu nền tiêu đề bảng */
+            .table-dark {
+                background-color: #D8373E !important;
+                color: #fff; /* Đổi màu chữ thành trắng để dễ đọc */
+            }
+        </style>
+    </head>
 
 <body>
-        <!-- my account wrapper start -->
-        <div class="my-account-wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <!-- My Account Page Start -->
-                        <div class="myaccount-page-wrapper">
-                            <!-- My Account Tab Menu Start -->
-                            <div class="row">
+<div class="container mt-5">
+    <!-- Thông báo lỗi hoặc trạng thái -->
+    <div id="status-message" class="alert d-none" role="alert"></div>
 
-                                <!-- My Account Tab Content Start -->
-                                <div class="col-lg-9 col-md-8">
-                                    <div class="tab-content" id="myaccountContent">
+    <!-- Bảng lịch sử đơn hàng -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái giao hàng</th>
+            <th>Trạng thái thanh toán</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody id="order-table-body">
+        <!-- Các dòng đơn hàng sẽ được thêm vào bằng JavaScript -->
+        </tbody>
+    </table>
+</div>
 
-                                        <!-- Single Tab Content Start -->
-
-                                            <div class="myaccount-content">
-                                                <h3>Orders</h3>
-                                                <div class="myaccount-table table-responsive text-center">
-                                                    <table class="table table-bordered">
-                                                        <thead class="thead-light">
-                                                        <tr>
-                                                            <th>Mã đơn hàng</th>
-                                                            <th>Ngày đặt</th>
-                                                            <th>Trạng thái</th>
-                                                            <th>Tổng tiền</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr th:each="order : ${orders}">
-                                                            <td th:text="${order.orderId}"></td>
-                                                            <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></td>
-                                                            <td th:text="${order.shippingStatus}"></td>
-                                                            <td th:text="${order.payment.total}"></td>
-                                                            <td>
-                                                                <a th:href="@{/purchasedProduct(orderId=${order.orderId})}" class="btn btn-info btn-sm">Xem chi tiết</a>
-                                                                <button th:data-order-id="${order.orderId}" onclick="showCancelForm(this)" class="btn btn-danger btn-sm">Hủy đơn hàng</button>
-
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                        <!-- Single Tab Content End -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!-- Modal nhập thông tin ngân hàng -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelOrderModalLabel">Hủy đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="accountNumber" class="form-label">Số tài khoản</label>
+                    <input type="text" class="form-control" id="accountNumber" required>
+                </div>
+                <div class="mb-3">
+                    <label for="accountName" class="form-label">Tên chủ tài khoản</label>
+                    <input type="text" class="form-control" id="accountName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="bankName" class="form-label">Tên ngân hàng</label>
+                    <input type="text" class="form-control" id="bankName" required>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelOrder">Xác nhận hủy</button>
+            </div>
         </div>
+    </div>
+</div>
 
-        <!-- Hộp thoại nhập thông tin hủy đơn -->
-        <div id="cancelModal" style="display:none;">
-            <form id="cancelForm" action="/history/cancel" method="post">
-                <input type="hidden" name="orderId" id="cancelOrderId">
-                <div>
-                    <label for="bankName">Tên Ngân Hàng:</label>
-                    <input type="text" id="bankName" name="bankName" required>
-                </div>
-                <div>
-                    <label for="accountName">Tên Chủ Tài Khoản:</label>
-                    <input type="text" id="accountName" name="accountName" required>
-                </div>
-                <div>
-                    <label for="accountNumber">Số Tài Khoản:</label>
-                    <input type="text" id="accountNumber" name="accountNumber" required>
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeCancelForm()">Hủy bỏ</button>
-                </div>
-            </form>
-        </div>
 
-        <script>
-            function showCancelForm(button) {
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        const statusMessage = $("#status-message");
+        let selectedOrderId = null;
 
-                // Lấy hàng hiện tại (row) từ nút nhấn
-                const row = button.closest('tr');
+        // Hiển thị thông báo
+        function showAlert(message, type) {
+            statusMessage.text(message)
+                .removeClass("d-none alert-success alert-danger alert-info")
+                .addClass("alert-" + type);
+        }
 
-                // Lấy giá trị của cột trạng thái trong hàng hiện tại
-                const statusCell = row.querySelector('td:nth-child(3)'); // Cột trạng thái
-                const status = statusCell ? statusCell.textContent.trim() : "";
-
-                // Kiểm tra trạng thái
-                if (status.toUpperCase() === "CANCEL") {
-                    alert("Đơn hàng này đã bị hủy trước đó!");
-                    return;
-                }
-                if (status.toUpperCase() === "ĐÃ GIAO") {
-                    alert(" Huỷ đơn hàng không thành công");
-                    return;
-                }
-                if (status.toUpperCase() === "ĐANG GIAO") {
-                    alert("Huỷ đơn hàng không thành công");
-                    return;
-                }
-
-                const orderId = button.getAttribute("data-order-id");
-                console.log(orderId);
-                if (isNaN(orderId)) {
-                    alert('ID đơn hàng không hợp lệ');
-                    return;
-                }
-                document.getElementById("cancelOrderId").value = orderId;
-                document.getElementById("cancelModal").style.display = "block";
+        // Lấy lịch sử đơn hàng
+        function getOrderHistory() {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                showAlert("Bạn cần đăng nhập để xem lịch sử đơn hàng.", "danger");
+                return;
             }
 
-            function closeCancelForm() {
-                document.getElementById("cancelModal").style.display = "none";
+            $.ajax({
+                url: "/api/history",
+                method: "GET",
+                headers: { "Authorization": "Bearer " + token },
+                success: function (orders) {
+                    if (!orders || orders.length === 0) {
+                        showAlert("Bạn chưa có đơn hàng nào.", "info");
+                        return;
+                    }
+
+                    const tableBody = $("#order-table-body");
+                    tableBody.empty();
+
+                    orders.forEach(order => {
+                        const row = `
+                        <tr>
+                            <td>${order.orderId}</td>
+                            <td>${new Date(order.orderDate).toLocaleDateString("vi-VN")}</td>
+                            <td>${order.shippingStatus}</td>
+                            <td>${order.paymentStatus || "Chưa xác định"}</td>
+                            <td>
+                                <button data-order-id="${order.orderId}"
+                                        data-shipping-status="${order.shippingStatus}"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="openCancelModal(${order.orderId}, '${order.shippingStatus}')">Hủy</button>
+                            </td>
+                        </tr>`;
+                        tableBody.append(row);
+                    });
+                },
+                error: function () {
+                    showAlert("Lỗi khi tải lịch sử đơn hàng.", "danger");
+                }
+            });
+        }
+
+        // Mở modal hủy đơn hàng
+        window.openCancelModal = function (orderId, shippingStatus) {
+            console.log("Opening cancel modal for orderId:", orderId); // Log kiểm tra sự kiện
+
+            if (shippingStatus === "NONDELIVERY") {
+                selectedOrderId = orderId;
+                $('#cancelOrderModal').modal('show');
+            } else if (shippingStatus === "DELIVERYING" || shippingStatus === "DELIVERIED") {
+                showAlert("Không thể hủy đơn hàng đang giao hoặc đã giao.", "danger");
+            } else if (shippingStatus === "CANCELED") {
+                showAlert("Đơn hàng này đã được hủy trước đó.", "info");
+            } else {
+                showAlert("Trạng thái đơn hàng không hợp lệ.", "danger");
             }
-        </script>
-    </body>
+        }
+
+        // Xử lý xác nhận hủy đơn hàng
+        $("#confirmCancelOrder").click(function () {
+            const accountNumber = $("#accountNumber").val();
+            const accountName = $("#accountName").val();
+            const bankName = $("#bankName").val();
+
+            if (!accountNumber || !accountName || !bankName) {
+                showAlert("Vui lòng điền đầy đủ thông tin ngân hàng.", "danger");
+                return;
+            }
+
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                showAlert("Bạn cần đăng nhập để hủy đơn hàng.", "danger");
+                return;
+            }
+
+            // Gửi yêu cầu hủy đơn hàng
+            $.ajax({
+                url: `/api/history/cancel/${selectedOrderId}`,
+                method: "POST",
+                headers: { "Authorization": "Bearer " + token },
+                contentType: "application/x-www-form-urlencoded",
+                data: {
+                    accountNumber: accountNumber,
+                    accountName: accountName,
+                    bankName: bankName
+                },
+                success: function () {
+                    $('#cancelOrderModal').modal('hide');
+                    showAlert("Đơn hàng đã được hủy thành công.", "success");
+                    getOrderHistory(); // Reload history after cancellation
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    showAlert(xhr.responseText || "Lỗi khi hủy đơn hàng.", "danger");
+                }
+
+            });
+        });
+        // Tải lịch sử đơn hàng khi trang được mở
+        getOrderHistory();
+    });
+</script>
+</body>
 </section>
-
 </html>

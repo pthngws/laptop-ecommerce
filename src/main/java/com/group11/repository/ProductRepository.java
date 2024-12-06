@@ -68,7 +68,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query("SELECT p.manufacturer.name, COUNT(p) FROM ProductEntity p GROUP BY p.manufacturer.name")
     Page<Object[]> countProductsGroupedByManufacturerName(Pageable pageable);
 
-    
     @Query("SELECT p FROM ProductEntity p WHERE p.name = :productName")
     List<ProductEntity> findByName(@Param("productName") String productName);
     
