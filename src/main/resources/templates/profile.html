@@ -57,6 +57,7 @@
                                   <option value="Nữ">Nữ</option>
                                   <option value="Khác">Khác</option>
                                 </select>
+
                               </div>
                             </div>
                             <div class="col-lg-6">
@@ -188,7 +189,7 @@
             $('#name').val(user.name);
             $('#email').val(user.email);
             $('#phone').val(user.phone);
-            $('#gender').val(user.gender);
+            $('#gender').val(user.gender || "Nam");
 
             if (user.address) {
               $('#country').val(user.address.country);
