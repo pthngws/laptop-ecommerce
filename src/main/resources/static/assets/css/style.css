@@ -7594,17 +7594,18 @@ body.image-bg .wrapper {
     color: #fff; /* Đảm bảo màu icon trắng khi hover */
 }
 
-header {
-    background-color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
+.main-header-wrapper {
+    position: relative; /* Ban đầu nó ở vị trí bình thường */
     width: 100%;
-    z-index: 1000;
+    z-index: 1000; /* Đặt trên các phần tử khác */
+    background-color: white; /* Màu nền */
+    transition: all 0.3s ease; /* Hiệu ứng mượt mà khi thay đổi */
 }
 
-/* Đẩy body xuống theo chiều cao header */
-body {
-    margin: 0;
-    padding-top: 210px; /* Điều chỉnh theo tổng chiều cao của header */
+.main-header-wrapper.sticky {
+    position: fixed; /* Cố định khi cuộn */
+    top: 0; /* Gắn sát đỉnh màn hình */
+    left: 0; /* Căn lề trái */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng cho rõ ràng */
 }
+
