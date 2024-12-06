@@ -1,28 +1,28 @@
-let USERID = null
+let SENDERID = null
 let RECEIVERID = null;
 let isAdmin = false;
 let stompClient = null;
 let lastMessageDate = null;
 // Fetch user từ server
 var userId = document.getElementById("userId").innerText; // Giá trị là chuỗi
-USERID = parseInt(userId, 10); // Chuyển đổi thành số nguyên (int)
-
+SENDERID = parseInt(userId, 10); // Chuyển đổi thành số nguyên (int)
+const token = localStorage.getItem('jwtToken');
 
 if (token) {
     // Sử dụng jwt-decode để giải mã
     const decodedToken = jwt_decode(token); // jwt-decode trả về object chứa payload
 
     // Lấy thông tin từ payload
-    USERID = decodedToken.userid; // Gán USERID từ token
+    SENDERID = decodedToken.userid; // Gán USERID từ token
     const role = decodedToken.role; // Gán role từ token
 
     // Kiểm tra role để xác định isAdmin
     if (role !== "Customer") {
-        USERID = 1; // Admin được mặc định có USERID là 1
+        SENDERID = 1; // Admin được mặc định có USERID là 1
     }
 }
 
-isAdmin = USERID === 1;
+isAdmin = SENDERID === 1;
 
 function toggleChatPopup() {
     const chatPopup = $("#chat-popup");
@@ -94,7 +94,7 @@ function loadMessages() {
     $.ajax({
         url: '/getMessages',
         type: 'GET',
-        data: { senderId: USERID, receiverId: RECEIVERID },
+        data: { senderId: SENDERID, receiverId: RECEIVERID },
         success: function (messages) {
             $("#chat-box").empty();
             messages.forEach(showMessage);
@@ -125,7 +125,7 @@ function showMessage(message) {
         .addClass("message-bubble")
         .html(`<span>${message.contentMessage}</span> <div class="message-time">${formattedTime}</div>`);
 
-    if (message.senderID === USERID) {
+    if (message.senderID === SENDERID) {
         messageElement.addClass("sender");
     } else {
         messageElement.addClass("receiver");
@@ -148,10 +148,10 @@ function sendMessage() {
     const input = $("#message-input");
     const messageContent = input.val().trim();
 
-    if (messageContent && stompClient && USERID && RECEIVERID) {
+    if (messageContent && stompClient && SENDERID && RECEIVERID) {
         const message = {
             contentMessage: messageContent,
-            senderID: USERID,
+            senderID: SENDERID,
             receiverID: RECEIVERID,
             sentTime: new Date().toISOString()
         };

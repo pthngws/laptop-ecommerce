@@ -77,6 +77,8 @@
                     contentType: 'application/json',
                     data: JSON.stringify({ email: email, password: password }),
                     success: function (response) {
+                        localStorage.removeItem('jwtToken');  // Xóa JWT trong localStorage (nếu có)
+                        sessionStorage.clear();  // Xóa tất cả sessionStorage (nếu có)
                         localStorage.setItem('jwtToken', response.token);
                         window.location.href = "/home";
                         $('#success').show();
