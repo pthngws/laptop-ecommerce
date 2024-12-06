@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @Controller
-@RequestMapping("api/products")
+@RequestMapping("/api/products")
 public class ProductRestController {
     @Autowired
     IProductService productService = new ProductServiceImpl();
