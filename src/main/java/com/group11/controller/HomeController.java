@@ -63,6 +63,11 @@ public class HomeController {
         return "recover";
     }
 
+    @GetMapping("/history")
+    public String history() {
+        return "my-account";
+    }
+
 
     private String generateRandomNumberString(int length) {
         Random random = new Random();

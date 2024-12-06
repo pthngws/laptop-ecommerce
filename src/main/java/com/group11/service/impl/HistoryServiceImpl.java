@@ -4,9 +4,11 @@ import com.group11.dto.EmailDetail;
 import com.group11.entity.OrderEntity;
 import com.group11.entity.OrderShippingStatus;
 import com.group11.entity.RefundOrderEntity;
+import com.group11.entity.UserEntity;
 import com.group11.repository.HistoryRepository;
 import com.group11.repository.RefundOrderRepository;
 import com.group11.repository.OrderRepository;
+import com.group11.repository.UserRepository;
 import com.group11.service.IEmailService;
 import com.group11.service.IHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class HistoryServiceImpl implements IHistoryService {
 
     @Autowired
     private IEmailService emailService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<OrderEntity> getPurchaseHistory(Long userID) {
@@ -54,7 +59,7 @@ public class HistoryServiceImpl implements IHistoryService {
 
 
 
-            order.setShippingStatus(OrderShippingStatus.valueOf("CANCEL"));
+            order.setShippingStatus(OrderShippingStatus.valueOf("CANCELED"));
             orderRepository.save(order);
 
             EmailDetail emailDetail = new EmailDetail();
@@ -69,6 +74,11 @@ public class HistoryServiceImpl implements IHistoryService {
             emailDetail.setSubject("Thông báo hủy đơn hàng");
             emailService.sendEmailConfirmCancelOrder(emailDetail);
 
+    }
+
+    @Override
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 
