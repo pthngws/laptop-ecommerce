@@ -7606,5 +7606,5 @@ header {
 /* Đẩy body xuống theo chiều cao header */
 body {
     margin: 0;
-    padding-top: 270px; /* Điều chỉnh theo tổng chiều cao của header */
+    padding-top: 210px; /* Điều chỉnh theo tổng chiều cao của header */
 }
