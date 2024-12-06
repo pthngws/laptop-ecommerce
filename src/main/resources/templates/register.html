@@ -140,6 +140,13 @@
 
     <script>
         $(document).ready(function () {
+            const token = localStorage.getItem('jwtToken');
+
+            if (token) {
+                // Nếu token tồn tại, chuyển hướng đến trang /home
+                window.location.href = "/home";
+            }
+
             // Hiển thị popup OTP sau khi gửi email thành công
             $('#signupForm').on('submit', function (e) {
                 e.preventDefault();
