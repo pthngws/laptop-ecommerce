@@ -1,5 +1,6 @@
 package com.group11.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +21,7 @@ public class ImageItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_detail_id", nullable = false)
-    @JsonManagedReference
+    @JsonBackReference
     private ProductDetailEntity productDetail;
 
 }

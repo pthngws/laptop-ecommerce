@@ -128,37 +128,39 @@
                     </div>
                     <h3>Sản Phẩm Mới Nhất</h3>
                 </div>
-                <div class="row d-flex flex-wrap justify-content-start">
-                    <!-- Lặp qua danh sách sản phẩm -->
-                    <div th:each="product : ${products}" class="product-item fix product-custom">
-                        <div class="product-thumb">
-                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">
-                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">
-                            </a>
-                            <div class="product-action-link">
-<!--                                <a href="#" data-toggle="modal" data-target="#quick_view">-->
-<!--                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>-->
-<!--                                </a>-->
-<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>-->
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h4>
-                                <a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a>
-                            </h4>
-                            <div class="pricebox">
-                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>
-                                <div class="ratings">
-                                    <div class="pro-review">
-                                        <span th:text="${1 + ' review(s)'}"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Kết thúc lặp -->
+                <div class="row d-flex flex-wrap justify-content-start" id="product-list">
+<!--                    &lt;!&ndash; Lặp qua danh sách sản phẩm &ndash;&gt;-->
+<!--                    <div th:each="product : ${products}" class="product-item fix product-custom">-->
+<!--                        <div class="product-thumb">-->
+<!--                            <a th:href="@{'/product-details/' + ${product.getProductID()}}">-->
+<!--                                <img th:src="@{${product.detail.images.getFirst().imageUrl}}" class="img-pri" alt="">-->
+<!--                            </a>-->
+<!--                            <div class="product-action-link">-->
+<!--&lt;!&ndash;                                <a href="#" data-toggle="modal" data-target="#quick_view">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i class="fa fa-heart-o"></i></a>&ndash;&gt;-->
+<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>-->
+<!--                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="product-content">-->
+<!--                            <h4>-->
+<!--                                <a th:href="@{'/product-details/' + ${product.getProductID()}}" th:text="${product.getName()}"></a>-->
+<!--                            </h4>-->
+<!--                            <div class="pricebox">-->
+<!--                                <span class="regular-price" th:text="${product.getPrice()} + 'đ'"></span>-->
+<!--                                <div class="ratings">-->
+<!--                                    <div class="pro-review">-->
+<!--                                        <span th:text="${1 + ' review(s)'}"></span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; Kết thúc lặp &ndash;&gt;-->
+
+
                 </div>
             </div>
 
@@ -258,5 +260,53 @@
     </div>
 
 </section>
+<script>
+    $(document).ready(function () {
+        // Gọi API để lấy danh sách sản phẩm
+        $.ajax({
+            url: '/api/products/latest',
+            method: 'GET',
+            success: function (products) {
+                let productList = $('#product-list');
+                productList.empty(); // Xóa nội dung cũ nếu có
+
+                // Lặp qua danh sách sản phẩm và thêm vào HTML
+                products.forEach(product => {
+                    let productHtml = `
+                    <div class="product-item fix product-custom">
+                        <div class="product-thumb">
+                            <a href="/product-details/${product.id}">
+                                <img src="${product.imageUrl}" class="img-pri" alt="">
+                            </a>
+                            <div class="product-action-link">
+                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>
+                                <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h4>
+                                <a href="/product-details/${product.id}">${product.name}</a>
+                            </h4>
+                            <div class="pricebox">
+                                <span class="regular-price">${product.price}đ</span>
+                                <div class="ratings">
+                                    <div class="pro-review">
+                                        <span>1 review(s)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    productList.append(productHtml);
+                });
+            },
+            error: function () {
+                console.error('Failed to fetch products.');
+            }
+        });
+    });
+
+</script>
 </body>
 </html>

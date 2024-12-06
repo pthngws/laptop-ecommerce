@@ -18,7 +18,7 @@ public interface IProductService {
 
     List<ProductEntity> findAll();
 
-    Optional<ProductEntity> findById(Long id);
+    Optional<ProductEntity> findProductById(Long id);
 
     ProductEntity save(ProductEntity productEntity);
     
@@ -34,4 +34,5 @@ public interface IProductService {
 
     public Page<ProductEntity> getProducts(int page, int size);
 
+    public List<ProductEntity> getNewestProducts();
 }

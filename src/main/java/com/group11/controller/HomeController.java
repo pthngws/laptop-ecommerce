@@ -34,9 +34,7 @@ public class HomeController {
     }
 
     @RequestMapping("/home")
-    public String home(Model model) {
-        List<ProductEntity> products = productService.findAll();
-        model.addAttribute("products", products);
+    public String home() {
         return "home";
     }
 
@@ -46,7 +44,7 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String home() {
+    public String login() {
         return "login";
     }
 
