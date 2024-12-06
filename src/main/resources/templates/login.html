@@ -25,31 +25,33 @@
                             <div th:if="${error}" class="alert alert-danger">
                                 <p th:text="${error}"></p>
                             </div>
-    <form id="loginForm">
-        <div class="single-input-item">
-            <!-- Email field with pattern for stricter validation -->
-            <input id="email"
-                   type="email"
-                   placeholder="Email"
-                   name="email"
-                   required
-                   pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                   title="Nhập đúng định dạng email!" />
-        </div>
-        <div class="single-input-item">
-            <input type="password" id="password" placeholder="Mật khẩu" name="password" required />
-        </div>
-        <div class="single-input-item">
-            <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
-                <a th:href="@{/recover}" class="forget-pwd">Quên mật khẩu</a>
-            </div>
-        </div>
-        <div class="single-input-item">
-            <button type="submit" class="sqr-btn">Đăng nhập</button>
-        </div>
-    </form>
+                            <form id="loginForm">
+                                <div class="single-input-item">
+                                    <!-- Email field with pattern for stricter validation -->
+                                    <input id="email"
+                                           type="email"
+                                           placeholder="Email"
+                                           name="email"
+                                           required
+                                           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                           title="Nhập đúng định dạng email!"/>
+                                </div>
+                                <div class="single-input-item">
+                                    <input type="password" id="password" placeholder="Mật khẩu" name="password"
+                                           required/>
+                                </div>
+                                <div class="single-input-item">
+                                    <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
+                                        <a th:href="@{/recover}" class="forget-pwd">Quên mật khẩu</a>
+                                        <a th:href="@{/signup}" class="forget-pwd">Đăng ký</a>
+                                    </div>
+                                </div>
+                                <div class="single-input-item">
+                                    <button type="submit" class="sqr-btn">Đăng nhập</button>
+                                </div>
+                            </form>
 
-                            <a th:href="@{/signup}" class="forget-pwd">Đăng ký</a>
+
                         </div>
                     </div>
                 </div>
@@ -58,8 +60,8 @@
     </div>
     <script>
         // AJAX request to login
-        $(document).ready(function() {
-            $('#loginForm').on('submit', function(e) {
+        $(document).ready(function () {
+            $('#loginForm').on('submit', function (e) {
                 e.preventDefault();
 
                 const email = $('#email').val();
@@ -69,13 +71,13 @@
                     type: 'POST',
                     url: '/auth/login',
                     contentType: 'application/json',
-                    data: JSON.stringify({ email: email, password: password }),
-                    success: function(response) {
+                    data: JSON.stringify({email: email, password: password}),
+                    success: function (response) {
                         localStorage.setItem('jwtToken', response.token);
                         window.location.href = "/home";
                         // Redirect to another page or update UI
                     },
-                    error: function(error) {
+                    error: function (error) {
                         $('#loginError').text('Invalid credentials, please try again.');
                         $('#loginError').show();
                     }

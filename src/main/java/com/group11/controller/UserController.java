@@ -2,7 +2,9 @@ package com.group11.controller;
 
 import com.group11.entity.AddressEntity;
 import com.group11.entity.UserEntity;
-import com.group11.service.impl.JwtService;
+import com.group11.service.IJwtService;
+import com.group11.service.IUserService;
+import com.group11.service.impl.JwtServiceImpl;
 import com.group11.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,10 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserServiceImpl userService;
     @Autowired
-    private JwtService jwtService;
+    private IUserService userService;
+    @Autowired
+    private IJwtService jwtService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     public UserController(UserServiceImpl userService) {

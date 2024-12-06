@@ -4,9 +4,13 @@ import com.group11.entity.UserEntity;
 import com.group11.model.LoginResponse;
 import com.group11.model.LoginUserModel;
 import com.group11.model.RegisterUserModel;
-import com.group11.service.impl.AuthenticationService;
-import com.group11.service.impl.JwtService;
+import com.group11.service.IAuthenticationService;
+import com.group11.service.IJwtService;
+import com.group11.service.IUserService;
+import com.group11.service.impl.JwtServiceImpl;
 import com.group11.service.impl.EmailServiceImpl;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +23,13 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthenticationController {
     @Autowired
-    AuthenticationService authenticationService;
+    IAuthenticationService authenticationService;
 
     @Autowired
-    private JwtService jwtService;
+    IUserService userService;
+
+    @Autowired
+    private IJwtService jwtService;
 
     @Autowired
     private EmailServiceImpl emailService; // Inject EmailServiceImpl
@@ -45,6 +52,8 @@ public class AuthenticationController {
         otpStorage.remove(registerUser.getEmail()); // Clear OTP after registration
         return ResponseEntity.ok("Registration successful!");
     }
+
+
 
     @PostMapping("/send-otp")
     public ResponseEntity<String> sendOtp(@RequestParam String email) {
@@ -74,4 +83,65 @@ public class AuthenticationController {
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        // Tạo cookie để xóa JWT
+        Cookie cookie = new Cookie("jwtToken", null);  // JWT token trong cookie
+        cookie.setHttpOnly(true);  // Giúp bảo vệ cookie khỏi việc bị truy cập từ JavaScript
+        cookie.setSecure(true);  // Nếu sử dụng HTTPS
+        cookie.setPath("/");  // Đảm bảo cookie được xóa cho tất cả các route
+        cookie.setMaxAge(0);  // Xóa cookie ngay lập tức
+        response.addCookie(cookie);
+
+        return "Logged out successfully!";
+    }
+
+    @PostMapping("/send-otp-reset")
+    public ResponseEntity<String> sendOtpForPasswordReset(@RequestParam String email) {
+        // Kiểm tra xem email có tồn tại trong hệ thống không
+        UserEntity user =userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Email không tồn tại trong hệ thống.");
+        }
+
+        // Tạo OTP
+        String otp = emailService.generateOtp();
+
+        // Tạo nội dung email
+        String subject = "Your OTP Code for Password Reset";
+        String message = "Your OTP code for resetting your password is: " + otp;
+
+        // Gửi email với OTP
+        emailService.sendEmail(email, subject, message);
+
+        // Lưu OTP tạm thời vào Map
+        otpStorage.put(email, otp);
+
+        // Trả về phản hồi thành công
+        return ResponseEntity.ok("OTP đã được gửi tới email của bạn.");
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email,
+                                                @RequestParam String otp,
+                                                @RequestParam String newPassword) {
+        // Kiểm tra OTP
+        String storedOtp = otpStorage.get(email);
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            return ResponseEntity.badRequest().body("OTP không hợp lệ hoặc đã hết hạn.");
+        }
+
+        // Tìm người dùng bằng email
+        UserEntity user = userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Người dùng không tồn tại.");
+        }
+        authenticationService.ChangePassword(email,newPassword);
+
+        // Xóa OTP sau khi sử dụng
+        otpStorage.remove(email);
+
+        return ResponseEntity.ok("Mật khẩu của bạn đã được đặt lại thành công.");
+    }
+
 }

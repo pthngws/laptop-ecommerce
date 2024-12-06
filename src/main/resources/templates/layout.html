@@ -40,7 +40,7 @@
 <div th:if="${session.user.getRoleName() == 'Customer'}" th:replace="~{/fragments/cart :: div}"></div>
 
 <!-- Content chính sẽ được thay thế ở đây -->
-<main>
+<main style="min-height: 500px;">
     <div layout:fragment="content">
         <!-- Nội dung sẽ được thay thế tại đây -->
     </div>

@@ -22,6 +22,7 @@ public class UserServiceImpl implements IUserService {
         return userRepository.findByEmail(email);
     }
 
+
     @Override
     public void save(UserEntity user) {
         userRepository.save(user);
@@ -42,6 +43,7 @@ public class UserServiceImpl implements IUserService {
                 .build();
     }
 
+    @Override
     public List<UserEntity> allUsers() {
         return userRepository.findAll();
     }

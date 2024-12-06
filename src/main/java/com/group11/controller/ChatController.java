@@ -24,29 +24,6 @@ public class ChatController {
     @Autowired
     private IChatService chatService;
 
-    @GetMapping("/")
-    public String homePage(HttpSession session, Model model) {
-        // Kiểm tra xem khách đã có ID tạm trong session chưa
-        String guestId = (String) session.getAttribute("GID");
-        // Nếu chưa có ID, tạo ID tạm và lưu vào session
-        if (guestId == null) {
-            guestId = generateRandomNumberString(10);
-            session.setAttribute("GID", guestId);
-        }
-
-        // Gửi ID tạm vào model để hiển thị lên trang
-        model.addAttribute("GID", guestId);
-        return "Mainhome"; // trả về view home (home.html hoặc home.jsp)
-    }
-
-    private String generateRandomNumberString(int length) {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            sb.append(random.nextInt(10)); // Thêm một chữ số ngẫu nhiên từ 0 đến 9
-        }
-        return sb.toString();
-    }
 
     @GetMapping("/getCustomerList")
     public ResponseEntity<List<Map<String, Object>>> getCustomerList() {
