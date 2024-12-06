@@ -2,24 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout.html}">
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý khách hàng</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
-</head>
+<div class="row" layout:fragment="content">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quản lý khách hàng</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    </head>
 
-<body>
-<section class="row" layout:fragment="content">
-    <div class="container mt-3">
-        <div th:if="${successMessage}" class="alert alert-success" role="alert">
-            <span th:text="${successMessage}"></span>
-        </div>
-        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-            <span th:text="${errorMessage}"></span>
-        </div>
-    </div>
+    <body>
     <div class="container mt-5">
         <!-- Tiêu đề -->
         <h1 class="text-center">Danh sách khách hàng</h1>
@@ -27,8 +19,8 @@
         <!-- Tìm kiếm khách hàng -->
         <div class="row mt-4 mb-3">
             <div class="col-md-6 offset-md-3">
-                <form th:action="@{/admin/customers/search}" method="get" class="d-flex">
-                    <input type="text" name="keyword" class="form-control me-0"
+                <form id="searchForm" class="d-flex">
+                    <input type="text" name="keyword" class="form-control me-0" id="keyword"
                            placeholder="Tìm kiếm khách hàng theo tên hoặc email"
                            style="border: 2px solid #444444; border-radius: 0; height: 40px"/>
 
@@ -43,7 +35,7 @@
         </div>
 
         <!-- Bảng thông tin khách hàng -->
-        <table class="table table-bordered table-striped text-center">
+        <table class="table table-bordered table-striped text-center" id="userTable">
             <thead class="table-custom-header">
             <tr>
                 <th style="text-align: center; vertical-align: middle;" scope="col">STT</th>
@@ -56,41 +48,125 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Sử dụng Thymeleaf để duyệt danh sách khách hàng -->
-            <tr th:each="customer, iterStat : ${customers}" th:if="${customer.roleName != 'Admin'}">
-                <td th:text="${iterStat.count}">1</td>
-                <td th:text="${customer.name}">Nguyễn Văn A</td>
-                <td th:text="${customer.email}">example@gmail.com</td>
-                <td th:text="${#strings.isEmpty(customer.phone) ? 'Chưa có' : customer.phone}">0123456789</td>
-                <td th:if="${customer.address == null}">Chưa có</td>
-                <td th:if="${customer.address != null}" th:text="${customer.address.other} + ' ' + ${customer.address.commune} + ', ' +${customer.address.district} + ', ' +${customer.address.province} + ', ' +${customer.address.country}"></td>
-<!--                <td th:text="-->
-<!--                    (${#strings.isEmpty(customer.address.other) ? 'N/A' : customer.address.other}) + ' ' +-->
-<!--                    (${#strings.isEmpty(customer.address.commune) ? 'N/A' : customer.address.commune}) + ', ' +-->
-<!--                    (${#strings.isEmpty(customer.address.district) ? 'N/A' : customer.address.district}) + ', ' +-->
-<!--                    (${#strings.isEmpty(customer.address.province) ? 'N/A' : customer.address.province}) + ', ' +-->
-<!--                    (${#strings.isEmpty(customer.address.country) ? 'N/A' : customer.address.country})-->
-<!--                "></td>-->
-
-                <td style="text-align: center; vertical-align: middle;">
-                    <a th:href="@{/admin/customers/{id}(id=${customer.userID})}" class="btn btn-danger custom-hover">Chi tiết</a>
-                </td>
-
-                <td style="text-align: center; vertical-align: middle;">
-                    <input type="checkbox" disabled th:checked="${customer.active}"/>
-                </td>
-
-            </tr>
-            <!-- Hiển thị thông báo nếu không có khách hàng nào -->
-            <tr th:if="${#lists.isEmpty(customers)}">
-                <td colspan="8" class="text-center">Không có khách hàng nào!</td>
-            </tr>
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Nút phân trang sẽ được tạo động -->
+            </ul>
+        </nav>
     </div>
 
     <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</section>
-</body>
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('jwtToken');
+            const pageSize = 10; // Số lượng mục mỗi trang
+            let currentPage = 0; // Trang hiện tại
+
+            function loadUser(page, keyword = "") {
+                var url
+                if (keyword === "")
+                    url = `/api/users?page=${page}&size=${pageSize}`;
+                else
+                    url = `/api/users/search/${keyword}?page=${page}&size=${pageSize}`;
+                if (token) {
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        success: function (response) {
+                            console.log(response.content)
+                            const {content: userList, totalPages} = response;
+                            var tableBody = $('#userTable tbody');
+                            const pagination = $('#pagination');
+
+                            // Xóa dữ liệu cũ
+                            tableBody.empty();
+                            pagination.empty();
+                            if (userList.length === 0) {
+                                // Nếu không có dữ liệu, hiển thị dòng thông báo
+                                tableBody.append('<tr><td colspan="8" class="text-center">Không có khách hàng nào!</td></tr>');
+                            } else {
+                                userList.forEach(function (user, index) {
+                                    const row = `
+                                <tr data-id="${user.userID}">
+                                    <td>${index + 1}</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.phone != null ? user.phone : 'Chưa có'}</td>
+                                    <td>${user.address != null ? user.address.commune + ', ' + user.address.district + ', ' + user.address.province + ', ' + user.address.country : 'Chưa có'}</td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <a href="/admin/customers/${user.userID}" class="btn btn-danger custom-hover">Chi tiết</a>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <input type="checkbox" disabled checked="${user.active}"/>
+                                    </td>
+                                </tr> `;
+                                    tableBody.append(row);
+                                });
+                            }
+                            // Tạo nút phân trang
+                            const prevButton = `<li class="page-item ${page === 0 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#">« Previous</a>
+                                    </li>`;
+
+                            const nextButton = `<li class="page-item ${page === totalPages - 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#">Next »</a>
+                                    </li>`;
+
+                            pagination.append(prevButton);
+
+                            // Create page number buttons
+                            for (let i = 0; i < totalPages; i++) {
+                                const activeClass = i === page ? 'active' : '';
+                                const pageButton = `<li class="page-item ${activeClass}"><a class="page-link" href="#">${i + 1}</a></li>`;
+                                pagination.append(pageButton);
+                            }
+
+                            pagination.append(nextButton);
+                            // Gắn sự kiện khi nhấn nút phân trang
+                            $('.page-link').on('click', function (e) {
+                                e.preventDefault();
+
+                                const selectedPage = $(this).text().trim();
+
+                                if (selectedPage === '« Previous') {
+                                    if (page > 0) loadUser(page - 1); // Go to previous page
+                                } else if (selectedPage === 'Next »') {
+                                    if (page < totalPages - 1) loadUser(page + 1); // Go to next page
+                                } else {
+                                    loadUser(parseInt(selectedPage) - 1); // Go to specific page
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching promotions:", error);
+                            alert("Không thể tải dữ liệu khuyến mãi. Vui lòng thử lại sau!");
+                        }
+                    })
+                }
+            }
+
+            // Xử lý sự kiện tìm kiếm
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault(); // Ngăn form reload trang
+                const keyword = $('#keyword').val().trim();
+                if (keyword !== "") {
+                    currentPage = 0; // Reset về trang đầu tiên
+                    loadUser(currentPage, keyword); // Gọi API với từ khóa tìm kiếm
+                }
+
+            });
+
+            // Tải trang đầu tiên khi trang được load
+            loadUser(currentPage);
+        })
+    </script>
+    </body>
+</div>
 </html>
