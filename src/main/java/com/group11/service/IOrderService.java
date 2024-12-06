@@ -7,5 +7,7 @@ import org.springframework.data.domain.Page;
 public interface IOrderService {
     public OrderResponse toOrderResponse(OrderEntity order);
     public Page<OrderResponse> getAllOrders(int page, int size);
+    public OrderResponse getOrderById(Long id);
     public Page<OrderResponse> getAllOrdersByUserId(Long id, int page, int size);
+    public Page<OrderResponse> searchOrders(String keyword, int page, int size);
 }
