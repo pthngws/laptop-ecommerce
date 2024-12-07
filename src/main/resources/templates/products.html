@@ -13,6 +13,42 @@
     <!-- Site title -->
     <title>Danh sách sản phẩm</title>
     <style>
+        .input-group .form-control {
+            height: 50px;
+            border: 1px solid #ddd;
+            border-right: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+            padding: 0 20px;
+        }
+
+        .input-group .form-control:focus {
+            border-color: #007bff;
+            box-shadow: none;
+        }
+
+        .input-group .btn {
+            height: 50px;
+            border-radius: 0 4px 4px 0;
+            font-size: 16px;
+            padding: 0 30px;
+        }
+        .product-thumb {
+            width: 100%; /* Đảm bảo khung hình chiếm toàn bộ chiều rộng */
+            height: 200px; /* Chiều cao cố định của khung chứa ảnh */
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Căn giữa ảnh */
+            overflow: hidden; /* Ẩn phần ảnh thừa */
+            background-color: white; /* Màu nền dự phòng nếu ảnh không tải được */
+        }
+
+        .product-thumb img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Đảm bảo ảnh luôn nằm gọn trong khung */
+        }
+
 
     </style>
 </head>
@@ -21,23 +57,6 @@
 <div layout:fragment="content">
     <div class="wrapper box-layout">
         <!-- breadcrumb area start -->
-        <div class="breadcrumb-area">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="breadcrumb-wrap">
-                            <nav aria-label="breadcrumb">
-                                <ul class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">shop left sidebar</li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- breadcrumb area end -->
 
         <!-- page wrapper start -->
         <div class="page-main-wrapper">
@@ -151,59 +170,28 @@
                         <!-- product view wrapper area start -->
                         <div class="shop-product-wrapper pt-34">
                             <!-- shop product top wrap start -->
-                            <div class="shop-top-bar">
-                                <div class="row">
-                                    <div class="col-lg-7 col-md-6">
-                                        <div class="top-bar-left">
-                                            <div class="product-view-mode mr-70 mr-sm-0">
-                                                <a class="active" href="#" data-target="grid"><i class="fa fa-th"></i></a>
-                                                <a href="#" data-target="list"><i class="fa fa-list"></i></a>
-                                            </div>
-                                            <div class="product-amount">
-                                                <p>Showing 1–16 of 21 results</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-5 col-md-6">
-                                        <div class="top-bar-right">
-                                            <div class="product-short">
-                                                <p>Sort By : </p>
-                                                <select class="nice-select" name="sortby">
-                                                    <option value="trending">Relevance</option>
-                                                    <option value="sales">Name (A - Z)</option>
-                                                    <option value="sales">Name (Z - A)</option>
-                                                    <option value="rating">Price (Low &gt; High)</option>
-                                                    <option value="date">Rating (Lowest)</option>
-                                                    <option value="price-asc">Model (A - Z)</option>
-                                                    <option value="price-asc">Model (Z - A)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="shop-top-bar d-flex justify-content-between align-items-center p-3 bg-white border-bottom">
+                                <div class="input-group w-100" style="max-width: 800px; margin: 0 auto;">
+                                    <input type="search" class="form-control" name="q" placeholder="Bạn cần tìm gì hôm nay?" aria-label="Search">
+                                    <button class="sqr-btn" type="submit">Tìm kiếm</button>
                                 </div>
                             </div>
-                            <!-- shop product top wrap start -->
 
-                            <div class="shop-product-wrap grid row" id="productContainer">
-                                <!-- Sản phẩm sẽ được thêm vào đây bằng AJAX -->
-                            </div>
+
+<!--                            <div class="shop-product-wrap grid row" id="productContainer">-->
+<!--                                &lt;!&ndash; Sản phẩm sẽ được thêm vào đây bằng AJAX &ndash;&gt;-->
+<!--                            </div>-->
                         </div>
                         <!-- product view wrapper area end -->
 
                         <!-- start pagination area -->
-                        <div class="paginatoin-area text-center pt-28">
-                            <div class="row">
-                                <div class="col-12">
-                                    <ul class="pagination-box">
-                                        <li><a class="Previous" href="#">Previous</a></li>
-                                        <li class="active"><a href="#">1</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a class="Next" href="#"> Next </a></li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="row" id="productContainer"></div>
+                        <div class="pagination-container text-center mt-4">
+                            <nav>
+                                <ul class="pagination justify-content-center" id="pagination"></ul>
+                            </nav>
                         </div>
+
                         <!-- end pagination area -->
 
                     </div>
@@ -265,67 +253,67 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Lấy ra product
         $(document).ready(function () {
             const productContainer = $("#productContainer");
+            const paginationContainer = $("#pagination");
+            let currentPage = 0; // Trang hiện tại
+            const pageSize = 20; // Số sản phẩm mỗi trang
 
             // Hàm gọi API và hiển thị sản phẩm
-            function fetchProducts() {
-                const apiUrl = "/api/products/getAll"; // Địa chỉ API Spring Boot của bạn
+            function fetchProducts(keyword = "", page = 0) {
+                const apiUrl = `/api/products/getAll?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`;
 
                 $.ajax({
                     url: apiUrl,
                     method: "GET",
                     headers: {
                         'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    success: function (products) {
-                        renderProducts(products);
+                    success: function (response) {
+                        renderProducts(response.content); // Hiển thị sản phẩm
+                        renderPagination(response.totalPages, page); // Hiển thị phân trang
                     },
                     error: function () {
                         alert("Lỗi khi lấy dữ liệu sản phẩm từ server!");
-                    }
+                    },
                 });
             }
 
             // Hàm hiển thị danh sách sản phẩm
             function renderProducts(products) {
-                productContainer.empty(); // Xóa nội dung cũ
+                productContainer.empty();
 
                 if (products.length === 0) {
-                    productContainer.append('<div class="col-12"><p class="text-center">Không có sản phẩm nào.</p></div>');
+                    productContainer.append('<div class="col-12"><p class="text-center">Không có sản phẩm nào phù hợp.</p></div>');
                     return;
                 }
 
                 products.forEach(product => {
-                    // Kiểm tra giá trị sản phẩm trước khi hiển thị
-                    console.log(product.name, product.price, product.detail?.images?.[0]?.imageUrl);
-
                     const productHTML = `
-        <div class="col-lg-3 col-md-4 col-sm-6">
-            <!-- product single grid item start -->
-            <div class="product-item fix mb-30">
-                <div class="product-thumb">
-                    <a href="product-details.html">
-                        <img src="${product.detail?.images?.[0]?.imageUrl || 'assets/img/default-product.jpg'}" class="img-pri" alt="">
-                    </a>
-
-                    <div class="product-action-link">
-                        <a href="#" data-toggle="modal" data-target="#quick_view">
-                            <span data-toggle="tooltip" data-placement="left" title="Quick view"><i class="fa fa-search"></i></span>
-                        </a>
-                        <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i class="fa fa-refresh"></i></a>
-                        <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-item fix mb-30">
+                    <div class="product-thumb">
+                        <a href="product-details.html">
+        <img src="${product.detail?.images?.[0]?.imageUrl || 'assets/img/default-product.jpg'}"
+             class="img-pri"
+             style="width: 100%; height: 100%; object-fit: contain;"
+             alt="Product Image">
+    </a>
+                        <div class="product-action-link">
+                            <a href="#" data-toggle="modal" data-target="#quick_view"><i class="fa fa-search"></i></a>
+                            <a href="#"><i class="fa fa-refresh"></i></a>
+                            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                        </div>
                     </div>
-                </div>
-                <div class="product-content">
-                    <h4 class="product-title" style="height: 55px">
-                        <a href="product-details.html">${product.name}</a>
-                    </h4>
-                    <div class="pricebox">
-                        <span class="regular-price">${product.price.toLocaleString()} VND</span>
-                        <div class="ratings">
+                    <div class="product-content">
+                        <h4 class="product-title" style="height: 55px">
+                            <a href="product-details.html">${product.name}</a>
+                        </h4>
+                        <div class="pricebox">
+                            <span class="regular-price">${product.price.toLocaleString()} VND</span>
+                        </div>
+                          <div class="ratings">
                             <span class="good"><i class="fa fa-star"></i></span>
                             <span class="good"><i class="fa fa-star"></i></span>
                             <span class="good"><i class="fa fa-star"></i></span>
@@ -334,35 +322,69 @@
                             <div class="pro-review">
                                 <span>1 review(s)</span>
                             </div>
-                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- product single grid item end -->
-        </div>`;
+            </div>`;
                     productContainer.append(productHTML);
                 });
-
-                // Cân chỉnh chiều cao sau khi render xong
-                adjustHeight();
             }
 
-            // Hàm điều chỉnh chiều cao để sản phẩm hiển thị đều nhau
-            function adjustHeight() {
-                const items = $(".product-item");
-                let maxHeight = 0;
+            // Hàm hiển thị phân trang
+            function renderPagination(totalPages, currentPage) {
+                // Xóa nội dung cũ
+                paginationContainer.empty();
 
-                // Tìm chiều cao lớn nhất
-                items.each(function () {
-                    const itemHeight = $(this).height();
-                    if (itemHeight > maxHeight) maxHeight = itemHeight;
-                });
+                // Nếu chỉ có 1 trang, không cần hiển thị phân trang
+                if (totalPages <= 1) return;
 
-                // Áp dụng chiều cao lớn nhất cho tất cả sản phẩm
-                items.height(maxHeight);
+                // Nút Previous
+                const prevButton = `
+        <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+            <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+                &laquo; Previous
+            </a>
+        </li>`;
+                paginationContainer.append(prevButton);
+
+                // Nút số trang
+                for (let i = 0; i < totalPages; i++) {
+                    const activeClass = i === currentPage ? "active" : "";
+                    const pageHTML = `
+            <li class="page-item ${activeClass}">
+                <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
+            </li>`;
+                    paginationContainer.append(pageHTML);
+                }
+
+                // Nút Next
+                const nextButton = `
+        <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+                Next &raquo;
+            </a>
+        </li>`;
+                paginationContainer.append(nextButton);
             }
 
-            // Gọi hàm fetchProducts khi trang được tải
+
+            // Lắng nghe sự kiện click nút tìm kiếm
+            $("button.sqr-btn").on("click", function (e) {
+                e.preventDefault();
+                const keyword = $("input[name='q']").val().trim();
+                currentPage = 0; // Reset về trang đầu tiên
+                fetchProducts(keyword, currentPage);
+            });
+
+            // Lắng nghe sự kiện click phân trang
+            paginationContainer.on("click", ".page-link", function (e) {
+                e.preventDefault();
+                const page = $(this).data("page");
+                const keyword = $("input[name='q']").val().trim();
+                currentPage = page;
+                fetchProducts(keyword, currentPage);
+            });
+
+            // Gọi lần đầu để hiển thị sản phẩm
             fetchProducts();
         });
 

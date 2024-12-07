@@ -5,6 +5,9 @@ import com.group11.repository.*;
 import com.group11.service.IProductService;
 import com.group11.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +40,13 @@ public class ProductRestController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<ProductEntity>> getAllProducts() {
-        List<ProductEntity> products = productService.findAll();
+    public ResponseEntity<Page<ProductEntity>> getAllProducts(
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductEntity> products = productService.searchProducts(keyword, pageable);
         return ResponseEntity.ok(products);
     }
 
