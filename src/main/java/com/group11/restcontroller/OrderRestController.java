@@ -1,20 +1,23 @@
 package com.group11.restcontroller;
 
 import com.group11.dto.request.LineItemRequest;
+import com.group11.dto.response.LineItemResponse;
 import com.group11.dto.response.OrderResponse;
-import com.group11.entity.AddressEntity;
-import com.group11.entity.ProductEntity;
+import com.group11.entity.*;
 import com.group11.service.IJwtService;
 import com.group11.service.IOrderService;
 import com.group11.service.IProductService;
 import com.group11.dto.response.CheckoutResponse;
 
+import com.group11.service.IUserService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +26,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderRestController {
-
+    @Autowired
+    IUserService userService;
     @Autowired
     private IOrderService orderService;
     @Autowired
@@ -63,49 +67,17 @@ public class OrderRestController {
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> checkoutOrders(@RequestHeader("Authorization") String token,
                                                                 @RequestBody List<LineItemRequest> cartItems){
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        return ResponseEntity.ok(orderService.checkOutOrder(token, cartItems));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String>  createOrder(@RequestHeader("Authorization") String token,
+            @RequestBody CheckoutResponse response) {
+        OrderEntity order = orderService.createOrder(token, response);
+        if (order == null) {
+            return ResponseEntity.badRequest().body("Đặt hàng không thành công. Vui lòng thử lại!");
         }
-
-        Claims claims = jwtService.extractAllClaims(token);
-        String name = claims.get("name", String.class);
-        String phone = claims.get("phone", String.class);
-        String email = claims.getSubject();
-        Map<String, Object> address = claims.get("address", Map.class);
-        AddressEntity addressEntity = new AddressEntity();
-        addressEntity.setAddressID(((Number) address.get("addressID")).longValue());
-        addressEntity.setCountry((String) address.get("country"));
-        addressEntity.setProvince((String) address.get("province"));
-        addressEntity.setDistrict((String) address.get("district"));
-        addressEntity.setCommune((String) address.get("commune"));
-
-        AtomicInteger total = new AtomicInteger();
-        List<LineItemRequest> processedCartItems = cartItems.stream()
-                .map(item -> {
-                    // Giả sử bạn muốn kiểm tra thông tin sản phẩm từ database
-                    ProductEntity product = productService.findProductById(item.getProductId()).get();
-                    if (product == null) {
-                        throw new IllegalArgumentException("Sản phẩm không tồn tại: " + item.getProductId());
-                    }
-
-                    // Tính giá trị mỗi sản phẩm
-                    item.setProductName(product.getName());
-                    item.setPrice(product.getPrice());
-                    item.setTotal(item.getQuantity() * product.getPrice());
-                    total.addAndGet(item.getQuantity() * product.getPrice());
-                    return item;
-                })
-                .collect(Collectors.toList());
-
-        // Tạo phản hồi
-        CheckoutResponse response = new CheckoutResponse();
-        response.setName(name);
-        response.setEmail(email);
-        response.setAddress(addressEntity);
-        response.setCartItems(processedCartItems);
-        response.setTotal(total.get());
-        // Trả lại danh sách đã xử lý
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("Đặt hàng thành công. Vui lòng thanh toán!");
     }
 
 }
