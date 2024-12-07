@@ -1,23 +1,44 @@
 package com.group11.service.impl;
 
+import com.group11.dto.request.LineItemRequest;
+import com.group11.dto.response.CheckoutResponse;
 import com.group11.dto.response.LineItemResponse;
 import com.group11.dto.response.OrderResponse;
-import com.group11.entity.OrderEntity;
+import com.group11.entity.*;
+import com.group11.repository.AddressRepository;
 import com.group11.repository.OrderRepository;
+import com.group11.repository.UserRepository;
+import com.group11.service.IJwtService;
 import com.group11.service.IOrderService;
-import com.group11.entity.OrderShippingStatus;
+import com.group11.service.IProductService;
+import com.group11.service.IUserService;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements IOrderService {
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private AddressRepository addressRepository;
+    @Autowired
+    private IUserService userService;
+    @Autowired
+    private IJwtService jwtService;
+    @Autowired
+    IProductService productService;
 
     @Override
     public Page<OrderResponse> getAllOrders(int page, int size) {
@@ -57,8 +78,97 @@ public class OrderServiceImpl implements IOrderService {
         return orderPage.map(this::toOrderResponse);
     }
 
+    @Override
+    public OrderEntity createOrder(String token, CheckoutResponse response) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        Claims claims = jwtService.extractAllClaims(token);
+        Long userID = claims.get("userid", Long.class);
+
+        UserEntity user = userService.findById(userID);
+
+        OrderEntity order = new OrderEntity();
+        order.setUser(user);
+        order.setOrderDate(LocalDateTime.now());
+        order.setReceiveDate(LocalDateTime.now().plusDays(7));
+        order.setShippingStatus(OrderShippingStatus.NONDELIVERY);
+        order.setPhoneNumber(response.getPhone());
+        order.setPaymentStatus(PaymentStatus.PENDING);
 
 
+        AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setCommune(response.getAddress().getCommune());
+        addressEntity.setProvince(response.getAddress().getProvince());
+        addressEntity.setDistrict(response.getAddress().getDistrict());
+        addressEntity.setCountry(response.getAddress().getCountry());
+
+        addressRepository.save(addressEntity);
+
+        order.setShippingAddress(addressEntity);
+
+
+        List<LineItemEntity> list = new ArrayList<>();
+
+        for (LineItemRequest item : response.getCartItems()){
+            LineItemEntity lineItemEntity = new LineItemEntity();
+            lineItemEntity.setProduct(productService.findProductById(item.getProductId()).get());
+            lineItemEntity.setQuantity(item.getQuantity());
+            lineItemEntity.setOrder(order);
+            list.add(lineItemEntity);
+        }
+        order.setListLineItems(list);
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public CheckoutResponse checkOutOrder(String token, List<LineItemRequest> cartItems) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        Claims claims = jwtService.extractAllClaims(token);
+        String name = claims.get("name", String.class);
+        String phone = claims.get("phone", String.class);
+        String email = claims.getSubject();
+        Map<String, Object> address = claims.get("address", Map.class);
+        AddressEntity addressEntity = new AddressEntity();
+        addressEntity.setAddressID(((Number) address.get("addressID")).longValue());
+        addressEntity.setCountry((String) address.get("country"));
+        addressEntity.setProvince((String) address.get("province"));
+        addressEntity.setDistrict((String) address.get("district"));
+        addressEntity.setCommune((String) address.get("commune"));
+
+        AtomicInteger total = new AtomicInteger();
+        List<LineItemRequest> processedCartItems = cartItems.stream()
+                .map(item -> {
+                    // Giả sử bạn muốn kiểm tra thông tin sản phẩm từ database
+                    ProductEntity product = productService.findProductById(item.getProductId()).get();
+                    if (product == null) {
+                        throw new IllegalArgumentException("Sản phẩm không tồn tại: " + item.getProductId());
+                    }
+
+                    // Tính giá trị mỗi sản phẩm
+                    item.setProductName(product.getName());
+                    item.setPrice(product.getPrice());
+                    item.setTotal(item.getQuantity() * product.getPrice());
+                    total.addAndGet(item.getQuantity() * product.getPrice());
+                    return item;
+                })
+                .collect(Collectors.toList());
+
+        // Tạo phản hồi
+        CheckoutResponse response = new CheckoutResponse();
+        response.setName(name);
+        response.setPhone(phone);
+        response.setEmail(email);
+        response.setAddress(addressEntity);
+        response.setCartItems(processedCartItems);
+        response.setTotal(total.get());
+        // Trả lại danh sách đã xử lý
+        return response;
+    }
 
 
     @Override

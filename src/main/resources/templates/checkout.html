@@ -187,7 +187,7 @@
                                     </div>
                                 </div>
                                 <div class="summary-footer-area">
-                                    <button type="submit" class="check-btn sqr-btn">Đặt hàng</button>
+                                    <button type="submit" class="check-btn sqr-btn" onclick="makeOrder()">Đặt hàng</button>
                                 </div>
                             </div>
                         </div>
@@ -216,13 +216,12 @@
                     },
                     success: function (response) {
                         console.log(response)
-                        if(response !== null){
-                            var percent = parseInt(response.discountAmount);
-                            var total = parseInt($('#total strong').text());
-                            var discountAmount = (total * percent) / 100;
-                            $('#discountAmount strong').text(discountAmount.toFixed(2));
-                            $('#totalAmount strong').text(parseInt(total - discountAmount).toFixed(2));
-                        }
+                        var percent = parseInt(response.discountAmount);
+                        var total = parseInt($('#total strong').text());
+                        var discountAmount = (total * percent) / 100;
+                        $('#discountAmount strong').text(discountAmount.toFixed(2));
+                        $('#totalAmount strong').text(parseInt(total - discountAmount).toFixed(2));
+
                     },
                     error: function (xhr, status, error) {
                         if (xhr.status === 404) {
@@ -237,7 +236,43 @@
         }
 
         function makeOrder(){
+            const token = localStorage.getItem('jwtToken');
+            const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+            // Lấy thông tin từ form
+            const orderData = {
+                name: $('#name').val(), // Lấy tên từ input
+                email: $('#email').val(), // Lấy email từ input
+                phone: $('#phone').val(), // Lấy số điện thoại từ input
+                address: {
+                    country: "Việt Nam",
+                    province: $('#province').val(), // Lấy tỉnh
+                    commune: $('#commune').val(), // Lấy xã
+                    district: $('#district').val() // Lấy huyện
+                },
+                total: parseFloat($('#totalAmount strong').text()), // Lấy tổng tiền từ giao diện
+                cartItems: checkoutData.cartItems // Danh sách sản phẩm
+            };
 
+            // Kiểm tra thông tin trước khi gửi
+            console.log(orderData);
+            // Gửi dữ liệu bằng AJAX
+            $.ajax({
+                url: "/api/orders/create", // Endpoint tạo đơn hàng
+                type: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Gửi kèm token trong header
+                    'Content-Type': 'application/json' // Định dạng JSON
+                },
+                data: JSON.stringify(orderData), // Dữ liệu gửi đi
+                success: function (response) {
+                    alert("Đơn hàng đã được tạo thành công!");
+                    console.log("Response:", response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại!");
+                }
+            });
         }
 
         $(document).ready(function() {

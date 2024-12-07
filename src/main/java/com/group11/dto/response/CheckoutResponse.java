@@ -11,6 +11,7 @@ import java.util.List;
 public class CheckoutResponse {
     private String name;
     private String email;
+    private String phone;
     private AddressEntity address;
     private List<LineItemRequest> cartItems;
     private int total;
