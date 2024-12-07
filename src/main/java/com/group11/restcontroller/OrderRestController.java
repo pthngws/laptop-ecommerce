@@ -71,13 +71,13 @@ public class OrderRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String>  createOrder(@RequestHeader("Authorization") String token,
+    public ResponseEntity<Object>  createOrder(@RequestHeader("Authorization") String token,
             @RequestBody CheckoutResponse response) {
         OrderEntity order = orderService.createOrder(token, response);
         if (order == null) {
             return ResponseEntity.badRequest().body("Đặt hàng không thành công. Vui lòng thử lại!");
         }
-        return ResponseEntity.ok("Đặt hàng thành công. Vui lòng thanh toán!");
+        return ResponseEntity.ok(order);
     }
 
 }

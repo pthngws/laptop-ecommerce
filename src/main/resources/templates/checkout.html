@@ -238,19 +238,48 @@
         function makeOrder(){
             const token = localStorage.getItem('jwtToken');
             const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
-            // Lấy thông tin từ form
+
+            const selectedMethod = $("input[name='paymentmethod']:checked").val();
+            console.log(selectedMethod)
+
+            const name = $('#name').val().trim();
+            const email = $('#email').val().trim();
+            const phone = $('#phone').val().trim();
+            const province = $('#province').val().trim();
+            const district = $('#district').val().trim();
+            const commune = $('#commune').val().trim();
+            const totalAmount = parseFloat($('#totalAmount strong').text());
+
+            // Kiểm tra các trường bắt buộc
+            if (!name || !email || !phone || !province || !district || !commune || isNaN(totalAmount)) {
+                alert("Vui lòng điền đầy đủ thông tin trước khi đặt hàng!");
+                return;
+            }
+
+            if (!selectedMethod) {
+                alert("Vui lòng chọn phương thức thanh toán!");
+                return;
+            }
+
+
+
+
+
+
+
+            // Dữ liệu đơn hàng
             const orderData = {
-                name: $('#name').val(), // Lấy tên từ input
-                email: $('#email').val(), // Lấy email từ input
-                phone: $('#phone').val(), // Lấy số điện thoại từ input
+                name: name,
+                email: email,
+                phone: phone,
                 address: {
                     country: "Việt Nam",
-                    province: $('#province').val(), // Lấy tỉnh
-                    commune: $('#commune').val(), // Lấy xã
-                    district: $('#district').val() // Lấy huyện
+                    province: province,
+                    district: district,
+                    commune: commune,
                 },
-                total: parseFloat($('#totalAmount strong').text()), // Lấy tổng tiền từ giao diện
-                cartItems: checkoutData.cartItems // Danh sách sản phẩm
+                total: totalAmount,
+                cartItems: checkoutData.cartItems
             };
 
             // Kiểm tra thông tin trước khi gửi
@@ -267,6 +296,31 @@
                 success: function (response) {
                     alert("Đơn hàng đã được tạo thành công!");
                     console.log("Response:", response);
+                    var amount = parseInt($('#totalAmount strong').text());
+                    $.ajax({
+                        url: `/api/payments/vn-pay?amount=${encodeURIComponent(amount)}&bankCode=${encodeURIComponent(selectedMethod)}&orderId=${encodeURIComponent(response.orderId)}`,
+                        method: "GET",
+                        dataType: "JSON",
+                        success: function (response) {
+                            if (response.code === 200) { // Kiểm tra trạng thái trả về
+                                if (response.data.code === "ok") {
+                                    // Lấy URL thanh toán từ response
+                                    var paymentUrl = response.data.paymentUrl;
+
+                                    // Chuyển hướng người dùng đến trang thanh toán
+                                    window.location.href = paymentUrl;
+                                } else {
+                                    alert("Không thể tạo URL thanh toán: " + response.data.message);
+                                }
+                            } else {
+                                alert("Lỗi từ API: " + response.message);
+                            }
+                        },
+                        error: function () {
+                            alert("Có lỗi xảy ra khi gọi API, vui lòng thử lại.");
+                        }
+                    })
+
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", error);
