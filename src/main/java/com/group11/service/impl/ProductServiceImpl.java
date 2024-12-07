@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private ProductRepository productRepository;
 
+
 //    @Autowired
 //    private CategoryRepository categoryRepository;
 //
@@ -26,14 +28,11 @@ public class ProductServiceImpl implements IProductService {
 //    private RateRepository rateRepository;
 
     @Override
-    public List<ProductEntity> searchProducts(String keyword, Double minPrice, Double maxPrice,
-                                              String ram, String cpu, String gpu,
-                                              String monitor, String disk, String manufacturerName) {
-        if (keyword != null || !keyword.isEmpty()) {
-            return productRepository.findByNameContainingIgnoreCase(keyword);
-        }
-        return productRepository.findByMultipleFilters(minPrice, maxPrice, ram, cpu, gpu, monitor, disk, manufacturerName);
+    public Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable)
+    {
+        return productRepository.searchProducts(keyword, pageable);
     }
+
 
     @Override
     public Page<ProductEntity> findAll(Pageable pageable) {
