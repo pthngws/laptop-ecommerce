@@ -1,5 +1,6 @@
 package com.group11.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,10 @@ public class UserEntity implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", referencedColumnName = "address_id")
     private AddressEntity address;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private ShoppingCartEntity shoppingCart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

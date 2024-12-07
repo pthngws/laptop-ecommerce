@@ -32,4 +32,5 @@ public interface IJwtService {
     Claims extractAllClaims(String token);
 
     SecretKey getSignInKey();
+    Long extractUserId(String token);
 }

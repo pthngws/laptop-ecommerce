@@ -95,4 +95,9 @@ public class JwtServiceImpl implements IJwtService {
         byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);  // Return the signing key for JWT
     }
+
+    @Override
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userid", Long.class));
+    }
 }

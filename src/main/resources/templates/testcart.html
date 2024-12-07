@@ -1,313 +1,90 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org"-->
-<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
-<!--      layout:decorate="~{layout.html}" lang="en">-->
-<!--<section class="row" layout:fragment="content">-->
-<!--    <head>-->
-<!--        <meta charset="UTF-8">-->
-<!--        <title>Giỏ hàng</title>-->
-<!--        &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
-
-<!--        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">-->
-<!--        <style>-->
-
-<!--            .quantity {-->
-<!--                display: flex;-->
-<!--                justify-content: center;-->
-<!--                align-items: center;-->
-<!--            }-->
-
-<!--            .qty-btn {-->
-<!--                border: none; /* Loại bỏ đường viền */-->
-<!--                background: none; /* Loại bỏ nền */-->
-<!--                font-size: 18px; /* Kích thước chữ */-->
-<!--                padding: 0 10px; /* Khoảng cách chữ */-->
-<!--                cursor: pointer;-->
-<!--                color: #333; /* Màu chữ */-->
-<!--            }-->
-
-<!--            .qty-btn:focus {-->
-<!--                outline: none; /* Loại bỏ viền khi nhấn nút */-->
-<!--            }-->
-
-<!--            .qty-btn:hover {-->
-<!--                color: #e60000; /* Màu đỏ khi di chuột vào */-->
-<!--            }-->
-
-<!--            .quantity-input {-->
-<!--                width: 50px;-->
-<!--                height: 30px;-->
-<!--                text-align: center;-->
-<!--                border: 1px solid #ccc; /* Viền của ô nhập */-->
-<!--                margin: 0 5px; /* Khoảng cách hai bên */-->
-<!--            }-->
-
-
-<!--        </style>-->
-<!--    </head>-->
-
-<!--    <body>-->
-<!--    <div class="breadcrumb-area">-->
-<!--        <div class="container">-->
-<!--            <div class="row">-->
-<!--                <div class="col-12">-->
-<!--                    <div class="breadcrumb-wrap">-->
-<!--                        <nav aria-label="breadcrumb">-->
-<!--                            <ul class="breadcrumb">-->
-<!--                                <li class="breadcrumb-item">-->
-<!--                                    <a th:href="@{/index.html}">Trang chủ</a>-->
-
-<!--                                </li>-->
-<!--                                <li class="breadcrumb-item active" aria-current="page">-->
-<!--                                    Giỏ hàng-->
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </nav>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div class="cart-main-wrapper">-->
-<!--        <div class="container">-->
-<!--            <div class="row">-->
-<!--                <div class="col-lg-12">-->
-<!--                    &lt;!&ndash; Cart Table Area &ndash;&gt;-->
-<!--                    <div class="cart-table table-responsive">-->
-<!--                        <table class="table table-bordered">-->
-<!--                            <thead>-->
-<!--                            <tr>-->
-<!--                                <th class="pro-thumbnail">Thumbnail</th>-->
-<!--                                <th class="pro-title">Product</th>-->
-<!--                                <th class="pro-price">Price</th>-->
-<!--                                <th class="pro-quantity">Quantity</th>-->
-<!--                                <th class="pro-subtotal">Total</th>-->
-<!--                                <th class="pro-remove">Remove</th>-->
-<!--                            </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody>-->
-<!--                            &lt;!&ndash; Lặp qua danh sách sản phẩm trong giỏ hàng &ndash;&gt;-->
-<!--                            <tr th:each="product : ${products}">-->
-<!--                                <td class="pro-thumbnail">-->
-<!--                                    <a href="#"><img class="img-fluid" th:src="${product.detail.images[0]?.imageUrl}" alt="Product"/></a>-->
-<!--                                </td>-->
-<!--                                <td class="pro-title">-->
-<!--                                    <a th:href="@{/product/{id}(id=${product.getProductID()})}" th:text="${product.getName()}">Product Name</a>-->
-<!--                                </td>-->
-<!--                                <td class="pro-price">-->
-<!--                                    <span th:text="${product.getPrice()} + ''">Price</span>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <div class="quantity">-->
-<!--                                        <button class="qty-btn minus">-</button>-->
-<!--                                        <input type="text" value="1" min="1" class="quantity-input" readonly>-->
-<!--                                        <button class="qty-btn plus">+</button>-->
-<!--                                    </div>-->
-<!--                                </td>-->
-<!--                                <td class="pro-subtotal">-->
-<!--                                    <span th:text="${product.getPrice() * 1} + ''">Total</span>-->
-<!--                                </td>-->
-<!--&lt;!&ndash;                                <td class="pro-remove">&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <a th:href="@{/cart/remove/{productId}(productId=${product.getProductID()})}">&ndash;&gt;-->
-<!--&lt;!&ndash;                                        <i class="fa fa-trash-o"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    </a>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </td>&ndash;&gt;-->
-<!--                                <td class="pro-remove">-->
-<!--                                    <a th:href="@{/cart/remove/{productId}(productId=${product.getProductID()})}" style="text-decoration: none;">-->
-<!--                                        <i class="fa fa-trash-o" style="font-size: 20px; color: #333;"></i>-->
-<!--                                    </a>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; Cart Update Option &ndash;&gt;-->
-<!--                    <div class="cart-update-option d-block d-md-flex justify-content-between">-->
-<!--                        <div class="apply-coupon-wrapper">-->
-<!--                            <form action="#" method="post" class=" d-block d-md-flex">-->
-<!--                                <input type="text" placeholder="Enter Your Coupon Code" required />-->
-<!--                                <button class="sqr-btn">Apply Coupon</button>-->
-<!--                            </form>-->
-<!--                        </div>-->
-<!--                        <div class="cart-update mt-sm-16">-->
-<!--                            <a href="#" class="sqr-btn">Update Cart</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="row">-->
-<!--                <div class="col-lg-5 ml-auto">-->
-<!--                    &lt;!&ndash; Cart Calculation Area &ndash;&gt;-->
-<!--                    <div class="cart-calculator-wrapper">-->
-<!--                        <div class="cart-calculate-items">-->
-<!--                            <h3>Cart Totals</h3>-->
-<!--                            <div class="table-responsive">-->
-<!--                                <table class="table">-->
-<!--                                    <tr>-->
-<!--                                        <td>Sub Total</td>-->
-<!--                                        <td id="sub-total">Sub Total</td>-->
-<!--                                    </tr>-->
-<!--                                    <tr>-->
-<!--                                        <td>Giảm giá</td>-->
-<!--                                        <td id="shipping-fee">Shipping</td>-->
-<!--                                    </tr>-->
-<!--                                    <tr class="total">-->
-<!--                                        <td>Total</td>-->
-<!--                                        <td id="total-amount" class="total-amount">Total</td>-->
-<!--                                    </tr>-->
-<!--                                </table>-->
-<!--                            </div>-->
-
-<!--                        </div>-->
-<!--                        <a href="/checkout" class="sqr-btn d-block">Proceed To Checkout</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    </body>-->
-<!--    <script>-->
-<!--        document.addEventListener("DOMContentLoaded", function () {-->
-<!--            const cartRows = document.querySelectorAll("tbody tr");-->
-
-<!--            // Hàm định dạng tiền tệ với dấu phân cách-->
-<!--            function formatCurrency(value) {-->
-<!--                return value.toLocaleString(); // Thêm dấu phân cách hàng nghìn-->
-<!--            }-->
-
-<!--            // Hàm cập nhật Total cho từng hàng-->
-<!--            function updateTotal(row) {-->
-<!--                const priceElement = row.querySelector(".pro-price span");-->
-<!--                const totalElement = row.querySelector(".pro-subtotal span");-->
-<!--                const quantityInput = row.querySelector(".quantity-input");-->
-
-<!--                const price = parseFloat(priceElement.innerText.replace(/[^0-9.-]+/g, ""));-->
-<!--                const quantity = parseInt(quantityInput.value);-->
-
-<!--                const total = (price * quantity).toFixed();-->
-<!--                totalElement.innerText = `${formatCurrency(parseInt(total))}`;-->
-
-<!--                // Cập nhật tổng giỏ hàng-->
-<!--                updateCartTotal();-->
-<!--            }-->
-
-<!--            // Hàm cập nhật tổng giỏ hàng-->
-<!--            function updateCartTotal() {-->
-<!--                let subTotalAmount = 0;-->
-
-<!--                // Lặp qua tất cả các hàng trong bảng và tính tổng các giá trị của cột Total-->
-<!--                document.querySelectorAll(".pro-subtotal span").forEach(subtotalElement => {-->
-<!--                    const subtotal = parseFloat(subtotalElement.innerText.replace(/[^0-9.-]+/g, ""));-->
-<!--                    subTotalAmount += subtotal;-->
-<!--                });-->
-
-<!--                // Cập nhật Sub Total-->
-<!--                const subTotalElement = document.getElementById("sub-total");-->
-<!--                subTotalElement.innerText = `${formatCurrency(subTotalAmount.toFixed(0))}`;-->
-
-<!--                // Giảm giá (shipping fee)-->
-<!--                const shippingFee = calculateDiscount(subTotalAmount);-->
-<!--                const shippingFeeElement = document.getElementById("shipping-fee");-->
-<!--                shippingFeeElement.innerText = `${formatCurrency(shippingFee.toFixed(0))}`;-->
-
-<!--                // Cập nhật Total (giá thực trả)-->
-<!--                const totalAmount = subTotalAmount - shippingFee;-->
-<!--                const totalAmountElement = document.getElementById("total-amount");-->
-<!--                totalAmountElement.innerText = `${formatCurrency(totalAmount.toFixed(0))} `;-->
-<!--            }-->
-
-<!--            // Hàm tính giảm giá (Shipping Fee) - giả sử là 10% giảm giá-->
-<!--            function calculateDiscount(subTotal) {-->
-<!--                const discountRate = 0.1; // 10% giảm giá-->
-<!--                return subTotal * discountRate;-->
-<!--            }-->
-
-<!--            // Cập nhật định dạng cho cột Price và Total khi trang được tải-->
-<!--            cartRows.forEach(row => {-->
-<!--                const priceElement = row.querySelector(".pro-price span");-->
-<!--                const minusBtn = row.querySelector(".qty-btn.minus");-->
-<!--                const plusBtn = row.querySelector(".qty-btn.plus");-->
-<!--                const quantityInput = row.querySelector(".quantity-input");-->
-
-<!--                // Lấy giá trị Price, định dạng lại, và cập nhật nội dung-->
-<!--                const rawPrice = parseFloat(priceElement.innerText.replace(/[^0-9.-]+/g, ""));-->
-<!--                priceElement.innerText = `${formatCurrency(rawPrice)}`;-->
-
-<!--                // Giảm số lượng-->
-<!--                minusBtn.addEventListener("click", function () {-->
-<!--                    let currentValue = parseInt(quantityInput.value);-->
-<!--                    if (currentValue > 1) {-->
-<!--                        quantityInput.value = currentValue - 1;-->
-<!--                        updateTotal(row);-->
-<!--                    }-->
-<!--                });-->
-
-<!--                // Tăng số lượng-->
-<!--                plusBtn.addEventListener("click", function () {-->
-<!--                    let currentValue = parseInt(quantityInput.value);-->
-<!--                    quantityInput.value = currentValue + 1;-->
-<!--                    updateTotal(row);-->
-<!--                });-->
-
-<!--                // Cập nhật total ban đầu khi trang được tải-->
-<!--                updateTotal(row);-->
-<!--            });-->
-
-<!--            // Cập nhật tổng khi trang được tải lần đầu-->
-<!--            updateCartTotal();-->
-<!--        });-->
-
-
-<!--    </script>-->
-<!--</section>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout.html}" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giỏ hàng</title>
-    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/assets/css/font-awesome.min.css}" rel="stylesheet">
-    <style>
-        .quantity {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .qty-btn {
-            border: none;
-            background: none;
-            font-size: 18px;
-            padding: 0 10px;
-            cursor: pointer;
-            color: #333;
-        }
-
-        .qty-btn:hover {
-            color: #e60000;
-        }
-
-        .quantity-input {
-            width: 50px;
-            height: 30px;
-            text-align: center;
-            border: 1px solid #ccc;
-            margin: 0 5px;
-        }
-    </style>
-</head>
-<body>
+      layout:decorate="~{layout.html}">
 <div layout:fragment="content">
-    <div class="cart-main-wrapper">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Giỏ hàng</title>
+
+
+        <style>
+            .cart-calculator-wrapper {
+                display: flex;
+                justify-content: flex-end; /* Căn nút sang bên phải */
+                margin-top: 20px; /* Khoảng cách từ dưới bảng đến nút */
+            }
+            .remove-btn {
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 18px; /* Kích thước icon */
+            }
+            .quantity {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .qty-btn {
+                border: none; /* Loại bỏ đường viền */
+                background: none; /* Loại bỏ nền */
+                font-size: 18px; /* Kích thước chữ */
+                padding: 0 10px; /* Khoảng cách chữ */
+                cursor: pointer;
+                color: #333; /* Màu chữ */
+            }
+
+            .qty-btn:focus {
+                outline: none; /* Loại bỏ viền khi nhấn nút */
+            }
+
+            .qty-btn:hover {
+                color: #e60000; /* Màu đỏ khi di chuột vào */
+            }
+
+            .quantity-input {
+                width: 50px;
+                height: 30px;
+                text-align: center;
+                border: 1px solid #ccc; /* Viền của ô nhập */
+                margin: 0 5px; /* Khoảng cách hai bên */
+            }
+
+            /* Cách định dạng thông báo xóa sản phẩm thành công */
+            #remove-success-alert {
+                display: none; /* Ẩn thông báo mặc định */
+                background-color: #4CAF50; /* Màu nền xanh khi thành công */
+                color: white; /* Màu chữ trắng */
+                padding: 10px;
+                border-radius: 5px;
+                margin-top: 20px;
+                text-align: center;
+                font-size: 16px;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1000;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho thông báo */
+                max-width: 380px; /* Giới hạn chiều rộng của thông báo */
+                width: 100%;
+            }
+
+
+        </style>
+    </head>
+    <body>
+    <!-- Thông báo xóa sản phẩm thành công -->
+    <div id="remove-success-alert" class="alert alert-success">
+        Sản phẩm đã được xóa khỏi giỏ hàng thành công!
+    </div>
+
+    <!-- cart main wrapper start -->
+    <div class="cart-main-wrapper mt-4">
         <div class="container">
+
             <div class="row">
                 <div class="col-lg-12">
                     <!-- Cart Table Area -->
@@ -327,6 +104,7 @@
                             <!-- Lặp qua danh sách sản phẩm trong giỏ hàng -->
                             <tr th:each="product : ${products}">
                                 <td class="pro-thumbnail">
+                                    <input type="text" hidden="hidden" class="productId" th:value="${product.productID}">
                                     <a href="#"><img class="img-fluid" th:src="${product.detail.images[0]?.imageUrl}" alt="Product"/></a>
                                 </td>
                                 <td class="pro-title">
@@ -345,14 +123,9 @@
                                 <td class="pro-subtotal">
                                     <span th:text="${product.getPrice() * 1} + ''">Total</span>
                                 </td>
-                                <!--                                <td class="pro-remove">-->
-                                <!--                                    <a th:href="@{/cart/remove/{productId}(productId=${product.getProductID()})}">-->
-                                <!--                                        <i class="fa fa-trash-o"></i>-->
-                                <!--                                    </a>-->
-                                <!--                                </td>-->
                                 <td class="pro-remove">
-                                    <a th:href="@{/cart/remove/{productId}(productId=${product.getProductID()})}" style="text-decoration: none;">
-                                        <i class="fa fa-trash-o" style="font-size: 20px; color: #333;"></i>
+                                    <a th:href="@{/cart/remove/{id}(id=${product.productID})}">
+                                        Xóa
                                     </a>
                                 </td>
                             </tr>
@@ -361,148 +134,181 @@
                     </div>
 
                     <!-- Cart Update Option -->
-                    <div class="cart-update-option d-block d-md-flex justify-content-between">
-                        <div class="apply-coupon-wrapper">
-                            <form action="#" method="post" class=" d-block d-md-flex">
-                                <input type="text" placeholder="Enter Your Coupon Code" required />
-                                <button class="sqr-btn">Apply Coupon</button>
-                            </form>
-                        </div>
-                        <div class="cart-update mt-sm-16">
-                            <a href="#" class="sqr-btn">Update Cart</a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-lg-5 ml-auto">
                     <!-- Cart Calculation Area -->
-                    <div class="cart-calculator-wrapper">
-                        <div class="cart-calculate-items">
-                            <h3>Cart Totals</h3>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tr>
-                                        <td>Sub Total</td>
-                                        <td id="sub-total">Sub Total</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Giảm giá</td>
-                                        <td id="shipping-fee">Shipping</td>
-                                    </tr>
-                                    <tr class="total">
-                                        <td>Total</td>
-                                        <td id="total-amount" class="total-amount">Total</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                        </div>
-                        <a href="/checkout" class="sqr-btn d-block">Proceed To Checkout</a>
+                    <div class="cart-calculator-wrapper mb-4">
+                        <button onclick="proceedToCheckout()" class="sqr-btn d-block">Mua Hàng</button>
+                        <!--                    <a href="/checkout" >Proceed To Checkout</a>-->
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+    <!-- cart main wrapper end -->
+    </body>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("jwtToken"); // Lấy token từ localStorage
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const cartRows = document.querySelectorAll("tbody tr");
-
-        // Hàm định dạng tiền tệ với dấu phân cách
-        function formatCurrency(value) {
-            return value.toLocaleString(); // Thêm dấu phân cách hàng nghìn
-        }
-
-        // Hàm cập nhật Total cho từng hàng
-        function updateTotal(row) {
-            const priceElement = row.querySelector(".pro-price span");
-            const totalElement = row.querySelector(".pro-subtotal span");
-            const quantityInput = row.querySelector(".quantity-input");
-
-            const price = parseFloat(priceElement.innerText.replace(/[^0-9.-]+/g, ""));
-            const quantity = parseInt(quantityInput.value);
-
-            const total = (price * quantity).toFixed();
-            totalElement.innerText = `${formatCurrency(parseInt(total))}`;
-
-            // Cập nhật tổng giỏ hàng
-            updateCartTotal();
-        }
-
-        // Hàm cập nhật tổng giỏ hàng
-        function updateCartTotal() {
-            let subTotalAmount = 0;
-
-            // Lặp qua tất cả các hàng trong bảng và tính tổng các giá trị của cột Total
-            document.querySelectorAll(".pro-subtotal span").forEach(subtotalElement => {
-                const subtotal = parseFloat(subtotalElement.innerText.replace(/[^0-9.-]+/g, ""));
-                subTotalAmount += subtotal;
-            });
-
-            // Cập nhật Sub Total
-            const subTotalElement = document.getElementById("sub-total");
-            subTotalElement.innerText = `${formatCurrency(subTotalAmount.toFixed(0))}`;
-
-            // Giảm giá (shipping fee)
-            const shippingFee = calculateDiscount(subTotalAmount);
-            const shippingFeeElement = document.getElementById("shipping-fee");
-            shippingFeeElement.innerText = `${formatCurrency(shippingFee.toFixed(0))}`;
-
-            // Cập nhật Total (giá thực trả)
-            const totalAmount = subTotalAmount - shippingFee;
-            const totalAmountElement = document.getElementById("total-amount");
-            totalAmountElement.innerText = `${formatCurrency(totalAmount.toFixed(0))} `;
-        }
-
-        // Hàm tính giảm giá (Shipping Fee) - giả sử là 10% giảm giá
-        function calculateDiscount(subTotal) {
-            const discountRate = 0.1; // 10% giảm giá
-            return subTotal * discountRate;
-        }
-
-        // Cập nhật định dạng cho cột Price và Total khi trang được tải
-        cartRows.forEach(row => {
-            const priceElement = row.querySelector(".pro-price span");
-            const minusBtn = row.querySelector(".qty-btn.minus");
-            const plusBtn = row.querySelector(".qty-btn.plus");
-            const quantityInput = row.querySelector(".quantity-input");
-
-            // Lấy giá trị Price, định dạng lại, và cập nhật nội dung
-            const rawPrice = parseFloat(priceElement.innerText.replace(/[^0-9.-]+/g, ""));
-            priceElement.innerText = `${formatCurrency(rawPrice)}`;
-
-            // Giảm số lượng
-            minusBtn.addEventListener("click", function () {
-                let currentValue = parseInt(quantityInput.value);
-                if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
-                    updateTotal(row);
-                }
-            });
-
-            // Tăng số lượng
-            plusBtn.addEventListener("click", function () {
-                let currentValue = parseInt(quantityInput.value);
-                quantityInput.value = currentValue + 1;
-                updateTotal(row);
-            });
-
-            // Cập nhật total ban đầu khi trang được tải
-            updateTotal(row);
+            // Gọi API để lấy danh sách sản phẩm trong giỏ hàng
+            fetch("/api/cart/products", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`, // Thêm token vào header
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch products");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    renderCartProducts(data); // Render danh sách sản phẩm
+                })
+                .catch((error) => {
+                    console.error("Error loading products:", error);
+                });
         });
 
-        // Cập nhật tổng khi trang được tải lần đầu
-        updateCartTotal();
-    });
+        function renderCartProducts(products) {
+            const tbody = document.querySelector("tbody");
+            tbody.innerHTML = ""; // Xóa nội dung cũ trong bảng
 
+            products.forEach((product) => {
+                // Định dạng giá tiền (không có chữ VND)
+                const formattedPrice = product.price.toLocaleString('vi-VN');
+                const formattedTotal = (product.price * 1).toLocaleString('vi-VN');
 
-</script>
+                const row = `
+        <tr data-product-id="${product.productID}">
+            <td class="pro-thumbnail">
+                <a href="#"><img class="img-fluid" src="${product.imageUrl}" alt="Product"/></a>
+            </td>
+            <td class="pro-title">
+                <a href="/product/${product.productID}">${product.name}</a>
+            </td>
+            <td class="pro-price">
+                <span>${product.price}</span>
+            </td>
+            <td>
+                <div class="quantity">
+                    <button class="qty-btn minus">-</button>
+                    <input type="text" value="1" min="1" class="quantity-input" readonly>
+                    <button class="qty-btn plus">+</button>
+                </div>
+            </td>
+            <td class="pro-subtotal">
+                <span>${product.price * 1}</span>
+            </td>
+            <td class="pro-remove">
+                <button class="remove-btn" data-product-id="${product.productID}">
+                 <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        `;
+                tbody.insertAdjacentHTML("beforeend", row);
+            });
+
+            attachEventHandlers(); // Gọi hàm để gán sự kiện
+        }
+
+        function attachEventHandlers() {
+            // Hàm định dạng tiền tệ với dấu phân cách hàng nghìn theo chuẩn Việt Nam
+            function formatCurrency(value) {
+                return value.toLocaleString('vi-VN');  // Sử dụng định dạng tiền tệ Việt Nam
+            }
+
+            // Sự kiện cho nút tăng
+            document.querySelectorAll('.qty-btn.plus').forEach(button => {
+                button.addEventListener('click', function () {
+                    const row = this.closest('tr'); // Lấy hàng của sản phẩm
+                    const quantityInput = row.querySelector('.quantity-input'); // Lấy ô nhập số lượng
+                    let quantity = parseInt(quantityInput.value); // Số lượng hiện tại
+
+                    // Tăng số lượng
+                    quantity += 1;
+                    quantityInput.value = quantity;
+
+                    // Cập nhật cột total
+                    const price = parseFloat(row.querySelector('.pro-price span').textContent.replace(/[^\d.-]/g, '')); // Lấy giá mà không có ký tự đặc biệt
+                    const total = price * quantity;
+
+                    // Định dạng lại total với dấu phân cách hàng nghìn theo chuẩn Việt Nam
+                    row.querySelector('.pro-subtotal span').textContent = total;
+                });
+            });
+
+            // Sự kiện cho nút giảm
+            document.querySelectorAll('.qty-btn.minus').forEach(button => {
+                button.addEventListener('click', function () {
+                    const row = this.closest('tr'); // Lấy hàng của sản phẩm
+                    const quantityInput = row.querySelector('.quantity-input'); // Lấy ô nhập số lượng
+                    let quantity = parseInt(quantityInput.value); // Số lượng hiện tại
+
+                    // Giảm số lượng nếu số lượng > 1
+                    if (quantity > 1) {
+                        quantity -= 1;
+                        quantityInput.value = quantity;
+
+                        // Cập nhật cột total
+                        const price = parseFloat(row.querySelector('.pro-price span').textContent.replace(/[^\d.-]/g, '')); // Lấy giá mà không có ký tự đặc biệt
+                        const total = price * quantity;
+
+                        // Định dạng lại total với dấu phân cách hàng nghìn theo chuẩn Việt Nam
+                        row.querySelector('.pro-subtotal span').textContent = total;
+                    }
+                });
+            });
+
+            // Sự kiện cho nút xóa
+            $('.remove-btn').click(function () {
+                const productId = $(this).data('product-id'); // Lấy productId từ thuộc tính data-product-id
+
+                // Gọi API để xóa sản phẩm khỏi giỏ hàng
+                const token = localStorage.getItem("jwtToken"); // Lấy token từ localStorage
+                $.ajax({
+                    url: `/api/cart/remove/${productId}`,  // API để xóa sản phẩm
+                    type: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`, // Thêm token vào header
+                        "Content-Type": "application/json",
+                    },
+                    success: function(response) {
+                        // Xóa sản phẩm khỏi giỏ hàng trên giao diện
+                        $(`[data-product-id="${productId}"]`).closest('tr').remove();
+                        $('#remove-success-alert').fadeIn().delay(3000).fadeOut();
+                        // Cập nhật lại tổng giỏ hàng
+                        updateCartTotals();
+                    },
+                    error: function(error) {
+                        console.error("Error removing product:", error);
+                    }
+                });
+            });
+
+            // Hàm cập nhật lại tổng giỏ hàng
+            function updateCartTotals() {
+                // Cập nhật lại các tổng số tiền trong giỏ hàng
+                const totalAmount = [...document.querySelectorAll('.pro-subtotal span')].reduce((total, subtotal) => {
+                    return total + parseFloat(subtotal.textContent.replace(/[^\d.-]/g, ''));
+                }, 0);
+
+                // Cập nhật lại tổng số tiền trên giao diện
+                $('#total-amount').text(totalAmount.toLocaleString('vi-VN') + ' VND');
+            }
+
+        }
+
+    </script>
 
 </div>
-</body>
-
 </html>
-
