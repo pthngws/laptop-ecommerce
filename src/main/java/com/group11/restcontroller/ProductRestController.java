@@ -43,8 +43,13 @@ public class ProductRestController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<ProductEntity>> getAllProducts() {
-        List<ProductEntity> products = productService.findAll();
+    public ResponseEntity<Page<ProductEntity>> getAllProducts(
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductEntity> products = productService.searchProducts(keyword, pageable);
         return ResponseEntity.ok(products);
     }
 
