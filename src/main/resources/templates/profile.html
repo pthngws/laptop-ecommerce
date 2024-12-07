@@ -180,7 +180,7 @@
       if (token) {
         // Lấy thông tin người dùng và điền vào form
         $.ajax({
-          url: '/user/my-info',
+          url: '/api/profile',
           type: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`
