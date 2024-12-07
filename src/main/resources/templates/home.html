@@ -172,10 +172,10 @@
             $.ajax({
                 url: '/api/products/newest', // Đảm bảo URL này đúng
                 type: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                // headers: {
+                //     'Authorization': `Bearer ${token}`,
+                //     'Content-Type': 'application/json'
+                // },
                 success: function (products) {
                     console.log('Dữ liệu sản phẩm trả về:', products);
                     const productContainer = $('#product-container');
