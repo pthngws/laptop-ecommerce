@@ -1,6 +1,7 @@
 package com.group11.restcontroller;
 
 
+import com.group11.dto.response.CheckoutResponse;
 import com.group11.entity.OrderEntity;
 import com.group11.entity.UserEntity;
 import com.group11.service.IHistoryService;
@@ -87,4 +88,33 @@ public class HistoryRestController {
 
         return ResponseEntity.ok("Đơn hàng đã được hủy thành công.");
     }
+
+    // Endpoint xem chi tiết đơn hàng
+    @GetMapping("/details/{orderId}")
+    public ResponseEntity<?> getOrderDetails(@RequestHeader("Authorization") String token, @PathVariable Long orderId) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Bạn cần đăng nhập để xem chi tiết đơn hàng.");
+        }
+
+        token = token.substring(7); // Loại bỏ "Bearer " để lấy JWT thực tế
+        String email = jwtService.extractClaim(token, claims -> claims.getSubject());
+        UserEntity user = userService.findByEmail(email);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User không tồn tại.");
+        }
+
+        CheckoutResponse orderDetails = historyService.getOrderDetails(orderId);
+
+        if (!orderDetails.getEmail().equals(user.getEmail())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Bạn không có quyền xem đơn hàng này.");
+        }
+
+        return ResponseEntity.ok(orderDetails);
+    }
+
+
 }
