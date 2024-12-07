@@ -230,6 +230,8 @@
                                 <th>Tên sản phẩm</th>
                                 <th>Số lượng</th>
                                 <th>Tổng tiền</th>
+                                <th>Đánh giá</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -238,6 +240,13 @@
                                     <td>${item.productName}</td>
                                     <td>${item.quantity}</td>
                                     <td>${item.total.toLocaleString()} VNĐ</td>
+                                    <td>
+                                        <button
+                                            class="btn btn-primary btn-sm"
+                                            onclick="redirectToReviewPage('${item.productId}')">
+                                            Đánh giá
+                                        </button>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -264,6 +273,12 @@
                     }
                 });
             };
+
+            window.redirectToReviewPage = function (productId) {
+                const reviewPageUrl = `/customer/rates?productId=${productId}`; // URL trang đánh giá, tùy chỉnh nếu cần
+                window.location.href = reviewPageUrl;
+            }
+
 
 
 
