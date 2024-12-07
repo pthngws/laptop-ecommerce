@@ -78,6 +78,8 @@
                     <!-- Address Details Tab Start -->
                     <div class="tab-pane fade" id="address-edit" role="tabpanel">
                       <!-- Address Form Content Here -->
+                      <div class="myaccount-content">
+                      <h3>Địa chỉ</h3>
                       <form id="update-address-form">
                         <div class="row">
                           <div class="col-lg-6">
@@ -119,6 +121,7 @@
                           <button type="button" id="save-address-btn" class="check-btn sqr-btn">Lưu địa chỉ</button>
                         </div>
                       </form>
+                    </div>
                     </div>
 
                     <div class="tab-pane fade" id="change-password" role="tabpanel">
@@ -180,7 +183,7 @@
       if (token) {
         // Lấy thông tin người dùng và điền vào form
         $.ajax({
-          url: '/user/my-info',
+          url: '/api/profile',
           type: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -215,7 +218,7 @@
 
           $.ajax({
             url: '/api/profile/update-info',
-            type: 'POST',
+            type: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -242,7 +245,7 @@
 
           $.ajax({
             url: '/api/profile/update-address',
-            type: 'POST',
+            type: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -277,7 +280,7 @@
 
           $.ajax({
             url: '/api/profile/update-password',
-            type: 'POST',
+            type: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'

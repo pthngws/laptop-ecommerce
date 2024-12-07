@@ -56,6 +56,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             @Param("category") String category,
             Pageable pageable);
 
+    @Query("SELECT p FROM ProductEntity p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT p.name, COUNT(p) FROM ProductEntity p GROUP BY p.name")
     Page<Object[]> countProductsGroupedByName(Pageable pageable);

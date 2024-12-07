@@ -26,27 +26,18 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ProductDetailRepository productDetailRepository;
-
-
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ManufacturerRepository manufacturerRepository;
-    @Autowired
-    private ImageItemRepository imageItemRepository;
+//    @Autowired
+//    private CategoryRepository categoryRepository;
+//
+//    @Autowired
+//    private RateRepository rateRepository;
 
     @Override
-    public List<ProductEntity> searchProducts(String keyword, Double minPrice, Double maxPrice,
-                                              String ram, String cpu, String gpu,
-                                              String monitor, String disk, String manufacturerName) {
-        if (keyword != null || !keyword.isEmpty()) {
-            return productRepository.findByNameContainingIgnoreCase(keyword);
-        }
-        return productRepository.findByMultipleFilters(minPrice, maxPrice, ram, cpu, gpu, monitor, disk, manufacturerName);
+    public Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable)
+    {
+        return productRepository.searchProducts(keyword, pageable);
     }
+
 
     @Override
     public Page<ProductEntity> findAll(Pageable pageable) {
@@ -59,6 +50,22 @@ public class ProductServiceImpl implements IProductService {
         // Gọi đến repository để lấy danh sách sản phẩm dựa trên các tiêu chí tìm kiếm
         return productRepository.findProductsByCriteria(searchName, manufacturer, cpu, gpu, operationSystem, minPrice, maxPrice, disk, category, pageable);
     }
+
+//    @Override
+//    public List<CategoryModel> getAllCategories() {
+//        List<CategoryEntity> categoryEntities = categoryRepository.findAll();
+//        return categoryEntities.stream()
+//                .map(categoryEntity -> {
+//                    CategoryModel categoryModel = new CategoryModel();
+//                    categoryModel.setCategoryID(categoryEntity.getCategoryID());
+//                    categoryModel.setName(categoryEntity.getName());
+//                    categoryModel.setDescription(categoryEntity.getDescription());
+//                    return categoryModel;
+//                })
+//                .collect(Collectors.toList());
+//    }
+
+
     @Override
     public List<ProductEntity> findAll() {
         return productRepository.findAll();

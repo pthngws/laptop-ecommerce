@@ -29,6 +29,11 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setRoleName("Customer");
         AddressEntity address = new AddressEntity();
+        address.setCommune("Không có");
+        address.setCountry("Không có");
+        address.setProvince("Không có");
+        address.setDistrict("Không có");
+        address.setOther("Không có");
         user.setAddress(address);
         return userRepository.save(user);
     }

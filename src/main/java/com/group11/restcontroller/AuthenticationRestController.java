@@ -43,13 +43,13 @@ public class AuthenticationRestController {
         String storedOtp = otpStorage.get(registerUser.getEmail());
 
         if (storedOtp == null || !storedOtp.equals(otp)) {
-            return ResponseEntity.badRequest().body("Invalid OTP");
+            return ResponseEntity.badRequest().body("OTP Không hợp lệ");
         }
 
         // Proceed with user registration if OTP is valid
         authenticationService.signup(registerUser);
         otpStorage.remove(registerUser.getEmail()); // Clear OTP after registration
-        return ResponseEntity.ok("Registration successful!");
+        return ResponseEntity.ok("Đăng ký thành công!");
     }
 
 
@@ -60,8 +60,8 @@ public class AuthenticationRestController {
         String otp = emailService.generateOtp();
 
         // Create email details
-        String subject = "Your OTP Code for Registration";
-        String message = "Your OTP code is: " + otp;
+        String subject = "OTP code";
+        String message = "Mã OTP của bạn là: " + otp;
 
         // Send email with OTP
         emailService.sendEmail(email, subject, message);
@@ -70,7 +70,7 @@ public class AuthenticationRestController {
         otpStorage.put(email, otp);
 
         // Return a success response
-        return ResponseEntity.ok("OTP sent to your email.");
+        return ResponseEntity.ok("OTP đã được gửi đến email của bạn!");
     }
 
     @PostMapping("/login")
@@ -93,7 +93,7 @@ public class AuthenticationRestController {
         cookie.setMaxAge(0);  // Xóa cookie ngay lập tức
         response.addCookie(cookie);
 
-        return "Logged out successfully!";
+        return "Đăng xuất thành công!";
     }
 
     @PostMapping("/send-otp-reset")
@@ -108,8 +108,8 @@ public class AuthenticationRestController {
         String otp = emailService.generateOtp();
 
         // Tạo nội dung email
-        String subject = "Your OTP Code for Password Reset";
-        String message = "Your OTP code for resetting your password is: " + otp;
+        String subject = "OTP CODE";
+        String message = "Mã OTP của bạn là: " + otp;
 
         // Gửi email với OTP
         emailService.sendEmail(email, subject, message);
@@ -118,7 +118,7 @@ public class AuthenticationRestController {
         otpStorage.put(email, otp);
 
         // Trả về phản hồi thành công
-        return ResponseEntity.ok("OTP đã được gửi tới email của bạn.");
+        return ResponseEntity.ok("OTP đã được gửi đến email của bạn.");
     }
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestParam String email,
