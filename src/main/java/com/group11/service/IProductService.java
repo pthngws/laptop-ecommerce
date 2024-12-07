@@ -1,4 +1,5 @@
 package com.group11.service;
+import com.group11.dto.ProductDTO;
 import com.group11.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,4 +36,8 @@ public interface IProductService {
     public Page<ProductEntity> getProducts(int page, int size);
 
     public List<ProductEntity> getNewestProducts();
+    public ProductEntity saveProduct(ProductEntity product);
+//    public ProductEntity addProduct(ProductDTO productDTO);
+
+    ProductEntity findById(Long id);
 }

@@ -8,6 +8,6 @@ public class CartController {
     @RequestMapping("/cart")
     public String load()
     {
-        return "cart";
+        return "testcart";
     }
 }
