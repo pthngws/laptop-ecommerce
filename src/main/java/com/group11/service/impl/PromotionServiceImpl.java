@@ -29,6 +29,11 @@ public class PromotionServiceImpl implements IPromotionService {
     }
 
     @Override
+    public List<PromotionEntity> getValidPromotions() {
+        return promotionRepository.findValidPromotions();
+    }
+
+    @Override
     public PromotionEntity getPromotionById(Long id) {
         return promotionRepository.findById(id).get();
     }

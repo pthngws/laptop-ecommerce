@@ -140,7 +140,7 @@
                             </table>
                         </div>
                     </div>
-                    <button onclick="proceedToCheckout()" class="sqr-btn d-block">Mua Hàng</button>
+                    <button onclick="test()" class="sqr-btn d-block">Mua Hàng</button>
 <!--                    <a href="/checkout" >Proceed To Checkout</a>-->
                 </div>
 
@@ -320,6 +320,86 @@
         // Cập nhật tổng khi trang được tải lần đầu
         updateCartTotal();
     });
+
+
+
+    function test(){
+        const cartItems = [];
+        cartItems.push({
+            productId: 1,
+            quantity: 1,
+        })
+        cartItems.push({
+            productId: 2,
+            quantity: 3,
+        })
+
+        $.ajax({
+            url: "/api/orders/checkout",
+            type: "POST",
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            contentType: "application/json",
+            data: JSON.stringify(cartItems),
+            success: function (response) {
+                localStorage.setItem("checkoutData", JSON.stringify(response));
+                // Chuyển hướng sang trang /checkout với dữ liệu trả về
+                window.location.href = `/mua`;
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi:", error);
+                alert("Có lỗi xảy ra khi xử lý!");
+            },
+        });
+
+
+    }
+
+    function proceedToCheckout() {
+        // Thu thập thông tin sản phẩm từ giao diện
+        const cartItems = [];
+        $("tr").each(function () {
+            const productId = $(this).find(".productId").val();
+            const quantity = $(this).find(".quantity-input").val();
+
+            if (productId && quantity) {
+                cartItems.push({
+                    productId: productId,
+                    quantity: parseInt(quantity),
+                });
+            }
+        });
+
+        if (cartItems.length === 0) {
+            alert("Giỏ hàng của bạn trống!");
+            return;
+        }
+
+        // Gửi dữ liệu đến API bằng AJAX
+        $.ajax({
+            url: "http://localhost:8080/api/cart/checkout",
+            type: "POST",
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            contentType: "application/json",
+            data: JSON.stringify(cartItems),
+            success: function (response) {
+                // Chuyển hướng sang trang /checkout với dữ liệu trả về
+                window.location.href = `/checkout?data=${encodeURIComponent(JSON.stringify(response))}`;
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi:", error);
+                alert("Có lỗi xảy ra khi xử lý!");
+            },
+        });
+    }
+
+
+
+
+
 
 
 </script>
