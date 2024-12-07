@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
-public class PaymentController {
+public class PaymentestController {
     @Autowired
     private final IPaymentService paymentService;
 
