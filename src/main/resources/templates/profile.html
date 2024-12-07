@@ -215,7 +215,7 @@
 
           $.ajax({
             url: '/api/profile/update-info',
-            type: 'POST',
+            type: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -242,7 +242,7 @@
 
           $.ajax({
             url: '/api/profile/update-address',
-            type: 'POST',
+            type: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -277,7 +277,7 @@
 
           $.ajax({
             url: '/api/profile/update-password',
-            type: 'POST',
+            type: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
