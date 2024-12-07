@@ -2,119 +2,68 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout.html}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory</title>
-    <style>
-        /* Search Bar Styling */
-        #search {
-            width: 300px; /* Make the search input smaller */
-            margin-bottom: 20px;
-        }
+<div class="row" layout:fragment="content">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quản lý kho</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    </head>
 
-        /* Table Styling Adjustments */
-        .table thead {
-            background-color: #d8373e; /* Red color */
-            color: #fff; /* White text */
-        }
+    <body>
+    <div class="container mt-5">
+        <!-- Tiêu đề -->
+        <h1 class="text-center">Danh sách sản phẩm trong kho</h1>
 
-        .table td:nth-child(1) { /* Product name */
-            width: 50%;
-        }
+        <!-- Tìm kiếm sản phẩm -->
+        <div class="row mt-4 mb-3">
+            <div class="col-md-6 offset-md-3">
+                <form id="searchForm" class="d-flex" onsubmit="searchInventory(); return false;">
+                    <input type="text" name="search" id="search" class="form-control me-0"
+                           placeholder="Tìm kiếm sản phẩm theo tên hoặc mã sản phẩm"
+                           style="border: 2px solid #444444; border-radius: 0; height: 40px"/>
 
-        .table td:nth-child(2) input { /* Quantity input */
-            width: 80px; /* Make quantity field smaller */
-        }
+                    <button type="submit" class="search-btn"
+                            style="background-color: #444444; color: white; border: none; padding: 10px; cursor: pointer; width: 40px; height: 40px; border-radius: 0;"
+                            onmouseover="this.style.backgroundColor='#d8373e';"
+                            onmouseout="this.style.backgroundColor='#444444';">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
 
-        .table td:nth-child(3) button { /* Update button */
-            background-color: #d8373e; /* Red color */
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+        <!-- Bảng thông tin sản phẩm -->
+        <table class="table table-bordered table-striped text-center" id="inventoryTable">
+            <thead class="table-custom-header">
+            <tr>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col">STT</th>
+                <th style="text-align: center; vertical-align: middle; border: 3px solid black;" scope="col">Tên sản phẩm</th>
+                <th style="text-align: center; vertical-align: middle; width: 100px; border: 3px solid black;" scope="col">Số lượng</th>
+                <th style="text-align: center; vertical-align: middle; border: 3px solid black;" scope="col">Cập nhật số lượng</th>
+            </tr>
+            </thead>
 
-        .table td:nth-child(3) button:hover {
-            background-color: #a32b31; /* Darker red on hover */
-        }
+            <tbody>
+            <!-- Dữ liệu sẽ được thêm động bằng JS -->
+            </tbody>
+        </table>
 
-        /* Notification Styling */
-        #notification {
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        #notification.success {
-            color: #28a745; /* Green text */
-            background-color: #d4edda; /* Light green background */
-            border: 1px solid #c3e6cb;
-        }
-
-        #notification.error {
-            color: #dc3545; /* Red text */
-            background-color: #f8d7da; /* Light red background */
-            border: 1px solid #f5c6cb;
-        }
-
-        /* Pagination Styling */
-        #paginationControls {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        #paginationControls a {
-            display: inline-block;
-            padding: 8px 15px;
-            background-color: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #paginationControls a:hover {
-            background-color: #d8373e; /* Red on hover */
-            color: white;
-        }
-
-        #paginationControls a.active {
-            background-color: #d8373e; /* Red for active page */
-            color: white;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-<section class="row" layout:fragment="content">
-    <div class="container">
-        <!-- Search Bar -->
+        <!-- Điều khiển phân trang -->
         <div>
-            <input type="text" id="search" placeholder="Tìm sản phẩm..." class="form-control" oninput="searchInventory()" />
-        </div>
-        <!-- Notification area -->
-        <div id="notification" style="margin-top: 20px; font-weight: bold; display: none;"></div>
-
-        <!-- Table to display inventory -->
-        <div id="inventoryResult" class="table-responsive">
-            <!-- Table will be populated here -->
+            <nav style="margin-bottom: 20px;">
+                <ul class="pagination justify-content-center" id="paginationControls">
+                    <!-- Pagination buttons will be added dynamically -->
+                </ul>
+            </nav>
         </div>
 
-        <!-- Pagination Controls -->
-        <div id="paginationControls" class="pagination">
-            <!-- Pagination links will be generated here -->
-        </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         let currentPage = 1;
@@ -133,9 +82,9 @@
                         search: searchQuery
                     },
                     success: function(data) {
-                        inventoryData = data.content; // Use 'content' to get the list of items
+                        inventoryData = data.content;
                         displayInventory(inventoryData);
-                        displayPagination(data.totalPages); // Assuming API returns 'totalPages'
+                        displayPagination(data.totalPages);
                     },
                     error: function(error) {
                         console.error('Error fetching inventory:', error);
@@ -146,124 +95,104 @@
             }
         }
 
-        // Function to display inventory with editable quantity
         function displayInventory(data) {
-            const resultDiv = document.getElementById('inventoryResult');
-            resultDiv.innerHTML = '';
+            const tableBody = $('#inventoryTable tbody');
+            tableBody.empty();
 
             if (data.length === 0) {
-                resultDiv.innerHTML = 'Không có sản phẩm nào.';
+                tableBody.append('<tr><td colspan="4" class="text-center">Không có sản phẩm nào.</td></tr>');
+                return;
+            }
+            data.forEach((item, index) => {
+                const row = `
+    <tr>
+        <td>${index + 1}</td> <!-- Use the index to display the incrementing number -->
+        <td>${item.product ? item.product.name : 'Unknown'}</td>
+        <td><input type="number" value="${item.quantity}" id="quantity-${item.productId}" class="form-control text-center" min="0" /></td>
+        <td><button class="btn btn-danger custom-hover" onclick="updateQuantity(${item.productId})">Cập nhật</button></td>
+    </tr>`;
+                tableBody.append(row);
+            });
+
+        }
+
+        async function updateQuantity(productId) {
+            const quantity = $(`#quantity-${productId}`).val();
+            const notificationDiv = $('#notification');
+
+            if (quantity < 0) {
+                alert('Số lượng không được nhỏ hơn 0!');
                 return;
             }
 
-            let table = `
-        <table class="table table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Tên sản phẩm</th>
-                    <th>Số lượng</th>
-                    <th>Cập nhật</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-            data.forEach(item => {
-                table += `
-            <tr>
-                <td>${item.product ? item.product.name : 'Unknown'}</td>
-                <td><input type="number" value="${item.quantity}" id="quantity-${item.productId}" class="form-control" /></td>
-                <td><button class="btn btn-primary" onclick="updateQuantity(${item.productId})">Cập nhật</button></td>
-            </tr>
-        `;
-            });
-
-            table += `</tbody></table>`;
-            resultDiv.innerHTML = table;
-        }
-
-        // Function to update the quantity of a product
-        async function updateQuantity(productId) {
-            const quantity = document.getElementById(`quantity-${productId}`).value;
-            const notificationDiv = document.getElementById('notification');
-            if (quantity < 0) {
-                notificationDiv.textContent = 'Số lượng không được nhỏ hơn 0!';
-                notificationDiv.className = 'error';
-                notificationDiv.style.display = 'block';
-                setTimeout(() => {
-                    notificationDiv.style.display = 'none';
-                }, 5000);
-                return; // Stop execution if invalid
-            }
             try {
                 const response = await $.ajax({
                     url: `/admin/api/inventory/${productId}`,
                     type: 'PUT',
                     contentType: 'application/json',
-                    data: JSON.stringify({ quantity: quantity }),
-                    success: function(response) {
-                        // Show success notification
-                        notificationDiv.textContent = 'Cập nhật thành công!';
-                        notificationDiv.className = 'success';
-                        notificationDiv.style.display = 'block';
-                        setTimeout(() => {
-                            notificationDiv.style.display = 'none';
-                        }, 5000);
-                        // Reload inventory after updating
-                        fetchInventory();
+                    data: JSON.stringify({ quantity }),
+                    success: function() {
+                        alert('Cập nhật thành công!');
+                        fetchInventory(); // Gọi lại dữ liệu sau khi cập nhật
                     },
-                    error: function(error) {
-                        // Show error notification
-                        notificationDiv.textContent = 'Cập nhật không thành công!';
-                        notificationDiv.className = 'error';
-                        notificationDiv.style.display = 'block';
-                        setTimeout(() => {
-                            notificationDiv.style.display = 'none';
-                        }, 5000);
+                    error: function() {
+                        alert('Cập nhật không thành công! Vui lòng thử lại.');
                     }
+
                 });
             } catch (error) {
                 console.error('Error updating quantity:', error);
-                // Show error notification
-                notificationDiv.textContent = 'Có lỗi xảy ra khi cập nhật!';
-                notificationDiv.className = 'error';
+                notificationDiv.text('Có lỗi xảy ra khi cập nhật!');
+                notificationDiv.removeClass('success').addClass('error').show();
             }
         }
 
-        // Function to display pagination links
+        // Display pagination controls
         function displayPagination(totalPages) {
-            const paginationDiv = document.getElementById('paginationControls');
-            paginationDiv.innerHTML = '';
+            const paginationDiv = $('#paginationControls');
+            paginationDiv.empty();
 
-            // If there's more than one page, render the pagination
-            if (totalPages > 1) {
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageLink = document.createElement('a');
-                    pageLink.href = '#';
-                    pageLink.textContent = i;
-                    pageLink.className = currentPage === i ? 'active' : ''; // Highlight the active page
-                    pageLink.onclick = () => goToPage(i);
-                    paginationDiv.appendChild(pageLink);
-                }
+            const prevButton = `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" onclick="changePage(currentPage - 1)">« Previous</a>
+                </li>`;
+            paginationDiv.append(prevButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = `<li class="page-item ${currentPage === i ? 'active' : ''}">
+                    <a class="page-link" onclick="goToPage(${i})">${i}</a>
+                </li>`;
+                paginationDiv.append(pageLink);
             }
+
+            const nextButton = `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link"  onclick="changePage(currentPage + 1)">Next »</a>
+                </li>`;
+
+            paginationDiv.append(nextButton);
         }
 
-        // Function to go to the selected page
+        // Change page number
         function goToPage(pageNumber) {
             currentPage = pageNumber;
-            fetchInventory(); // Fetch inventory for the selected page
+            fetchInventory();
         }
 
-        // Search functionality (trigger on input change)
+        // Navigate to previous/next page
+        function changePage(newPage) {
+            if (newPage < 1 || newPage > totalPages) return;
+            currentPage = newPage;
+            fetchInventory();
+        }
+
         function searchInventory() {
-            const searchQuery = document.getElementById('search').value;
-            fetchInventory(searchQuery); // Fetch inventory with the search query
+            const searchQuery = $('#search').val();
+            fetchInventory(searchQuery);
         }
 
-        // Fetch all inventory when the page loads
-        document.addEventListener('DOMContentLoaded', () => fetchInventory());
-
+        $(document).ready(() => fetchInventory());
     </script>
-</section>
-</body>
+    </body>
+</div>
 </html>

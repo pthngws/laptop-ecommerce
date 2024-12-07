@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    Page<UserEntity> findAllByRoleName(String roleName, Pageable pageable);
     UserEntity findByEmail(String email);
     UserEntity findByPhone(String phone);
 

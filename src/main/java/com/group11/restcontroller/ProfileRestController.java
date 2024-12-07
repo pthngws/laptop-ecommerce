@@ -46,7 +46,7 @@ public class ProfileRestController {
 //        return ResponseEntity.ok(users);
 //    }
 
-    @PostMapping("/update-info")
+    @PutMapping("/update-info")
     public void updateUser(@RequestHeader("Authorization") String token, @RequestBody UserEntity user) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
@@ -59,7 +59,7 @@ public class ProfileRestController {
         userService.save(currentUser);
     }
 
-    @PostMapping("/update-address")
+    @PutMapping("/update-address")
     public void updateAddress(@RequestHeader("Authorization") String token, @RequestBody AddressEntity address) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
@@ -72,7 +72,7 @@ public class ProfileRestController {
         userService.save(currentUser); // Save the user with the updated address
     }
 
-    @PostMapping("/update-password")
+    @PutMapping("/update-password")
     public void updatePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> passwordData) {
         // Extract the token from the Authorization header
         if (token.startsWith("Bearer ")) {

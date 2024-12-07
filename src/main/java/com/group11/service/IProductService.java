@@ -2,15 +2,13 @@ package com.group11.service;
 import com.group11.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
-    public List<ProductEntity> searchProducts(String keyword, Double minPrice, Double maxPrice,
-                                              String ram, String cpu, String gpu,
-                                              String monitor, String disk, String manufacturerName);
-
+    Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable);
     public Page<ProductEntity> findAll(Pageable pageable);
 
     public Page<ProductEntity> searchProducts(String searchName, String manufacturer, String cpu, String gpu,

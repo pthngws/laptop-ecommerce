@@ -16,9 +16,10 @@ public class UserRestController {
     IUserService userService;
 
     @GetMapping
-    public ResponseEntity<Page<UserEntity>> getPromotions(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<UserEntity>> getUser(@RequestParam(defaultValue = "0") int page,
                                                                @RequestParam(defaultValue = "10") int size) {
-        Page<UserEntity> promotions = userService.getAllUsers(page, size);
+        String roleName = "Customer";
+        Page<UserEntity> promotions = userService.getAllUsersByRoleName(roleName,page, size);
         return ResponseEntity.ok(promotions);
     }
 

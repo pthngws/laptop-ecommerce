@@ -63,6 +63,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public Page<UserEntity> getAllUsersByRoleName(String roleName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAllByRoleName(roleName, pageable);
+    }
+
+    @Override
     public boolean activeUser(Long id, boolean active) {
         int updatedRows = userRepository.updateUserStatus(id, active);
         return updatedRows > 0; // Trả về true nếu cập nhật thành công

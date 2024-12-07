@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/promotions")
 public class PromotionRestController {
@@ -23,6 +25,12 @@ public class PromotionRestController {
         return ResponseEntity.ok(promotions);
     }
 
+    @GetMapping("/valid")
+    public ResponseEntity<List<PromotionEntity>> getValidPromotions() {
+        List<PromotionEntity> validPromotions = promotionService.getValidPromotions();
+        return ResponseEntity.ok(validPromotions);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PromotionEntity> getPromotionById(@PathVariable Long id) {
         return ResponseEntity.ok(promotionService.getPromotionById(id));
@@ -30,7 +38,11 @@ public class PromotionRestController {
 
     @GetMapping("/code/{code}")
     public ResponseEntity<PromotionEntity> getPromotionByCode(@PathVariable String code) {
-        return ResponseEntity.ok(promotionService.getPromotionByCode(code));
+        PromotionEntity promotion = promotionService.getPromotionByCode(code);
+        if (promotion != null)
+            return ResponseEntity.ok(promotion);
+        else
+            return ResponseEntity.notFound().build();
     }
 
     @PostMapping
