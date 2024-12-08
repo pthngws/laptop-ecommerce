@@ -308,6 +308,53 @@
 
         }
 
+        function proceedToCheckout() {
+            // Thu thập thông tin sản phẩm từ giao diện
+            const cartItems = [];
+            $("tr[data-product-id]").each(function () {
+                // Get the product ID from the `data-product-id` attribute
+                const productId = $(this).data("product-id");
+
+                // Get the quantity from the input field with the class `quantity-input`
+                const quantity = parseInt($(this).find(".quantity-input").val());
+
+                // Ensure both `productId` and `quantity` are valid before adding to cart
+                if (productId && quantity > 0) {
+                    cartItems.push({
+                        productId: productId,
+                        quantity: quantity,
+                    });
+                }
+            });
+
+            console.log(cartItems)
+
+            if (cartItems.length === 0) {
+                alert("Giỏ hàng của bạn trống!");
+                return;
+            }
+
+            // Gửi dữ liệu đến API bằng AJAX
+            $.ajax({
+                url: "/api/orders/checkout",
+                type: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                contentType: "application/json",
+                data: JSON.stringify(cartItems),
+                success: function (response) {
+                    localStorage.setItem("checkoutData", JSON.stringify(response));
+                    // Chuyển hướng sang trang /checkout với dữ liệu trả về
+                    window.location.href = `/checkout`;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi:", error);
+                    alert("Có lỗi xảy ra khi xử lý!");
+                },
+            });
+        }
+
     </script>
 
 </div>

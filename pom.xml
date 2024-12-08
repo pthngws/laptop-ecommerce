@@ -138,6 +138,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.0</version> <!-- Đảm bảo sử dụng phiên bản mới nhất -->
+		</dependency>
+
 	</dependencies>
 
 	<build>

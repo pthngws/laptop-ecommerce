@@ -27,8 +27,10 @@
     <div class="mb-3">
       <label for="files" class="form-label">Hình ảnh/Video:</label>
       <input type="file" id="files" name="files" class="form-control" accept="image/*,video/*" multiple>
-      <small class="text-muted">Chọn hình ảnh hoặc video để tải lên.</small>
+      <small class="text-muted">Chọn nhiều hình ảnh hoặc video để tải lên.</small>
+      <ul id="fileList" class="mt-2"></ul> <!-- Danh sách tệp đã chọn -->
     </div>
+
 
     <div class="mt-4">
       <button type="button" class="btn btn-primary" id="submitRate">Gửi đánh giá</button>
@@ -44,36 +46,55 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   $(document).ready(function () {
-    // Lấy token từ localStorage (hoặc sessionStorage nếu bạn sử dụng)
-    const token = localStorage.getItem("jwtToken");
+    const selectedFiles = []; // Mảng để lưu các tệp đã chọn
 
-    // Nếu không có token, chuyển hướng về trang đăng nhập
-    if (!token) {
-      alert("Bạn cần đăng nhập để thực hiện đánh giá.");
-      window.location.href = "/login";
-      return;
+    // Xử lý khi người dùng chọn tệp
+    $("#files").change(function (event) {
+      const files = event.target.files;
+
+      for (let i = 0; i < files.length; i++) {
+        selectedFiles.push(files[i]); // Thêm tệp mới vào mảng
+      }
+
+      // Cập nhật danh sách tệp hiển thị
+      updateFileList();
+    });
+
+    function updateFileList() {
+      const fileList = $("#fileList");
+      fileList.empty(); // Xóa danh sách cũ
+      selectedFiles.forEach((file, index) => {
+        fileList.append(`<li>${file.name} <button class="btn btn-sm btn-danger" onclick="removeFile(${index})">Xóa</button></li>`);
+      });
     }
 
-    // Xử lý gửi đánh giá
+    // Xóa tệp khỏi danh sách
+    window.removeFile = function (index) {
+      selectedFiles.splice(index, 1); // Xóa tệp từ mảng
+      updateFileList(); // Cập nhật lại danh sách
+    };
+
+    // Xử lý gửi form
     $("#submitRate").click(function () {
       const formData = new FormData();
       formData.append("productId", $("#productId").val());
       formData.append("rate", $("#rating").val());
       formData.append("content", $("#content").val());
 
-      const files = $("#files")[0].files;
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-      }
+      // Thêm các tệp đã chọn vào FormData
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
 
       // Gửi dữ liệu tới API
+      const token = localStorage.getItem("jwtToken");
       $.ajax({
         url: "/api/rates/add",
         method: "POST",
         processData: false,
         contentType: false,
         headers: {
-          "Authorization": `Bearer ${token}` // Thêm token vào header
+          "Authorization": `Bearer ${token}`
         },
         data: formData,
         success: function (response) {
@@ -87,6 +108,7 @@
       });
     });
   });
+
 </script>
 </body>
 </html>
