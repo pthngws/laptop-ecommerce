@@ -96,13 +96,14 @@ public class OrderServiceImpl implements IOrderService {
         order.setShippingStatus(OrderShippingStatus.NONDELIVERY);
         order.setPhoneNumber(response.getPhone());
         order.setPaymentStatus(PaymentStatus.PENDING);
-
+        order.setNote(response.getNote());
 
         AddressEntity addressEntity = new AddressEntity();
         addressEntity.setCommune(response.getAddress().getCommune());
         addressEntity.setProvince(response.getAddress().getProvince());
         addressEntity.setDistrict(response.getAddress().getDistrict());
         addressEntity.setCountry(response.getAddress().getCountry());
+        addressEntity.setOther(response.getAddress().getOther());
 
         addressRepository.save(addressEntity);
 

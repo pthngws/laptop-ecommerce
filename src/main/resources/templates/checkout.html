@@ -84,6 +84,10 @@
                                     <label for="phone" class="required">Số điện thoại </label>
                                     <input type="email" id="phone" placeholder="Số điện thoại" required/>
                                 </div>
+                                <div class="single-input-item">
+                                    <label for="commune" class="required pt-20">Ghi chú: </label>
+                                    <input type="text" id="note" placeholder="Ghi chú" required/>
+                                </div>
 
                                 <h4>Địa chỉ </h4>
 
@@ -100,6 +104,10 @@
                                 <div class="single-input-item">
                                     <label for="commune" class="required pt-20">Phường Xã: </label>
                                     <input type="text" id="commune" placeholder="Phường Xã" required/>
+                                </div>
+                                <div class="single-input-item">
+                                    <label for="commune" class="required pt-20">Số nhà: </label>
+                                    <input type="text" id="street" placeholder="Số nhà " required/>
                                 </div>
                             </form>
                         </div>
@@ -217,15 +225,17 @@
                     success: function (response) {
                         console.log(response)
                         var percent = parseInt(response.discountAmount);
-                        var str = $('#total strong').text();
-                        console.log(str)
                         var total = parseFloat($('#total strong').text().replace(/[^\d]/g, ''));
-                        console.log(total)
-                        // var total = parseInt($('#total strong').text());
                         var discountAmount = (total * percent) / 100;
                         $('#discountAmount strong').text(discountAmount.toLocaleString("vi-VN", { style: "currency", currency: "VND" }));
                         $('#totalAmount strong').text(parseInt(total - discountAmount).toLocaleString("vi-VN", { style: "currency", currency: "VND" }));
-
+                        $.ajax({
+                            url: `/api/promotions/apply/${code}`,
+                            type: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
                     },
                     error: function (xhr, status, error) {
                         if (xhr.status === 404) {
@@ -249,9 +259,11 @@
             const name = $('#name').val().trim();
             const email = $('#email').val().trim();
             const phone = $('#phone').val().trim();
+            const note = $('#note').val().trim();
             const province = $('#province').val().trim();
             const district = $('#district').val().trim();
             const commune = $('#commune').val().trim();
+            const street = $('#street').val().trim();
             const totalAmount = parseFloat($('#totalAmount strong').text());
 
             // Kiểm tra các trường bắt buộc
@@ -269,11 +281,13 @@
                 name: name,
                 email: email,
                 phone: phone,
+                note: note,
                 address: {
                     country: "Việt Nam",
                     province: province,
                     district: district,
                     commune: commune,
+                    other: street
                 },
                 total: totalAmount,
                 cartItems: checkoutData.cartItems

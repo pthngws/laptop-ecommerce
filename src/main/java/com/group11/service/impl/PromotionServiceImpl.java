@@ -41,6 +41,13 @@ public class PromotionServiceImpl implements IPromotionService {
     public PromotionEntity getPromotionByCode(String code) {
         return promotionRepository.findByPromotionCode(code);
     }
+
+    @Override
+    public PromotionEntity applyPromotionByCode(String code) {
+        PromotionEntity promotion = promotionRepository.findByPromotionCode(code);
+        promotion.setRemainingUses(promotion.getRemainingUses() - 1);
+        return promotionRepository.save(promotion);
+    }
     @Override
     public PromotionEntity createPromotion(PromotionRequest promotion) {
         PromotionEntity promotionEntity = new PromotionEntity();
