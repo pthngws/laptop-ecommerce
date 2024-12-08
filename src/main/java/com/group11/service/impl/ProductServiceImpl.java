@@ -33,31 +33,6 @@ public class ProductServiceImpl implements IProductService {
 //    @Autowired
 //    private RateRepository rateRepository;
 
-    @Transactional
-    public void addProductWithDetails(ProductRequest productRequestDTO) {
-//        // 1. Lưu ProductDetail
-//        ProductDetailEntity productDetail = productRequestDTO.getProductDetail();
-//        ProductDetailEntity savedDetail = productDetailRepository.save(productDetail);
-//
-//        // 2. Lưu Product
-//        ProductEntity product = productRequestDTO.toProductEntity();
-//        product.setDetail(savedDetail);
-//        ProductEntity savedProduct = productRepository.save(product);
-//
-//        // 3. Lưu Inventory
-//        InventoryEntity inventory = new InventoryEntity();
-//        inventory.setProductId(savedProduct.getProductID());
-//        inventoryRepository.save(inventory);
-//
-//        // 4. Lưu Images
-//        for (String imageUrl : productRequestDTO.getImageUrls()) {
-//            ImageItemEntity image = new ImageItemEntity();
-//            image.setImageUrl(imageUrl);
-//            image.setProductDetail(savedDetail);
-//            imageItemRepository.save(image);
-//        }
-    }
-
     @Override
     public Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable)
     {

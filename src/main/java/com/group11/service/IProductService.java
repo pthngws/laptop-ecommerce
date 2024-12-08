@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
-    public void addProductWithDetails(ProductRequest productRequestDTO);
     Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable);
     public Page<ProductEntity> findAll(Pageable pageable);
 
