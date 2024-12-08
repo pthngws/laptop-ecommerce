@@ -1,6 +1,7 @@
 package com.group11.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -52,6 +53,7 @@ public class UserEntity implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
+    @JsonIgnore // Bỏ qua trường role khi tuần tự hóa UserEntity
     private ShoppingCartEntity shoppingCart;
 
     @Override
