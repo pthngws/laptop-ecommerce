@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<section class="row" layout:fragment="content">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Thể Loại</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+  <div class="container mt-5">
+
+    <!-- Button to open the Add Category Modal -->
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Thêm Thể Loại</button>
+
+    <!-- Table to display categories -->
+    <table class="table table-striped" id="categoryTable">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tên Thể Loại</th>
+        <th>Mô tả</th>
+        <th>Hành Động</th>
+      </tr>
+      </thead>
+      <tbody id="categoryTableBody">
+      <!-- Dynamic list of categories will go here -->
+      </tbody>
+    </table>
+
+    <!-- Modal to add a new category -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addCategoryModalLabel">Thêm Thể Loại Mới</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addCategoryForm">
+              <div class="mb-3">
+                <label for="addCategoryName" class="form-label">Tên Thể Loại</label>
+                <input type="text" class="form-control" id="addCategoryName" required>
+              </div>
+              <div class="mb-3">
+                <label for="addCategoryDescription" class="form-label">Mô Tả</label>
+                <textarea class="form-control" id="addCategoryDescription"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Thêm</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal to update a category -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editCategoryModalLabel">Cập Nhật Thể Loại</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editCategoryForm">
+              <div class="mb-3">
+                <label for="editCategoryName" class="form-label">Tên Thể Loại</label>
+                <input type="text" class="form-control" id="editCategoryName" required>
+              </div>
+              <div class="mb-3">
+                <label for="editCategoryDescription" class="form-label">Mô Tả</label>
+                <textarea class="form-control" id="editCategoryDescription"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Cập Nhật</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      // Load categories list on page load
+      loadCategories();
+
+      // Add new category
+      $('#addCategoryForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const categoryData = {
+          name: $('#addCategoryName').val(),
+          description: $('#addCategoryDescription').val()
+        };
+
+        $.ajax({
+          url: '/api/categories',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(categoryData),
+          success: function () {
+            $('#addCategoryModal').modal('hide');
+            loadCategories();
+            $('#addCategoryName').val('');
+            $('#addCategoryDescription').val('');
+          },
+          error: function (xhr, status, error) {
+            alert('Error adding category: ' + error);
+          }
+        });
+      });
+
+      // Open edit modal
+      $(document).on('click', '.edit-btn', function () {
+        const categoryId = $(this).data('id');
+        const categoryName = $(this).data('name');
+        const categoryDescription = $(this).data('description');
+
+        $('#editCategoryName').val(categoryName);
+        $('#editCategoryDescription').val(categoryDescription);
+        $('#editCategoryForm').data('id', categoryId);
+        $('#editCategoryModal').modal('show');
+      });
+
+      // Update category
+      $('#editCategoryForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const categoryId = $(this).data('id');
+        const categoryData = {
+          name: $('#editCategoryName').val(),
+          description: $('#editCategoryDescription').val()
+        };
+
+        $.ajax({
+          url: `/api/categories/${categoryId}`,
+          method: 'PUT',
+          contentType: 'application/json',
+          data: JSON.stringify(categoryData),
+          success: function () {
+            $('#editCategoryModal').modal('hide');
+            loadCategories();
+          },
+          error: function (xhr, status, error) {
+            alert('Error updating category: ' + error);
+          }
+        });
+      });
+
+      // Delete category
+      $(document).on('click', '.delete-btn', function () {
+        const categoryId = $(this).data('id');
+        if (confirm('Bạn có chắc chắn muốn xóa thể loại này?')) {
+          $.ajax({
+            url: `/api/categories/${categoryId}`,
+            method: 'DELETE',
+            success: function () {
+              loadCategories();
+            },
+            error: function (xhr, status, error) {
+              alert('Error deleting category: ' + error);
+            }
+          });
+        }
+      });
+
+      // Load categories
+      function loadCategories() {
+        $.ajax({
+          url: '/api/categories',
+          method: 'GET',
+          success: function (response) {
+            $('#categoryTableBody').empty();
+            response.forEach(function (category) {
+              $('#categoryTableBody').append(`
+                  <tr>
+                    <td>${category.id}</td>
+                    <td>${category.name}</td>
+                    <td>${category.description}</td>
+                    <td>
+                      <button class="btn btn-warning btn-sm edit-btn"
+                              data-id="${category.id}"
+                              data-name="${category.name}"
+                              data-description="${category.description}">
+                        Cập Nhật
+                      </button>
+                      <button class="btn btn-danger btn-sm delete-btn" data-id="${category.id}">Xóa</button>
+                    </td>
+                  </tr>
+                `);
+            });
+          },
+          error: function (xhr, status, error) {
+            alert('Error loading categories: ' + error);
+          }
+        });
+      }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</section>
+</html>
