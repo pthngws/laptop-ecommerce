@@ -18,7 +18,6 @@ public class OrderResponse {
     private LocalDateTime receiveDate;
     private String shippingStatus;
     private String paymentStatus;
-    private PaymentEntity payment;
     private String note;
     private double totalAmount;
     private List<LineItemResponse> items;
