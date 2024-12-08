@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+
+<section class="row" layout:fragment="content">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Quản lý Nhà Sản Xuất</title>
+    </head>
+    <body>
+
+    <div class="container mt-5">
+
+        <!-- Button to open the Add Manufacturer Modal -->
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addManufacturerModal">Thêm Nhà Sản Xuất</button>
+
+        <!-- Table to display manufacturers -->
+        <table class="table table-striped" id="manufacturerTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên Nhà Sản Xuất</th>
+                <th>Hành Động</th>
+            </tr>
+            </thead>
+            <tbody id="manufacturerTableBody">
+            <!-- Dynamic list of manufacturers will go here -->
+            </tbody>
+        </table>
+
+        <!-- Modal to add a new manufacturer -->
+        <div class="modal fade" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addManufacturerModalLabel">Thêm Nhà Sản Xuất Mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addManufacturerForm">
+                            <div class="mb-3">
+                                <label for="manufacturerName" class="form-label">Tên Nhà Sản Xuất</label>
+                                <input type="text" class="form-control" id="manufacturerName" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Thêm</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to update an existing manufacturer -->
+    <div class="modal fade" id="editManufacturerModal" tabindex="-1" aria-labelledby="editManufacturerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editManufacturerModalLabel">Cập Nhật Nhà Sản Xuất</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editManufacturerForm">
+                        <div class="mb-3">
+                            <label for="editManufacturerName" class="form-label">Tên Nhà Sản Xuất</label>
+                            <input type="text" class="form-control" id="editManufacturerName" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cập Nhật</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function() {
+            // Load manufacturer list when page is ready
+            loadManufacturers();
+
+            // Submit the form to add a manufacturer
+            $('#addManufacturerForm').on('submit', function(e) {
+                e.preventDefault();
+                const manufacturerName = $('#manufacturerName').val();
+                if (manufacturerName) {
+                    $.ajax({
+                        url: '/api/manufacturers',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ name: manufacturerName }),
+                        success: function(response) {
+                            $('#addManufacturerModal').modal('hide');
+                            loadManufacturers();
+                            $('#manufacturerName').val('');
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error adding manufacturer: " + error);
+                        }
+                    });
+                }
+            });
+
+            // Function to load manufacturers list
+            function loadManufacturers() {
+                $.ajax({
+                    url: '/api/manufacturers',  // Your API endpoint to get manufacturers
+                    method: 'GET',
+                    success: function(response) {
+                        $('#manufacturerTableBody').empty();
+                        response.forEach(function(manufacturer) {
+                            $('#manufacturerTableBody').append(`
+            <tr>
+              <td>${manufacturer.id}</td>
+              <td>${manufacturer.name}</td>
+              <td>
+                <button class="btn btn-warning btn-sm edit-btn" data-id="${manufacturer.id}" data-name="${manufacturer.name}">Cập Nhật</button>
+                <button class="btn btn-danger btn-sm delete-btn" data-id="${manufacturer.id}">Xóa</button>
+              </td>
+            </tr>
+          `);
+                        });
+
+                        // Attach event for edit buttons
+                        $('.edit-btn').on('click', function() {
+                            const manufacturerId = $(this).data('id');
+                            const manufacturerName = $(this).data('name');
+                            openEditModal(manufacturerId, manufacturerName);
+                        });
+
+                        // Attach event for delete buttons
+                        $('.delete-btn').on('click', function() {
+                            const manufacturerId = $(this).data('id');
+                            deleteManufacturer(manufacturerId);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error loading manufacturers: " + error);
+                    }
+                });
+            }
+
+            // Function to open the edit modal
+            function openEditModal(id, name) {
+                $('#editManufacturerName').val(name);
+                $('#editManufacturerForm').data('id', id);  // Store the ID in the form
+                $('#editManufacturerModal').modal('show');
+            }
+
+            // Submit the form to update a manufacturer
+            $('#editManufacturerForm').on('submit', function(e) {
+                e.preventDefault();
+                const manufacturerId = $(this).data('id');
+                const manufacturerName = $('#editManufacturerName').val();
+                if (manufacturerName) {
+                    $.ajax({
+                        url: `/api/manufacturers/${manufacturerId}`,
+                        method: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ name: manufacturerName }),
+                        success: function(response) {
+                            $('#editManufacturerModal').modal('hide');
+                            loadManufacturers();
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error updating manufacturer: " + error);
+                        }
+                    });
+                }
+            });
+
+            // Function to delete manufacturer
+            function deleteManufacturer(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa nhà sản xuất này?')) {
+                    $.ajax({
+                        url: `/api/manufacturers/${id}`,
+                        method: 'DELETE',
+                        success: function(response) {
+                            loadManufacturers();
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error deleting manufacturer: " + error);
+                        }
+                    });
+                }
+            }
+        });
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</section>
+</html>
