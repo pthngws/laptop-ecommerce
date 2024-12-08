@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout.html}" lang="vi">
 
-
+<div layout:fragment="content">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -54,7 +54,6 @@
 </head>
 
 <body>
-<div layout:fragment="content">
     <div class="wrapper box-layout">
         <!-- breadcrumb area start -->
 
@@ -79,15 +78,15 @@
                             <!-- manufacturer start -->
                             <div class="sidebar-widget mb-30">
                                 <div class="sidebar-title mb-10">
-                                    <h3>Manufacturers</h3>
+                                    <h3>Hãng sản xuất</h3>
                                 </div>
                                 <div class="sidebar-widget-body">
                                     <ul>
-                                        <li><i class="fa fa-angle-right"></i><a href="#">calvin klein</a><span>(10)</span></li>
-                                        <li><i class="fa fa-angle-right"></i><a href="#">diesel</a><span>(12)</span></li>
-                                        <li><i class="fa fa-angle-right"></i><a href="#">polo</a><span>(20)</span></li>
-                                        <li><i class="fa fa-angle-right"></i><a href="#">Tommy Hilfiger</a><span>(12)</span></li>
-                                        <li><i class="fa fa-angle-right"></i><a href="#">Versace</a><span>(16)</span></li>
+                                        <li><i class="fa fa-angle-right"></i><a href="#">MSI</a></li>
+                                        <li><i class="fa fa-angle-right"></i><a href="#">Asus</a></li>
+                                        <li><i class="fa fa-angle-right"></i><a href="#">Acer</a></li>
+                                        <li><i class="fa fa-angle-right"></i><a href="#">Dell</a></li>
+                                        <li><i class="fa fa-angle-right"></i><a href="#">Lenovo</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -96,7 +95,7 @@
                             <!-- pricing filter start -->
                             <div class="sidebar-widget mb-30">
                                 <div class="sidebar-title mb-10">
-                                    <h3>filter by price</h3>
+                                    <h3>Lọc theo giá</h3>
                                 </div>
                                 <div class="sidebar-widget-body">
                                     <div class="price-range-wrap">
@@ -105,7 +104,7 @@
                                             <form action="#" class="d-flex justify-content-between">
                                                 <button class="filter-btn">filter</button>
                                                 <div class="price-input d-flex align-items-center">
-                                                    <label for="amount">Price: </label>
+                                                    <label for="amount">Lọc: </label>
                                                     <input type="text" id="amount">
                                                 </div>
                                             </form>
@@ -210,7 +209,7 @@
                             <div class="title-icon">
                                 <i class="fa fa-crop"></i>
                             </div>
-                            <h3>Popular Brand</h3>
+                            <h3>Thương hiệu nổi tiếng</h3>
                         </div> <!-- section title end -->
                     </div>
                 </div>
@@ -218,25 +217,19 @@
                     <div class="col-12">
                         <div class="brand-active slick-padding slick-arrow-style">
                             <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br1.png" alt=""></a>
+                                <a href="#"><img src="assets/img/brand/br_acer.jpg" alt=""></a>
                             </div>
                             <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br2.png" alt=""></a>
+                                <a href="#"><img src="assets/img/brand/br_asus.png" alt=""></a>
                             </div>
                             <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br3.png" alt=""></a>
+                                <a href="#"><img src="assets/img/brand/br_dell.png" alt=""></a>
                             </div>
                             <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br4.png" alt=""></a>
+                                <a href="#"><img src="assets/img/brand/br_lenovo.png" alt=""></a>
                             </div>
                             <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br5.png" alt=""></a>
-                            </div>
-                            <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br6.png" alt=""></a>
-                            </div>
-                            <div class="brand-item text-center">
-                                <a href="#"><img src="assets/img/brand/br4.png" alt=""></a>
+                                <a href="#"><img src="assets/img/brand/br_msi.png" alt=""></a>
                             </div>
                         </div>
                     </div>
@@ -341,7 +334,7 @@
                 const prevButton = `
         <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
             <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
-                &laquo; Previous
+                &laquo; Trước
             </a>
         </li>`;
                 paginationContainer.append(prevButton);
@@ -360,7 +353,7 @@
                 const nextButton = `
         <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
             <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
-                Next &raquo;
+                Sau &raquo;
             </a>
         </li>`;
                 paginationContainer.append(nextButton);
@@ -414,8 +407,6 @@
             });
         });
     </script>
-</div>
 </body>
-
-
+</div>
 </html>

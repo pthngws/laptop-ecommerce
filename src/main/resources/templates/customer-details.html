@@ -267,9 +267,9 @@
 
                                 const selectedPage = $(this).text().trim();
 
-                                if (selectedPage === '« Previous') {
+                                if (selectedPage === '« Trước') {
                                     if (page > 0) loadOrder(page - 1); // Go to previous page
-                                } else if (selectedPage === 'Next »') {
+                                } else if (selectedPage === 'Sau »') {
                                     if (page < totalPages - 1) loadOrder(page + 1); // Go to next page
                                 } else {
                                     loadOrder(parseInt(selectedPage) - 1); // Go to specific page
