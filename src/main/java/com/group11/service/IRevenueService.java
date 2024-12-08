@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface IRevenueService {
     public double calculateDailyRevenue();
-    public long calculateWeeklyRevenue();
+    public double calculateWeeklyRevenue();
     public double calculateMonthlyRevenue();
     public double calculateYearlyRevenue();
     public long calculateTotalRevenue();
