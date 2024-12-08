@@ -44,7 +44,7 @@ public class RevenueServiceImpl implements IRevenueService {
     }
 
     @Override
-    public long calculateDailyRevenue() {
+    public double calculateDailyRevenue() {
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999);
 
@@ -52,7 +52,7 @@ public class RevenueServiceImpl implements IRevenueService {
     }
 
     @Override
-    public long calculateWeeklyRevenue() {
+    public double calculateWeeklyRevenue() {
         LocalDateTime startOfWeek = LocalDateTime.now().minusDays(LocalDateTime.now().getDayOfWeek().getValue() - 1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endOfWeek = startOfWeek.plusDays(6).withHour(23).withMinute(59).withSecond(59).withNano(999);
 
@@ -60,7 +60,7 @@ public class RevenueServiceImpl implements IRevenueService {
     }
 
     @Override
-    public long calculateMonthlyRevenue() {
+    public double calculateMonthlyRevenue() {
         LocalDateTime startOfMonth = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59).withNano(999);
 
@@ -68,7 +68,7 @@ public class RevenueServiceImpl implements IRevenueService {
     }
 
     @Override
-    public long calculateYearlyRevenue() {
+    public double calculateYearlyRevenue() {
         // Lấy thời điểm đầu năm
         LocalDateTime startOfYear = LocalDateTime.now()
                 .withDayOfYear(1)
@@ -95,7 +95,7 @@ public class RevenueServiceImpl implements IRevenueService {
     }
 
     @Override
-    public long calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
+    public double calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
         List<OrderEntity> orders = orderRepository.findOrdersWithShippingStatusAndReceiveDate(startDate, endDate);
         return orders.stream()
                 .mapToInt(order -> order.getPayment().getTotal())
