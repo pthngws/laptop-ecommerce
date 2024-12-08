@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group11.config.VNPAYConfig;
 import com.group11.dto.EmailDetail;
 import com.group11.dto.PaymentDTO;
-import com.group11.entity.OrderEntity;
-import com.group11.entity.PaymentEntity;
-import com.group11.entity.PaymentStatus;
+import com.group11.entity.*;
 import com.group11.repository.OrderRepository;
 import com.group11.repository.PaymentRepository;
+import com.group11.service.IInventoryService;
 import com.group11.service.IPaymentService;
 import com.group11.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +38,8 @@ public class PaymentServiceImpl implements IPaymentService {
     private final PaymentRepository paymentRepository;
     @Autowired
     private EmailServiceImpl emailService;
-
+    @Autowired
+    private IInventoryService inventoryService;
 
     @Override
     public PaymentDTO createVnPayPayment(HttpServletRequest request) {
@@ -80,6 +80,13 @@ public class PaymentServiceImpl implements IPaymentService {
         paymentRepository.save(paymentEntity);
         order.setPayment(paymentEntity);
         orderRepository.save(order);
+
+        List<LineItemEntity> lineItem = order.getListLineItems();
+        for (LineItemEntity lineItemEntity : lineItem) {
+            InventoryEntity inventoryEntity = inventoryService.findById(lineItemEntity.getId()).get();
+            inventoryEntity.setQuantity(inventoryEntity.getQuantity() - lineItemEntity.getQuantity());
+            inventoryService.save(inventoryEntity);
+        }
 
         EmailDetail emailDetail = new EmailDetail();
 
