@@ -290,9 +290,13 @@
                 // Chuyển hướng sang trang /checkout với dữ liệu trả về
                 window.location.href = `/mua`;
             },
-            error: function (xhr, status, error) {
-                console.error("Lỗi:", error);
-                alert("Có lỗi xảy ra khi xử lý!");
+            error: function (xhr) {
+                // Hiển thị thông báo lỗi từ server (nếu có)
+                if (xhr.responseText) {
+                    alert(xhr.responseText);
+                } else {
+                    alert("Có lỗi xảy ra khi xử lý!");
+                }
             },
         });
 

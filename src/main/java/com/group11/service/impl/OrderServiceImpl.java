@@ -8,10 +8,7 @@ import com.group11.entity.*;
 import com.group11.repository.AddressRepository;
 import com.group11.repository.OrderRepository;
 import com.group11.repository.UserRepository;
-import com.group11.service.IJwtService;
-import com.group11.service.IOrderService;
-import com.group11.service.IProductService;
-import com.group11.service.IUserService;
+import com.group11.service.*;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -39,6 +37,8 @@ public class OrderServiceImpl implements IOrderService {
     private IJwtService jwtService;
     @Autowired
     IProductService productService;
+    @Autowired
+    IInventoryService inventoryService;
 
     @Override
     public Page<OrderResponse> getAllOrders(int page, int size) {
@@ -141,12 +141,24 @@ public class OrderServiceImpl implements IOrderService {
         addressEntity.setCommune((String) address.get("commune"));
 
         AtomicInteger total = new AtomicInteger();
+
+        // Kiểm tra số lượng tồn kho cho từng sản phẩm
         List<LineItemRequest> processedCartItems = cartItems.stream()
                 .map(item -> {
-                    // Giả sử bạn muốn kiểm tra thông tin sản phẩm từ database
-                    ProductEntity product = productService.findProductById(item.getProductId()).get();
+                    // Lấy thông tin sản phẩm từ database
+                    ProductEntity product = productService.findProductById(item.getProductId()).orElse(null);
                     if (product == null) {
                         throw new IllegalArgumentException("Sản phẩm không tồn tại: " + item.getProductId());
+                    }
+
+                    // Lấy số lượng tồn kho
+                    int quantityInStock = inventoryService.findById(item.getProductId())
+                            .map(inventory -> inventory.getQuantity())
+                            .orElse(0);
+
+                    // Kiểm tra nếu số lượng tồn kho không đủ
+                    if (quantityInStock < item.getQuantity()) {
+                        return null; // hoặc ném ngoại lệ mới nếu cần
                     }
 
                     // Tính giá trị mỗi sản phẩm
@@ -156,7 +168,13 @@ public class OrderServiceImpl implements IOrderService {
                     total.addAndGet(item.getQuantity() * product.getPrice());
                     return item;
                 })
+                .filter(Objects::nonNull) // Loại bỏ các mục null
                 .collect(Collectors.toList());
+
+        // Nếu có bất kỳ sản phẩm nào không đủ tồn kho, trả về null
+        if (processedCartItems.size() < cartItems.size()) {
+            return null;
+        }
 
         // Tạo phản hồi
         CheckoutResponse response = new CheckoutResponse();
@@ -166,9 +184,10 @@ public class OrderServiceImpl implements IOrderService {
         response.setAddress(addressEntity);
         response.setCartItems(processedCartItems);
         response.setTotal(total.get());
-        // Trả lại danh sách đã xử lý
+
         return response;
     }
+
 
 
     @Override

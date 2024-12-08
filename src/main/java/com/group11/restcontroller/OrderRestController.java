@@ -65,9 +65,13 @@ public class OrderRestController {
 
 
     @PostMapping("/checkout")
-    public ResponseEntity<CheckoutResponse> checkoutOrders(@RequestHeader("Authorization") String token,
+    public ResponseEntity<Object> checkoutOrders(@RequestHeader("Authorization") String token,
                                                                 @RequestBody List<LineItemRequest> cartItems){
-        return ResponseEntity.ok(orderService.checkOutOrder(token, cartItems));
+        CheckoutResponse checkoutResponse = orderService.checkOutOrder(token, cartItems);
+        if(checkoutResponse == null){
+            return ResponseEntity.badRequest().body("Không đủ số lượng");
+        }
+        return ResponseEntity.ok(checkoutResponse);
     }
 
     @PostMapping("/create")
