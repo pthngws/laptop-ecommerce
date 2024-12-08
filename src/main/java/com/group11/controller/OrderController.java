@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class OrderController {
 
-    @GetMapping("/mua")
+    @GetMapping("/checkout")
     public String mua() {
         return "checkout";
     }

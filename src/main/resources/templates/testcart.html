@@ -346,7 +346,7 @@
                 success: function (response) {
                     localStorage.setItem("checkoutData", JSON.stringify(response));
                     // Chuyển hướng sang trang /checkout với dữ liệu trả về
-                    window.location.href = `/mua`;
+                    window.location.href = `/checkout`;
                 },
                 error: function (xhr, status, error) {
                     console.error("Lỗi:", error);
