@@ -8,21 +8,23 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Quản lý Nhà Sản Xuất</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     </head>
     <body>
 
     <div class="container mt-5">
 
         <!-- Button to open the Add Manufacturer Modal -->
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addManufacturerModal">Thêm Nhà Sản Xuất</button>
+        <button class="btn sqr-btn mb-10" data-bs-toggle="modal" data-bs-target="#addManufacturerModal">Thêm Nhà Sản Xuất</button>
 
         <!-- Table to display manufacturers -->
         <table class="table table-striped" id="manufacturerTable">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Tên Nhà Sản Xuất</th>
-                <th>Hành Động</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col">ID</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col">Tên Nhà Sản Xuất</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; width: 100px " scope="col"></th>
             </tr>
             </thead>
             <tbody id="manufacturerTableBody">
@@ -114,8 +116,8 @@
               <td>${manufacturer.id}</td>
               <td>${manufacturer.name}</td>
               <td>
-                <button class="btn btn-warning btn-sm edit-btn" data-id="${manufacturer.id}" data-name="${manufacturer.name}">Cập Nhật</button>
-                <button class="btn btn-danger btn-sm delete-btn" data-id="${manufacturer.id}">Xóa</button>
+                <button class="btn btn-primary btn-sm edit-btn" data-id="${manufacturer.id}" data-name="${manufacturer.name}"> <i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger btn-sm delete-btn" data-id="${manufacturer.id}"><i class="bi bi-trash"></i></button>
               </td>
             </tr>
           `);
@@ -187,8 +189,6 @@
         });
 
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </section>
 </html>

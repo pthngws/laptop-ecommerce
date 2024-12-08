@@ -8,21 +8,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Thể Loại</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   </head>
   <body>
   <div class="container mt-5">
 
     <!-- Button to open the Add Category Modal -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Thêm Thể Loại</button>
+    <button class="btn sqr-btn mb-10" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Thêm Thể Loại</button>
 
     <!-- Table to display categories -->
     <table class="table table-striped" id="categoryTable">
       <thead>
       <tr>
-        <th>ID</th>
-        <th>Tên Thể Loại</th>
-        <th>Mô tả</th>
-        <th>Hành Động</th>
+        <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col">ID</th>
+        <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col">Tên Thể Loại</th>
+        <th style="border: 3px solid black;text-align: center; vertical-align: middle; width: 600px " scope="col">Mô tả</th>
+        <th style="border: 3px solid black;text-align: center; vertical-align: middle; width: 100px " scope="col"></th>
       </tr>
       </thead>
       <tbody id="categoryTableBody">
@@ -73,7 +74,7 @@
                 <label for="editCategoryDescription" class="form-label">Mô Tả</label>
                 <textarea class="form-control" id="editCategoryDescription"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary">Cập Nhật</button>
+              <button type="submit" class="btn btn-primary"><i class="bi bi-pencil"></i></button>
             </form>
           </div>
         </div>
@@ -180,13 +181,13 @@
                     <td>${category.name}</td>
                     <td>${category.description}</td>
                     <td>
-                      <button class="btn btn-warning btn-sm edit-btn"
+                      <button class="btn btn-primary btn-sm edit-btn"
                               data-id="${category.id}"
                               data-name="${category.name}"
                               data-description="${category.description}">
-                        Cập Nhật
+                        <i class="bi bi-pencil"></i>
                       </button>
-                      <button class="btn btn-danger btn-sm delete-btn" data-id="${category.id}">Xóa</button>
+                      <button class="btn btn-danger btn-sm delete-btn" data-id="${category.id}"><i class="bi bi-trash"></i></button>
                     </td>
                   </tr>
                 `);

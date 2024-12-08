@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
@@ -43,6 +45,19 @@ public class ProductRestController {
 
     @Autowired
     private ImageItemRepository imageItemRepository;
+
+    @PutMapping("/updatePrice/{id}")
+    public ResponseEntity<?> updateProductPrice(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
+        try {
+            int newPrice = Integer.parseInt(payload.get("price").toString());
+            ProductEntity productEntity = productService.findById(id);
+            productEntity.setPrice(newPrice);
+            productRepository.save(productEntity);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating price");
+        }
+    }
 
     @RequestMapping("/newest")
     public ResponseEntity<List<ProductEntity>> getNewestProducts() {

@@ -128,14 +128,14 @@
           </div>
           <!-- Cart Table Area -->
           <div class="cart-table table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-striped" style="background-color: white !important;">
               <thead>
               <tr>
-                <th class="pro-thumbnail">Thumbnail</th>
-                <th class="pro-title">Product</th>
-                <th class="pro-price">Price</th>
-                <th class="pro-edit">Edit</th>
-                <th class="pro-remove">Remove</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col" class="pro-thumbnail">Hình ảnh</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col" class="pro-title">Product</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col" class="pro-price">Price</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col" class="pro-edit">Edit</th>
+                <th style="border: 3px solid black;text-align: center; vertical-align: middle; " scope="col" class="pro-remove">Remove</th>
               </tr>
               </thead>
               <tbody id="productTableBody">
@@ -166,12 +166,84 @@
 <!--        <span id="currentPage">1</span>-->
 <!--        <button id="nextPage">Next</button>-->
 <!--      </div>-->
+      <!-- Edit Price Modal -->
+      <div class="modal" id="editPriceModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Chỉnh sửa giá sản phẩm</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="editPriceForm">
+                <div class="form-group">
+                  <label for="productPrice">Giá mới</label>
+                  <input type="number" class="form-control" id="productPrice" min="0" required>
+                </div>
+                <input type="hidden" id="productId" value="">
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="savePriceBtn">Lưu</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
   <!-- cart main wrapper end -->
   </body>
 
   <script>
+    $(document).on('click', '.edit-btn', function () {
+      const productId = $(this).data('product-id');
+      const currentPrice = $(this).closest('tr').find('.pro-price span').text().replace(/[^\d]/g, '');
+
+      // Điền thông tin vào modal
+      $('#productId').val(productId);
+      $('#productPrice').val(currentPrice);
+
+      // Hiển thị modal
+      $('#editPriceModal').modal('show');
+    });
+    $('#savePriceBtn').on('click', function () {
+      const productId = $('#productId').val();
+      const newPrice = $('#productPrice').val();
+
+      if (!newPrice || newPrice < 0) {
+        alert('Vui lòng nhập giá hợp lệ!');
+        return;
+      }
+
+      const token = localStorage.getItem("jwtToken");
+
+      $.ajax({
+        url: `/api/products/updatePrice/${productId}`,
+        type: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({ price: newPrice }),
+        success: function (response) {
+          // Cập nhật giá trên giao diện
+          $(`[data-product-id="${productId}"]`).find('.pro-price span').text(parseInt(newPrice).toLocaleString("vi-VN"));
+
+          // Đóng modal
+          $('#editPriceModal').modal('hide');
+          alert('Cập nhật giá thành công!');
+        },
+        error: function (error) {
+          console.error('Error updating product price:', error);
+          alert('Cập nhật giá không thành công!');
+        },
+      });
+    });
+
     $(document).ready(function () {
       const token = localStorage.getItem("jwtToken");
       const productContainer = $("#productTableBody"); // Cập nhật id
