@@ -34,11 +34,13 @@ public class ProductEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     @JsonBackReference
+    @JsonIgnore
     private CategoryEntity category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manufacturer_id", nullable = false)
     @JsonBackReference
+    @JsonIgnore
     private ManufacturerEntity manufacturer;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -48,10 +50,12 @@ public class ProductEntity {
 
     @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
     @JsonBackReference
+    @JsonIgnore
     private List<ShoppingCartEntity> carts;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @JsonManagedReference
+    @JsonIgnore
     @ToString.Exclude
     private List<RateEntity> rates;
 }

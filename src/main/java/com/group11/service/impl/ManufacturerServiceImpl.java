@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -59,5 +61,29 @@ public class ManufacturerServiceImpl implements IManufacturerService {
         ManufacturerEntity entity = manufacturerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Manufacturer not found"));
         manufacturerRepository.delete(entity);
+    }
+
+    @Override
+    public List<ManufacturerEntity> findAll() {
+        // TODO Auto-generated method stub
+        return manufacturerRepository.findAll();
+    }
+
+    @Override
+    public Optional<ManufacturerEntity> findById(Long id) {
+        // TODO Auto-generated method stub
+        return manufacturerRepository.findById(id);
+    }
+
+    @Override
+    public ManufacturerEntity save(ManufacturerEntity manufacturerEntity) {
+        // TODO Auto-generated method stub
+        return manufacturerRepository.save(manufacturerEntity);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        // TODO Auto-generated method stub
+        manufacturerRepository.deleteById(id);
     }
 }

@@ -19,8 +19,7 @@
 
 		<div class="container mt-5">
 			<h1 class="center">Add Product</h1>
-			<form id="add-product-form" class="card p-4"
-				th:action="@{/admin/products/add}" method="post">
+			<form id="add-product-form" class="card p-4">
 				<!-- Product Information -->
 				<div class="form-group">
 					<label for="name">Product Name:</label> <input type="text"
@@ -33,12 +32,10 @@
 						required>
 				</div>
 				<div class="form-group">
-					<label for="status">Status:</label> <select id="status"
-						name="status" class="form-control" required>
-						<option value="1"
-							th:selected="${product != null and product.status == 1}">Active</option>
-						<option value="0"
-							th:selected="${product != null and product.status == 0}">Inactive</option>
+					<label for="status">Status:</label>
+					<select id="status" name="status" class="form-control" required>
+						<option value="AVAILABLE" th:selected="${product != null and product.status == 'AVAILABLE'}">AVAILABLE</option>
+						<option value="UNAVAILABLE" th:selected="${product != null and product.status == 'UNAVAILABLE'}">UNAVAILABLE</option>
 					</select>
 				</div>
 				<div class="form-group">
@@ -138,10 +135,7 @@
 
 				<div id="image-uri-container">
 					<div class="form-group">
-						<label for="imageName">Image Name:</label> <input type="text"
-							name="imageName[]" placeholder="Enter image name"
-							class="form-control"> <label for="imageURI">Image
-							URI:</label> <input type="text" name="imageURI[]"
+						<input type="text" name="imageURI[]"
 							placeholder="Enter image URI" class="form-control"
 							oninput="showImagePreview(this)">
 
@@ -166,6 +160,64 @@
 		<script
 			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 		<script src="/assets/js/admin/admin-product-add.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("#add-product-form").submit(function(event) {
+					event.preventDefault(); // Ngừng hành động submit mặc định
+
+					// Lấy các giá trị từ form
+					var productData = {
+						name: $("#name").val(),
+						price: $("#price").val(),
+						status: $("#status").val(),
+						category: $("#category").val(),
+						manufacturer: $("#manufacturer").val(),
+						ram: $("#ram").val(),
+						cpu: $("#cpu").val(),
+						gpu: $("#gpu").val(),
+						monitor: $("#monitor").val(),
+						color: $("#color").val(),
+						wifi: $("#wifi").val(),
+						lan: $("#lan").val(),
+						audio: $("#audio").val(),
+						bluetooth: $("#bluetooth").val(),
+						charger: $("#charger").val(),
+						connect: $("#connect").val(),
+						disk: $("#disk").val(),
+						size: $("#size").val(),
+						webcam: $("#webcam").val(),
+						weight: $("#weight").val(),
+						operationSystem: $("#operationSystem").val(),
+						description: $("#description").val(),
+						// Lấy danh sách URL hình ảnh
+						imageURI: [] // Đảm bảo dùng tên đúng là imageURI
+					};
+
+					// Lấy các URL hình ảnh từ các input image
+					$("input[name='imageURI[]']").each(function() {
+						var imageUrl = $(this).val();
+						if (imageUrl) {
+							productData.imageURI.push(imageUrl); // Thêm vào mảng imageURI
+						}
+					});
+
+					// Gửi yêu cầu AJAX
+					$.ajax({
+						url: "/admin/products/add", // Địa chỉ URL của controller
+						type: "POST",
+						data: productData, // Gửi dữ liệu form
+						success: function(response) {
+							alert("Sản phẩm đã được thêm thành công!");
+						},
+						error: function(xhr, status, error) {
+							alert("Đã xảy ra lỗi khi thêm sản phẩm.");
+						}
+					});
+				});
+			});
+
+
+		</script>
 		
 	</section>
 </body>

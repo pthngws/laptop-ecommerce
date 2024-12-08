@@ -1,5 +1,4 @@
 package com.group11.service;
-import com.group11.dto.ProductDTO;
 import com.group11.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

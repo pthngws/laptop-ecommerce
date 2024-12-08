@@ -1,31 +1,31 @@
 package com.group11.service.impl;
 
 
-import com.group11.dto.ImageItemDTO;
-import com.group11.dto.ProductDTO;
-import com.group11.entity.ImageItemEntity;
-import com.group11.entity.ProductDetailEntity;
-import com.group11.entity.ProductEntity;
-import com.group11.entity.ProductStatus;
+import com.group11.entity.*;
 import com.group11.repository.*;
 import com.group11.service.IProductService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements IProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    ProductDetailRepository productDetailRepository;
+    @Autowired
+    InventoryRepository inventoryRepository;
+    @Autowired
+    ImageItemRepository imageItemRepository;
 
 //    @Autowired
 //    private CategoryRepository categoryRepository;
@@ -142,6 +142,7 @@ public class ProductServiceImpl implements IProductService {
     public ProductEntity findById(Long id) {
         return productRepository.findById(id).orElse(null);
     }
+
 
 //
 //@Override

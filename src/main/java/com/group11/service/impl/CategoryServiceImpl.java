@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,4 +55,28 @@ public class CategoryServiceImpl implements ICategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         categoryRepository.delete(entity);
     }
+    @Override
+    public List<CategoryEntity> findAll() {
+        // TODO Auto-generated method stub
+        return categoryRepository.findAll();
+    }
+
+    @Override
+    public Optional<CategoryEntity> findById(Long id) {
+        // TODO Auto-generated method stub
+        return categoryRepository.findById(id);
+    }
+
+    @Override
+    public CategoryEntity save(CategoryEntity category) {
+        // TODO Auto-generated method stub
+        return categoryRepository.save(category);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        // TODO Auto-generated method stub
+        categoryRepository.deleteById(id);
+    }
+
 }
