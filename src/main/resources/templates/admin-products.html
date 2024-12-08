@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<div layout:fragment="content">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng</title>
+
+
+    <style>
+      .input-group .btn {
+        height: 50px;
+        border-radius: 0 4px 4px 0;
+        font-size: 16px;
+        padding: 0 30px;
+      }
+      .input-group .form-control {
+        height: 50px;
+        border: 1px solid #ddd;
+        border-right: none;
+        border-radius: 4px 0 0 4px;
+        font-size: 16px;
+        padding: 0 20px;
+      }
+
+      .input-group .form-control:focus {
+        border-color: #007bff;
+        box-shadow: none;
+      }
+      .edit-btn {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        color: #007bff;
+        font-size: 16px;
+        padding: 0;
+        margin-right: 5px;
+      }
+
+      .edit-btn i {
+        pointer-events: none;
+      }
+
+      .cart-calculator-wrapper {
+        display: flex;
+        justify-content: flex-end; /* Căn nút sang bên phải */
+        margin-top: 20px; /* Khoảng cách từ dưới bảng đến nút */
+      }
+      .remove-btn {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 18px; /* Kích thước icon */
+      }
+      .quantity {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .qty-btn {
+        border: none; /* Loại bỏ đường viền */
+        background: none; /* Loại bỏ nền */
+        font-size: 18px; /* Kích thước chữ */
+        padding: 0 10px; /* Khoảng cách chữ */
+        cursor: pointer;
+        color: #333; /* Màu chữ */
+      }
+
+      .qty-btn:focus {
+        outline: none; /* Loại bỏ viền khi nhấn nút */
+      }
+
+      .qty-btn:hover {
+        color: #e60000; /* Màu đỏ khi di chuột vào */
+      }
+
+      .quantity-input {
+        width: 50px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid #ccc; /* Viền của ô nhập */
+        margin: 0 5px; /* Khoảng cách hai bên */
+      }
+
+      /* Cách định dạng thông báo xóa sản phẩm thành công */
+      #remove-success-alert {
+        display: none; /* Ẩn thông báo mặc định */
+        background-color: #4CAF50; /* Màu nền xanh khi thành công */
+        color: white; /* Màu chữ trắng */
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 16px;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho thông báo */
+        max-width: 380px; /* Giới hạn chiều rộng của thông báo */
+        width: 100%;
+      }
+
+
+    </style>
+  </head>
+  <body>
+  <!-- Thông báo xóa sản phẩm thành công -->
+  <div id="remove-success-alert" class="alert alert-success">
+    Sản phẩm đã được xóa thành công!
+  </div>
+
+  <!-- cart main wrapper start -->
+  <div class="cart-main-wrapper mt-4">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="shop-top-bar d-flex justify-content-between align-items-center p-3 bg-white border-bottom">
+            <div class="input-group w-100" style="max-width: 800px; margin: 0 auto;">
+              <input type="search" class="form-control" name="q" placeholder="Bạn cần tìm gì hôm nay?" aria-label="Search">
+              <button class="sqr-btn" type="submit">Tìm kiếm</button>
+            </div>
+          </div>
+          <!-- Cart Table Area -->
+          <div class="cart-table table-responsive">
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th class="pro-thumbnail">Thumbnail</th>
+                <th class="pro-title">Product</th>
+                <th class="pro-price">Price</th>
+                <th class="pro-quantity">Quantity</th>
+                <th class="pro-edit">Edit</th>
+                <th class="pro-remove">Remove</th>
+              </tr>
+              </thead>
+              <tbody id="productTableBody">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-container text-center mt-4">
+            <nav>
+              <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+          </div>
+          <!-- Cart Update Option -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-5 ml-auto">
+          <!-- Cart Calculation Area -->
+          <div class="cart-calculator-wrapper mb-4">
+            <button onclick="proceedToCheckout()" class="sqr-btn d-block">Thêm sản phẩm</button>
+            <!--                    <a href="/checkout" >Proceed To Checkout</a>-->
+          </div>
+        </div>
+      </div>
+<!--      <div id="pagination">-->
+<!--        <button id="prevPage" disabled>Previous</button>-->
+<!--        <span id="currentPage">1</span>-->
+<!--        <button id="nextPage">Next</button>-->
+<!--      </div>-->
+    </div>
+  </div>
+  <!-- cart main wrapper end -->
+  </body>
+
+  <script>
+    $(document).ready(function () {
+      const token = localStorage.getItem("jwtToken");
+      const productContainer = $("#productTableBody"); // Cập nhật id
+      const paginationContainer = $("#pagination");
+      let currentPage = 0; // Trang hiện tại
+      const pageSize = 5; // Số sản phẩm mỗi trang
+
+      // Hàm gọi API và hiển thị sản phẩm
+      function fetchProducts(keyword = "", page = 0) {
+        $.ajax({
+          url: `/api/products/getAll?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`,
+          type: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          success: function (data) {
+            renderCartProducts(data.content); // Hiển thị sản phẩm
+            renderPagination(data.totalPages, page); // Hiển thị phân trang
+          },
+          error: function (error) {
+            console.error("Error loading products:", error);
+            productContainer.html(`<tr><td colspan="6" class="text-center">Không thể tải sản phẩm</td></tr>`);
+          },
+        });
+      }
+
+      // Render sản phẩm
+      function renderCartProducts(products) {
+        productContainer.empty(); // Xóa nội dung cũ trong bảng
+
+        if (products.length === 0) {
+          productContainer.html(
+                  `<tr><td colspan="6" class="text-center">Không có sản phẩm nào</td></tr>`
+          );
+          return;
+        }
+
+        products.forEach((product) => {
+          const row = `
+        <tr data-product-id="${product.productID}">
+            <td class="pro-thumbnail">
+                <a href="#"><img class="img-fluid" src="${product.detail?.images?.[0]?.imageUrl}" alt="Product"/></a>
+            </td>
+            <td class="pro-title">
+                <a href="/product/${product.productID}">${product.name}</a>
+            </td>
+            <td class="pro-price">
+                <span>${product.price.toLocaleString("vi-VN")}</span>
+            </td>
+            <td>
+                <div class="quantity">
+
+                    <input type="text" value="1" min="1" class="quantity-input" readonly>
+
+                </div>
+            </td>
+            <td class="pro-edit">
+                <button class="edit-btn" data-product-id="${product.productID}">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </td>
+            <td class="pro-remove">
+                <button class="remove-btn" data-product-id="${product.productID}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>`;
+          productContainer.append(row);
+        });
+
+        attachEventHandlers(); // Gắn sự kiện
+      }
+
+      // Hiển thị phân trang
+      function renderPagination(totalPages, currentPage) {
+        paginationContainer.empty(); // Xóa nội dung cũ
+
+        if (totalPages <= 1) return; // Không cần phân trang nếu chỉ có 1 trang
+
+        // Nút Previous
+        paginationContainer.append(`
+      <li class="page-item ${currentPage === 0 ? "disabled" : ""}">
+        <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo; Previous</a>
+      </li>`);
+
+        // Nút số trang
+        for (let i = 0; i < totalPages; i++) {
+          paginationContainer.append(`
+        <li class="page-item ${i === currentPage ? "active" : ""}">
+          <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
+        </li>`);
+        }
+
+        // Nút Next
+        paginationContainer.append(`
+      <li class="page-item ${currentPage === totalPages - 1 ? "disabled" : ""}">
+        <a class="page-link" href="#" data-page="${currentPage + 1}">Next &raquo;</a>
+      </li>`);
+      }
+
+      // Xử lý sự kiện click nút phân trang
+      paginationContainer.on("click", ".page-link", function (e) {
+        e.preventDefault();
+        const page = $(this).data("page");
+
+        if (page >= 0) {
+          const keyword = $("input[name='q']").val().trim();
+          currentPage = page; // Cập nhật trang hiện tại
+          fetchProducts(keyword, currentPage); // Gọi API
+        }
+      });
+
+      // Nút tìm kiếm
+      $("button.sqr-btn").on("click", function (e) {
+        e.preventDefault();
+        const keyword = $("input[name='q']").val().trim();
+        currentPage = 0; // Reset về trang đầu tiên
+        fetchProducts(keyword, currentPage);
+      });
+
+      // Gọi API lần đầu
+      fetchProducts();
+
+      // Gắn sự kiện cho các nút tăng, giảm, xóa sản phẩm
+      function attachEventHandlers() {
+
+      }
+
+      // Sự kiện cho nút xóa
+      $(document).on('click', '.remove-btn', function () {
+        const productId = $(this).data('product-id'); // Lấy productId từ thuộc tính data-product-id
+
+        // Gọi API để xóa sản phẩm khỏi giỏ hàng
+        const token = localStorage.getItem("jwtToken"); // Lấy token từ localStorage
+        $.ajax({
+          url: `/api/products/remove/${productId}`,  // API để xóa sản phẩm
+          type: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`, // Thêm token vào header
+            "Content-Type": "application/json",
+          },
+          success: function (response) {
+            // Xóa sản phẩm khỏi giỏ hàng trên giao diện
+            $(`[data-product-id="${productId}"]`).closest('tr').remove();
+            $('#remove-success-alert').fadeIn().delay(3000).fadeOut();
+          },
+          error: function (error) {
+            console.error("Error removing product:", error);
+          }
+        });
+      });
+
+    });
+
+
+
+  </script>
+
+</div>
+</html>

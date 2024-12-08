@@ -12,17 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/product")
+@Controller
+@RequestMapping("/product")
 public class ProductDetailController {
-    @Autowired
-    IProductService productService = new ProductServiceImpl();
+
     @RequestMapping("/{id}")
-    public ResponseEntity<ProductEntity> getProductDetails(@PathVariable Long id) {
-        Optional<ProductEntity> product = productService.findProductById(id);
-        if (product.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(product.get());
+   public String productDetail(@PathVariable int id) {
+        return "productDetails";
     }
 }

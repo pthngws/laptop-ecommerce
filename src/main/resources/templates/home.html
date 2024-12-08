@@ -196,10 +196,10 @@
             $.ajax({
                 url: '/api/products/newest', // Đảm bảo URL này đúng
                 type: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                // headers: {
+                //     'Authorization': `Bearer ${token}`,
+                //     'Content-Type': 'application/json'
+                // },
                 success: function (products) {
                     console.log('Dữ liệu sản phẩm trả về:', products);
                     const productContainer = $('#product-container');
@@ -288,7 +288,8 @@
                 error: function (xhr, status, error) {
                     $('#cart-notification').addClass('error').text('Đã có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!').fadeIn().delay(3000).fadeOut();
                 }
-            });}
+            });
+        }
 
 
     </script>

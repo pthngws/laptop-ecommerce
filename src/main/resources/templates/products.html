@@ -13,6 +13,25 @@
     <!-- Site title -->
     <title>Danh sách sản phẩm</title>
     <style>
+        .notification {
+            display: none; /* Ẩn thông báo mặc định */
+            background-color: #4CAF50; /* Màu nền khi thành công */
+            color: white; /* Màu chữ trắng */
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .notification.error {
+            background-color: #f44336; /* Màu nền khi có lỗi */
+        }
         .input-group .form-control {
             height: 50px;
             border: 1px solid #ddd;
@@ -56,6 +75,7 @@
 <body>
 <div layout:fragment="content">
     <div class="wrapper box-layout">
+        <div id="cart-notification" class="notification"></div>
         <!-- breadcrumb area start -->
 
         <!-- page wrapper start -->
@@ -303,7 +323,9 @@
                         <div class="product-action-link">
                             <a href="#" data-toggle="modal" data-target="#quick_view"><i class="fa fa-search"></i></a>
                             <a href="#"><i class="fa fa-refresh"></i></a>
-                            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                            <a href="#" class="add-to-cart" data-product-id="${product.productID}" data-toggle="tooltip" data-placement="left" title="Add to cart">
+                                <i class="fa fa-shopping-cart"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="product-content">
@@ -326,6 +348,31 @@
                 </div>
             </div>`;
                     productContainer.append(productHTML);
+                });
+                // Gắn sự kiện click cho nút Add to cart
+                $('.add-to-cart').off('click').on('click', function (e) {
+                    e.preventDefault(); // Ngăn chặn hành vi mặc định
+                    const productId = $(this).data('product-id'); // Lấy ID sản phẩm
+                    addToCart(productId); // Gọi hàm thêm sản phẩm vào giỏ hàng
+                });
+            }
+
+            function addToCart(productId) {
+                // Gọi API thêm sản phẩm vào giỏ hàng
+                $.ajax({
+                    url: '/api/cart/add',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Gửi token để xác định user
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({ productId: productId, quantity: 1 }), // Gửi ID sản phẩm và số lượng (mặc định là 1)
+                    success: function (response) {
+                        $('#cart-notification').removeClass('error').text('Sản phẩm đã được thêm vào giỏ hàng!').fadeIn().delay(3000).fadeOut();
+                    },
+                    error: function (xhr, status, error) {
+                        $('#cart-notification').addClass('error').text('Đã có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!').fadeIn().delay(3000).fadeOut();
+                    }
                 });
             }
 
@@ -410,9 +457,9 @@
                 },
                 error: function() {
                     alert("Có lỗi xảy ra khi tải danh sách categories.");
-                }
-            });
+                }});
         });
+
     </script>
 </div>
 </body>
