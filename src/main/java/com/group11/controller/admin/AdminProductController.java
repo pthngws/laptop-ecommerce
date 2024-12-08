@@ -11,6 +11,6 @@ public class AdminProductController {
     @GetMapping
     public String load()
     {
-        return "product-add";
+        return "add";
     }
 }

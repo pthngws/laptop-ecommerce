@@ -162,9 +162,6 @@
             const productID = parseInt(row.querySelector(".productId").value)
             const quantity = parseInt(row.querySelector(".quantity-input").value);
 
-            // alert(productID)
-            // alert(quantity)
-
             string += productID +' '+quantity+','
 
             cartData.push({ productID: productID, quantity: quantity });
@@ -172,48 +169,6 @@
         console.log(cartData)
         return string;
     }
-
-
-    function proceedToCheckout(){
-        const string = getCartData();
-        const totalAmountElement = document.getElementById('total-amount');
-        const totalAmountText = totalAmountElement.textContent.trim();
-        const totalAmount = totalAmountText.replace(/\./g, "");
-
-        const discountAmountElement = document.getElementById('discount-amount');
-        const discountAmountText = discountAmountElement.textContent.trim();
-        const discountAmount = discountAmountText.replace(/\./g, "");
-
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/purchase/checkout/buyInCart';
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'cartData';
-        input.value = JSON.stringify(string);
-        form.appendChild(input);
-
-        // Thêm totalAmount vào form
-        const totalAmountInput = document.createElement('input');
-        totalAmountInput.type = 'hidden';
-        totalAmountInput.name = 'total'; // Thay đổi theo yêu cầu của controller
-        totalAmountInput.value = totalAmount;
-        form.appendChild(totalAmountInput);
-
-        // Thêm totalAmount vào form
-        const discount = document.createElement('input');
-        discount.type = 'hidden';
-        discount.name = 'discount'; // Thay đổi theo yêu cầu của controller
-        discount.value = discountAmount;
-        form.appendChild(discount);
-
-
-        document.body.appendChild(form);
-        form.submit();
-    }
-
 
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -225,6 +180,7 @@
                 setTimeout(() => alertMessage.remove(), 500); // Xóa hoàn toàn sau 0.5 giây
             }, 4000); // Sau 4 giây
         }
+
 
         // Hàm định dạng tiền tệ với dấu phân cách
         function formatCurrency(value) {
@@ -271,19 +227,6 @@
             const totalElement = document.getElementById("total-amount");
             const total = subTotalAmount - discountAmount;
             totalElement.innerText = `${formatCurrency(total)} `;
-        }
-
-        // Hàm tính giảm giá
-        function calculateDiscount(subTotal) {
-
-
-            const discountRate = parseFloat(document.getElementById("discount-rate").value);  // Lấy tỷ lệ giảm giá từ backend
-
-            // Nếu không có giảm giá hoặc giá trị không hợp lệ, trả về 0
-            if (isNaN(discountRate) || discountRate <= 0) {
-                return 0;
-            }
-            return subTotal * discountRate / 100;
         }
 
         // Cập nhật định dạng cho cột Price và Total khi trang được tải
