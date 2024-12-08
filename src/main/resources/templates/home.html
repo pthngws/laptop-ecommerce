@@ -219,13 +219,11 @@
                         const productHtml = `
                     <div class="product-item fix product-custom">
                         <div class="product-thumb">
-                            <a href="/product-details/${product.productID}">
+                            <a href="/product/${product.productID}">
                                 <img src="${imageUrl}" class="img-pri" alt="${product.name}">
                             </a>
                             <div class="product-action-link">
-                                <a href="#" data-toggle="tooltip" data-placement="left" title="Compare">
-                                    <i class="fa fa-refresh"></i>
-                                </a>
+
                                 <a href="#" class="add-to-cart" data-product-id="${product.productID}" data-toggle="tooltip" data-placement="left" title="Add to cart">
                                 <i class="fa fa-shopping-cart"></i>
                             </a>
@@ -233,7 +231,7 @@
                         </div>
                         <div class="product-content">
                             <h4 style="height: 60px">
-                                <a href="/product-details/${product.productID}">${product.name}</a>
+                                <a href="/product/${product.productID}">${product.name}</a>
                             </h4>
                             <div class="pricebox">
                                 <span class="regular-price">${formatPrice(product.price)} đ</span>
