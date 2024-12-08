@@ -1,7 +1,9 @@
 package com.group11.restcontroller;
 
+import com.group11.dto.response.ProductResponse;
 import com.group11.entity.*;
 import com.group11.repository.*;
+import com.group11.service.IInventoryService;
 import com.group11.service.IJwtService;
 import com.group11.service.IProductService;
 import com.group11.service.impl.JwtServiceImpl;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/products")
 public class ProductRestController {
     @Autowired
@@ -25,6 +27,9 @@ public class ProductRestController {
     IProductService productService = new ProductServiceImpl();
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private IInventoryService inventoryService;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -43,6 +48,13 @@ public class ProductRestController {
     public ResponseEntity<List<ProductEntity>> getNewestProducts() {
         List<ProductEntity> newestProducts = productService.getNewestProducts();
         return ResponseEntity.ok(newestProducts);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
+        ProductEntity productEntity = productService.findById(id);
+        int quantity = inventoryService.findById(id).get().getQuantity();
+        return ResponseEntity.ok(new ProductResponse(productEntity, quantity));
     }
 
     @GetMapping("/getAll")

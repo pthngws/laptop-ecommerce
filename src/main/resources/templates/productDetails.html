@@ -669,10 +669,6 @@
 				$.ajax({
 					url: `/api/products/${id}`, // API lấy chi tiết sản phẩm
 					type: "GET",
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
 					success: function (response) {
 						console.log(response)
 						const product = response.product
@@ -683,13 +679,6 @@
 						$("#product-title").text(product.name);
 						$("#product-price").text(product.price + "đ");
 						$('#product-stock').text(quantity)
-						$('#cart').style.display = 'flex';
-						$('#buyNow').style.display = 'flex';
-						// $("#product-description").text(product.detail.description || "No description available");
-						// if(parseInt(quantity) > 0){
-						// 	$('#cart').style.display = 'flex';
-						// 	$('#buyNow').style.display = 'flex';
-						// }
 
 
 
