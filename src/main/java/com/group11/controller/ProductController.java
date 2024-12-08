@@ -12,5 +12,11 @@ public class ProductController {
         return "products";
     }
 
+    @GetMapping("/product/{id}")
+    public String productsID()
+    {
+        return "productDetails";
+    }
+
 
 }
