@@ -35,11 +35,8 @@ public class RateRestController {
                     .body("Bạn cần đăng nhập để đánh giá sản phẩm.");
         }
 
-
         token = token.substring(7);
         String email = jwtService.extractClaim(token, claims -> claims.getSubject());
-
-        // Lấy thông tin người dùng từ email
         UserEntity user = userService.findByEmail(email);
 
         if (user == null) {
@@ -47,15 +44,14 @@ public class RateRestController {
                     .body("Người dùng không tồn tại.");
         }
 
-        // Thiết lập userId từ người dùng đã tìm được
         rateRequest.setUserId(user.getUserID());
 
         try {
-            // Gọi service để thêm đánh giá
             rateService.addRate(rateRequest, files);
             return ResponseEntity.ok("Đánh giá đã được thêm thành công!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi: " + e.getMessage());
         }
     }
+
 }
