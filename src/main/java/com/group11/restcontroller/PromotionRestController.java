@@ -45,6 +45,15 @@ public class PromotionRestController {
             return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/apply/{code}")
+    public ResponseEntity<PromotionEntity> applyPromotionByCode(@PathVariable String code) {
+        PromotionEntity promotion = promotionService.applyPromotionByCode(code);
+        if (promotion != null)
+            return ResponseEntity.ok(promotion);
+        else
+            return ResponseEntity.notFound().build();
+    }
+
     @PostMapping
     public ResponseEntity<PromotionEntity> createPromotion(@RequestBody PromotionRequest promotion) {
         return ResponseEntity.ok(promotionService.createPromotion(promotion));

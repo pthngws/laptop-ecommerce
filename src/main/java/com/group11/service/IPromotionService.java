@@ -12,6 +12,7 @@ public interface IPromotionService {
     public List<PromotionEntity> getValidPromotions();
     public PromotionEntity getPromotionById(Long id);
     public PromotionEntity getPromotionByCode(String code);
+    public PromotionEntity applyPromotionByCode(String code);
     public PromotionEntity createPromotion(PromotionRequest promotion);
     public PromotionEntity updatePromotion(PromotionRequest promotion, Long promotionID);
     public void deletePromotion(Long id);
