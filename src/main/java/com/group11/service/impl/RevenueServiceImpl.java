@@ -98,7 +98,7 @@ public class RevenueServiceImpl implements IRevenueService {
     public double calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
         List<OrderEntity> orders = orderRepository.findOrdersWithShippingStatusAndReceiveDate(startDate, endDate);
         return orders.stream()
-                .mapToInt(order -> order.getPayment().getTotal())
+                .mapToDouble(order -> order.getPayment().getTotal())
                 .sum();
     }
 
