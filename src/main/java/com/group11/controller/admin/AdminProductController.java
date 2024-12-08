@@ -1,9 +1,6 @@
 package com.group11.controller.admin;
 
-import com.group11.entity.ImageItemEntity;
-import com.group11.entity.InventoryEntity;
-import com.group11.entity.ProductDetailEntity;
-import com.group11.entity.ProductEntity;
+import com.group11.entity.*;
 import com.group11.service.*;
 import com.group11.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +101,17 @@ public class AdminProductController {
 
             // Lưu ProductEntity vào database
             productService.save(productEntity);
+            InventoryEntity inventory = new InventoryEntity();
+            inventory.setProductId(productEntity.getProductID());
+            if(productEntity.getStatus().equals(ProductStatus.AVAILABLE))
+            {
+                inventory.setQuantity(1);
+            }
+            else {
+                inventory.setQuantity(0);
+            }
+
+            inventoryService.save(inventory);
 
             // Lưu InventoryEntity vào database
             redirectAttributes.addFlashAttribute("successMessage", "Product added successfully!");

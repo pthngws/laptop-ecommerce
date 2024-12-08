@@ -669,10 +669,6 @@
 				$.ajax({
 					url: `/api/products/${id}`, // API lấy chi tiết sản phẩm
 					type: "GET",
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
-					},
 					success: function (response) {
 						console.log(response)
 						const product = response.product
