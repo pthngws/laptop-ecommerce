@@ -102,6 +102,16 @@
                             'Authorization': `Bearer ${token}`
                         },
                         success: function (order){
+                            const statusMap = {
+                                NONDELIVERY: "Chưa giao",
+                                DELIVERING: "Đang giao",
+                                DELIVERIED: "Đã giao",
+                                CANCELED: "Đã hủy",
+                                COMPLETED: "Hoàn thành",
+                                ERRORED: "Lỗi",
+                                PENDING: "Chờ thanh toán",
+                                PAID: "Đã thanh toán"
+                            };
                             console.log(order)
                             $('#orderId').text(order.orderId);
                             $('#name').text(order.name);
@@ -113,10 +123,10 @@
                                 addressStr += address.commune + ", " + address.district + ", " +address.province + ", " +address.country
                             }
                             $('#address').text(addressStr !== "" ? addressStr : "Chưa có")
-                            $('#orderDate').text(order.orderDate)
-                            $('#receiveDate').text(order.receiveDate)
-                            $('#shippingStatus').text(order.shippingStatus);
-                            $('#paymentStatus').text(order.paymentStatus);
+                            $('#orderDate').text(new Date(order.orderDate).toLocaleDateString("vi-VN"))
+                            $('#receiveDate').text(new Date(order.receiveDate).toLocaleDateString("vi-VN"))
+                            $('#shippingStatus').text(statusMap[order.shippingStatus]);
+                            $('#paymentStatus').text(statusMap[order.paymentStatus]);
                             // $('#paymentMethod').text(order.paymentMethod);
                             $('#note').text(order.note);
 

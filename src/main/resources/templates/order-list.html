@@ -39,7 +39,7 @@
             <select id="status" name="status" class="form-select me-2">
                 <option value="">Tất cả</option>
                 <option value="CANCELED">Đã huỷ</option>
-                <option value="DELIVERYING">Đang giao</option>
+                <option value="DELIVERING">Đang giao</option>
                 <option value="DELIVERIED">Đã giao</option>
             </select>
             <!-- Nút tìm kiếm -->
@@ -110,15 +110,21 @@
                                 // Nếu không có dữ liệu, hiển thị dòng thông báo
                                 tableBody.append('<tr><td colspan="8" class="text-center">Không có khách hàng nào!</td></tr>');
                             } else {
+                                const shippingStatusMap = {
+                                    NONDELIVERY: "Chưa giao",
+                                    DELIVERING: "Đang giao",
+                                    DELIVERIED: "Đã giao",
+                                    CANCELED: "Đã hủy"
+                                };
                                 orderList.forEach(function (order, index) {
                                     const row = `
                                 <tr data-id="${order.orderId}">
                                     <td>${index + 1}</td>
                                     <td>${order.orderId}</td>
-                                    <td>${order.orderDate}</td>
+                                    <td>${new Date(order.orderDate).toLocaleDateString("vi-VN")}</td>
                                     <td>${order.name}</td>
                                     <td>${order.totalAmount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</td>
-                                    <td>${order.shippingStatus}</td>
+                                    <td>${shippingStatusMap[order.shippingStatus]}</td>
                                     <td style="text-align: center; vertical-align: middle;">
                                         <a href="/admin/orders/${order.orderId}" class="btn btn-danger custom-hover">Chi tiết</a>
                                     </td>
