@@ -38,61 +38,24 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-9">
-<!--						&lt;!&ndash; product details inner end &ndash;&gt;-->
-<!--						<div class="product-details-inner">-->
-<!--							<div class="row">-->
-<!--								<div class="col-lg-6">-->
-<!--									<div class="product-large-slider mb-20 slick-arrow-style_2" id="product-images">-->
-<!--										&lt;!&ndash; Hình ảnh sẽ được AJAX thêm vào đây &ndash;&gt;-->
-<!--									</div>-->
-<!--								</div>-->
-<!--								<div class="col-lg-6">-->
-<!--									<div class="product-details-des mt-md-34 mt-sm-34">-->
-<!--										<h3 id="product-title">Product Name</h3>-->
-<!--										<div class="pricebox">-->
-<!--											<span class="regular-price" id="product-price">0đ</span>-->
-<!--										</div>-->
-<!--										<p id="product-description">Mô tả sản phẩm</p>-->
-<!--										<div class="availability mt-10">-->
-<!--											<h5>Availability:</h5>-->
-<!--											<span id="product-stock">0 in stock</span>-->
-<!--										</div>-->
-<!--										<div class="quantity-cart-box d-flex align-items-center">-->
-<!--											<div class="quantity">-->
-<!--												<div class="pro-qty"><input type="text" value="1"></div>-->
-<!--											</div>-->
-<!--											<div class="action_link">-->
-<!--												<a class="buy-btn" href="#">add to cart<i class="fa fa-shopping-cart"></i></a>-->
-<!--											</div>-->
-<!--										</div>-->
-<!--									</div>-->
-<!--								</div>-->
-<!--							</div>-->
-<!--						</div>-->
-
-<!--						&lt;!&ndash; product details inner end &ndash;&gt;-->
-
 						<!-- product details inner start -->
 						<div class="product-details-inner">
 							<div class="row">
 								<div class="col-lg-6">
-									<!-- Hình ảnh chính -->
-									<div id="product-main-image" class="product-large-slider mb-20 slick-arrow-style_2">
-										<!-- Hình ảnh chính sẽ được hiển thị tại đây -->
+									<div class="product-large-slider mb-20 slick-arrow-style_2">
+<!--										ajax-->
 									</div>
-
-									<!-- Thumbnail hình ảnh -->
-									<div id="product-thumbnails" class="product-thumbnails mt-10" style="display: flex; gap: 10px;">
-										<!-- Thumbnail sẽ được hiển thị tại đây -->
+									<div class="pro-nav slick-padding2 slick-arrow-style_2">
+<!--										ajax-->
 									</div>
 								</div>
-								<div class="col-lg-6">
+								<div class="col-lg-6" id="productMain">
 									<div class="product-details-des mt-md-34 mt-sm-34">
 										<h3 id="product-title">Product Name</h3>
 										<div class="pricebox">
 											<span class="regular-price" id="product-price">0đ</span>
 										</div>
-										<p id="product-description">Mô tả sản phẩm</p>
+<!--										<p id="product-description">Mô tả sản phẩm</p>-->
 										<div class="availability mt-10">
 											<h5>Availability:</h5>
 											<span id="product-stock">0 in stock</span>
@@ -101,16 +64,18 @@
 											<div class="quantity">
 												<div class="pro-qty"><input type="text" value="1"></div>
 											</div>
-											<div class="action_link">
-												<a class="buy-btn" href="#">add to cart<i class="fa fa-shopping-cart"></i></a>
-											</div>
+										</div>
+										<div class="action_link" id="cart">
+											<a  href="#">giỏ hàng<i class="fa fa-shopping-cart"></i></a>
+										</div>
+										<div class="action_link" id="buyNow">
+											<a  class="buy-btn" href="#">Mua ngay<i class="fa fa-shopping-cart"></i></a>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						<!-- product details inner end -->
-
 
 						<!-- product details reviews start -->
 						<div class="product-details-reviews mt-34">
@@ -119,7 +84,7 @@
 									<div class="product-review-info">
 										<ul class="nav review-tab">
 											<li>
-												<a class="active" data-toggle="tab" href="#tab_one">information</a>
+												<a class="active" data-toggle="tab" href="#tab_one">Thông số kỹ thuật</a>
 											</li>
 											<li>
 												<a data-toggle="tab" href="#tab_two">reviews</a>
@@ -127,16 +92,9 @@
 										</ul>
 										<div class="tab-content reviews-tab">
 											<div class="tab-pane fade show active" id="tab_one">
-												<table class="table table-bordered">
+												<table class="table table-bordered" id="detailTable">
 													<tbody>
-													<tr>
-														<td>color</td>
-														<td>black, blue, red</td>
-													</tr>
-													<tr>
-														<td>size</td>
-														<td>L, M, S</td>
-													</tr>
+
 													</tbody>
 												</table>
 											</div>
@@ -706,73 +664,120 @@
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
-		function loadProductDetails(id) {
-			$.ajax({
-				url: `/api/product/${id}`, // API lấy chi tiết sản phẩm
-				type: "GET",
-				headers: {
-					'Authorization': `Bearer ${token}`,
-					'Content-Type': 'application/json'
-				},
-				success: function (product) {
-					// Hiển thị thông tin sản phẩm
-					$("#product-title").text(product.name);
-					$("#product-price").text(product.price + "đ");
-					$("#product-description").text(product.detail.description || "No description available");
+		$(document).ready(function () {
+			function loadProductDetails(id) {
+				$.ajax({
+					url: `/api/products/${id}`, // API lấy chi tiết sản phẩm
+					type: "GET",
+					headers: {
+						'Authorization': `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					success: function (response) {
+						console.log(response)
+						const product = response.product
+						const quantity = response.quantity
+						// const {content: product, quantity} = response;
+						console.log(product)
+						console.log(quantity)
+						$("#product-title").text(product.name);
+						$("#product-price").text(product.price + "đ");
+						$('#product-stock').text(quantity)
+						$('#cart').style.display = 'flex';
+						$('#buyNow').style.display = 'flex';
+						// $("#product-description").text(product.detail.description || "No description available");
+						// if(parseInt(quantity) > 0){
+						// 	$('#cart').style.display = 'flex';
+						// 	$('#buyNow').style.display = 'flex';
+						// }
 
-					// Hiển thị hình ảnh
-					const mainImageContainer = $("#product-main-image"); // Container hình chính
-					const thumbnailsContainer = $("#product-thumbnails"); // Container thumbnail
 
-					mainImageContainer.empty(); // Xóa hình chính trước đó
-					thumbnailsContainer.empty(); // Xóa thumbnail trước đó
 
-					if (product.detail.images && product.detail.images.length > 0) {
-						// Hiển thị hình chính (hình đầu tiên)
-						const firstImage = product.detail.images[0];
-						const mainImageHtml = `
-                    <div class="pro-large-img img-zoom">
-                        <img src="${firstImage.imageUrl}" alt="Main Product Image" style="width: 100%; height: auto; border: 1px solid #ccc;" />
-                    </div>
-                `;
-						mainImageContainer.append(mainImageHtml);
+						const slider = $('.product-large-slider');
+						const nav = $('.pro-nav');
 
-						// Hiển thị các hình nhỏ (thumbnail)
-						product.detail.images.forEach((image, index) => {
-							const thumbnailHtml = `
-                        <div class="thumbnail" style="cursor: pointer;">
-                            <img src="${image.imageUrl}" alt="Thumbnail ${index + 1}" style="width: 60px; height: 60px; border: 1px solid #ccc; margin-right: 10px;" onclick="changeMainImage('${image.imageUrl}')"/>
-                        </div>
-                    `;
-							thumbnailsContainer.append(thumbnailHtml);
+						// Hủy slider nếu đã khởi tạo
+						if (slider.hasClass('slick-initialized')) {
+							slider.slick('unslick');
+							nav.slick('unslick');
+						}
+
+						// Xóa nội dung cũ
+						slider.empty();
+						nav.empty();
+
+						// Thêm hình ảnh từ API
+						product.detail.images.forEach(function (image, index) {
+							const sliderItem = `
+                            <div class="pro-large-img img-zoom">
+                                <img src="${image.imageUrl}" alt="Product Image ${index}" />
+                            </div>`;
+							slider.append(sliderItem);
+
+							const navItem = `
+                            <div class="pro-nav-thumb">
+                                <img src="${image.imageUrl}" alt="Thumbnail ${index}" />
+                            </div>`;
+							nav.append(navItem);
 						});
-					} else {
-						mainImageContainer.append('<p>No images available</p>');
+
+						// Khởi tạo lại slider
+						slider.slick({
+							slidesToShow: 1,
+							slidesToScroll: 1,
+							fade: true,
+							arrows: true,
+							asNavFor: '.pro-nav',
+							prevArrow: '<button type="button" class="slick-prev"><i class="fa fa-angle-left"></i></button>',
+							nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
+						});
+
+						nav.slick({
+							slidesToShow: 4,
+							slidesToScroll: 1,
+							asNavFor: '.product-large-slider',
+							centerMode: true,
+							arrows: true,
+							centerPadding: 0,
+							focusOnSelect: true,
+							prevArrow: '<button type="button" class="slick-prev"><i class="fa fa-angle-left"></i></button>',
+							nextArrow: '<button type="button" class="slick-next"><i class="fa fa-angle-right"></i></button>',
+						});
+
+						const detail = $('#detailTable tbody');
+
+						const html = `
+    ${product.detail.cpu ? `<tr><td><strong>CPU</strong></td><td>${product.detail.cpu}</td></tr>` : ''}
+    ${product.detail.ram ? `<tr><td><strong>RAM</strong></td><td>${product.detail.ram}</td></tr>` : ''}
+    ${product.detail.gpu ? `<tr><td><strong>GPU</strong></td><td>${product.detail.gpu}</td></tr>` : ''}
+    ${product.detail.monitor ? `<tr><td><strong>Màn hình</strong></td><td>${product.detail.monitor}</td></tr>` : ''}
+    ${product.detail.disk ? `<tr><td><strong>Ổ cứng</strong></td><td>${product.detail.disk}</td></tr>` : ''}
+    ${product.detail.connect ? `<tr><td><strong>Cổng kết nối</strong></td><td>${product.detail.connect}</td></tr>` : ''}
+    ${product.detail.lan ? `<tr><td><strong>LAN</strong></td><td>${product.detail.lan}</td></tr>` : ''}
+    ${product.detail.wifi ? `<tr><td><strong>WIFI</strong></td><td>${product.detail.wifi}</td></tr>` : ''}
+    ${product.detail.bluetooth ? `<tr><td><strong>Bluetooth</strong></td><td>${product.detail.bluetooth}</td></tr>` : ''}
+    ${product.detail.audio ? `<tr><td><strong>Âm thanh</strong></td><td>${product.detail.audio}</td></tr>` : ''}
+    ${product.detail.webcam ? `<tr><td><strong>Webcam</strong></td><td>${product.detail.webcam}</td></tr>` : ''}
+    ${product.detail.operationSystem ? `<tr><td><strong>Hệ điều hành</strong></td><td>${product.detail.operationSystem}</td></tr>` : ''}
+    ${product.detail.charger ? `<tr><td><strong>Sạc</strong></td><td>${product.detail.charger}</td></tr>` : ''}
+    ${product.detail.weight ? `<tr><td><strong>Cân nặng</strong></td><td>${product.detail.weight}</td></tr>` : ''}
+    ${product.detail.color ? `<tr><td><strong>Màu sắc</strong></td><td>${product.detail.color}</td></tr>` : ''}
+    ${product.detail.size ? `<tr><td><strong>Kích thước</strong></td><td>${product.detail.size}</td></tr>` : ''}
+    ${product.detail.description ? `<tr><td><strong>Mô tả</strong></td><td>${product.detail.description}</td></tr>` : ''}
+`;
+						detail.append(html);
+
+
+					},
+					error: function () {
+						alert("Lỗi khi tải chi tiết sản phẩm!");
 					}
-				},
-				error: function () {
-					alert("Lỗi khi tải chi tiết sản phẩm!");
-				}
-			});
-		}
+				});
+			}
 
-		// Hàm thay đổi hình ảnh chính khi nhấp vào thumbnail
-		function changeMainImage(imageUrl) {
-			const mainImageContainer = $("#product-main-image");
-			mainImageContainer.empty(); // Xóa hình chính hiện tại
-			const newMainImageHtml = `
-        <div class="pro-large-img img-zoom">
-            <img src="${imageUrl}" alt="Main Product Image" style="width: 100%; height: auto; border: 1px solid #ccc;" />
-        </div>
-    `;
-			mainImageContainer.append(newMainImageHtml);
-		}
-
-
-		// Gọi hàm này với id của sản phẩm bạn muốn hiển thị
-		loadProductDetails(1); // Ví dụ: lấy chi tiết sản phẩm có id = 1
-
-
+			// Gọi hàm để tải chi tiết sản phẩm
+			loadProductDetails(1); // Thay `1` bằng ID sản phẩm thực tế
+		});
 	</script>
 	</body>
 
