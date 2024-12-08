@@ -196,7 +196,6 @@ public class OrderServiceImpl implements IOrderService {
                 order.getReceiveDate(),
                 order.getShippingStatus().name(),
                 order.getPaymentStatus().name(),
-                order.getPayment(),
                 order.getNote(),
                 totalAmount,
                 items

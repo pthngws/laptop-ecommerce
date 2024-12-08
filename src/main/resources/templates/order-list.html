@@ -117,7 +117,7 @@
                                     <td>${order.orderId}</td>
                                     <td>${order.orderDate}</td>
                                     <td>${order.name}</td>
-                                    <td>${order.totalAmount}</td>
+                                    <td>${order.totalAmount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</td>
                                     <td>${order.shippingStatus}</td>
                                     <td style="text-align: center; vertical-align: middle;">
                                         <a href="/admin/orders/${order.orderId}" class="btn btn-danger custom-hover">Chi tiết</a>
