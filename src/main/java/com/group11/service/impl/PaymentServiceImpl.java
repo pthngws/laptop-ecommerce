@@ -83,7 +83,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
         List<LineItemEntity> lineItem = order.getListLineItems();
         for (LineItemEntity lineItemEntity : lineItem) {
-            InventoryEntity inventoryEntity = inventoryService.findById(lineItemEntity.getId()).get();
+            InventoryEntity inventoryEntity = inventoryService.findById(lineItemEntity.getProduct().getProductID()).get();
             inventoryEntity.setQuantity(inventoryEntity.getQuantity() - lineItemEntity.getQuantity());
             inventoryService.save(inventoryEntity);
         }

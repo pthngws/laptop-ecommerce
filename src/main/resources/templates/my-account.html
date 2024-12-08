@@ -219,7 +219,7 @@
                             ? `${orderDetails.address.other}, ${orderDetails.address.commune}, ${orderDetails.address.district}, ${orderDetails.address.province}, ${orderDetails.address.country}`
                             : "Không có địa chỉ giao hàng";
 
-                        const phoneNumber = orderDetails.phone || "Không có số điện thoại";
+                        const phoneNumber = orderDetails.phone;
                         const note = orderDetails.note || "Không có ghi chú";
 
                         const items = Array.isArray(orderDetails.cartItems) ? orderDetails.cartItems : [];
