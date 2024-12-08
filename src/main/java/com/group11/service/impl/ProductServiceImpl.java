@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,7 +132,10 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ProductEntity> getNewestProducts() {
-        return productRepository.findTop10NewestProducts();
+        List<ProductEntity> allProducts = productRepository.findTop10NewestProducts();
+        Collections.reverse(allProducts);
+        List<ProductEntity> last10Products = allProducts.subList(0, Math.min(10, allProducts.size()));
+        return last10Products;
     }
 
     @Override

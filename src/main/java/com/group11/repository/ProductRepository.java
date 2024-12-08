@@ -81,7 +81,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     Page<ProductEntity> findAll(Pageable pageable);
 
     // Truy vấn lấy 10 sản phẩm mới nhất
-    @Query("SELECT p FROM ProductEntity p ORDER BY p.productID DESC")
+    @Query("SELECT p FROM ProductEntity p WHERE p.status= 'AVAILABLE' ORDER BY p.productID ASC")
     List<ProductEntity> findTop10NewestProducts();
 
 
