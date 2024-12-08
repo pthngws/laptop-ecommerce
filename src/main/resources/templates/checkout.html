@@ -164,7 +164,7 @@
                                         <div class="custom-control custom-radio">
                                             <input type="radio" id="directbank" name="paymentmethod" value="VNBANK"
                                                    class="custom-control-input"/>
-                                            <label class="custom-control-label" for="directbank">Thanh toán ngân hàng</label>
+                                            <label class="custom-control-label" for="directbank">Thanh toán ngân hàng <img th:src="@{/assets/img/vn-bank.jpg}" class="img-fluid paypal-card" alt="Thẻ ngân hàng" /></label>
                                         </div>
                                     </div>
                                 </div>
@@ -173,7 +173,7 @@
                                         <div class="custom-control custom-radio">
                                             <input type="radio" id="checkpayment" name="paymentmethod" value="INTCARD"
                                                    class="custom-control-input"/>
-                                            <label class="custom-control-label" for="checkpayment">Thanh toán thẻ quốc tế</label>
+                                            <label class="custom-control-label" for="checkpayment">Thanh toán thẻ quốc tế <img th:src="@{/assets/img/paypal-card.jpg}" class="img-fluid paypal-card" alt="Thẻ quốc tế" /></label>
                                         </div>
                                     </div>
                                 </div>
@@ -217,10 +217,14 @@
                     success: function (response) {
                         console.log(response)
                         var percent = parseInt(response.discountAmount);
-                        var total = parseInt($('#total strong').text());
+                        var str = $('#total strong').text();
+                        console.log(str)
+                        var total = parseFloat($('#total strong').text().replace(/[^\d]/g, ''));
+                        console.log(total)
+                        // var total = parseInt($('#total strong').text());
                         var discountAmount = (total * percent) / 100;
-                        $('#discountAmount strong').text(discountAmount.toFixed(2));
-                        $('#totalAmount strong').text(parseInt(total - discountAmount).toFixed(2));
+                        $('#discountAmount strong').text(discountAmount.toLocaleString("vi-VN", { style: "currency", currency: "VND" }));
+                        $('#totalAmount strong').text(parseInt(total - discountAmount).toLocaleString("vi-VN", { style: "currency", currency: "VND" }));
 
                     },
                     error: function (xhr, status, error) {
@@ -260,13 +264,6 @@
                 alert("Vui lòng chọn phương thức thanh toán!");
                 return;
             }
-
-
-
-
-
-
-
             // Dữ liệu đơn hàng
             const orderData = {
                 name: name,
@@ -296,7 +293,7 @@
                 success: function (response) {
                     alert("Đơn hàng đã được tạo thành công!");
                     console.log("Response:", response);
-                    var amount = parseInt($('#totalAmount strong').text());
+                    var amount = parseInt($('#totalAmount strong').text().replace(/[^\d]/g, ''));
                     $.ajax({
                         url: `/api/payments/vn-pay?amount=${encodeURIComponent(amount)}&bankCode=${encodeURIComponent(selectedMethod)}&orderId=${encodeURIComponent(response.orderId)}`,
                         method: "GET",
@@ -400,7 +397,7 @@
 
                     // Cột tổng
                     const totalCell = document.createElement("td");
-                    totalCell.textContent = `${item.total.toFixed(2)}`;
+                    totalCell.textContent = `${item.total.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
 
                     // Thêm các ô vào hàng
                     row.appendChild(productCell);
@@ -409,8 +406,8 @@
                     // Thêm hàng vào tbody
                     tableBody.appendChild(row);
                 });
-                total.textContent = `${checkoutData.total.toFixed(2)}`;
-                totalAmount.textContent = `${checkoutData.total.toFixed(2)}`;
+                total.textContent = `${checkoutData.total.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
+                totalAmount.textContent = `${checkoutData.total.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}`;
                 // Xóa dữ liệu khỏi localStorage nếu không cần dùng nữa
                 //localStorage.removeItem("checkoutData");
             }
