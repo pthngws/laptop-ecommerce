@@ -1,8 +1,5 @@
 package com.group11.restcontroller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.group11.dto.ProductDTO;
-import com.group11.dto.request.ProductRequest;
 import com.group11.entity.*;
 import com.group11.repository.*;
 import com.group11.service.IJwtService;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/products")
@@ -39,8 +35,10 @@ public class ProductRestController {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+
     @Autowired
     private ImageItemRepository imageItemRepository;
+
     @RequestMapping("/newest")
     public ResponseEntity<List<ProductEntity>> getNewestProducts() {
         List<ProductEntity> newestProducts = productService.getNewestProducts();
@@ -57,39 +55,55 @@ public class ProductRestController {
         Page<ProductEntity> products = productService.searchProducts(keyword, pageable);
         return ResponseEntity.ok(products);
     }
-
-    @PostMapping("/add")
-    public ProductEntity addProduct(@RequestBody ProductEntity productEntity) {
-        // Lấy thông tin Category và Manufacturer
-        CategoryEntity category = categoryRepository.findById(productEntity.getCategory().getCategoryID())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-
-        ManufacturerEntity manufacturer = manufacturerRepository.findById(productEntity.getManufacturer().getId())
-                .orElseThrow(() -> new RuntimeException("Manufacturer not found"));
-
-        // Lưu ProductDetail nếu có thông tin chi tiết
-        ProductDetailEntity productDetail = productEntity.getDetail();
-        if (productDetail != null) {
-            // Lưu thông tin chi tiết sản phẩm
-            productDetailRepository.save(productDetail);
-
-            // Lưu danh sách hình ảnh nếu có
-            List<ImageItemEntity> images = productDetail.getImages();
-            if (images != null && !images.isEmpty()) {
-                for (ImageItemEntity image : images) {
-                    image.setProductDetail(productDetail); // Gắn chi tiết sản phẩm cho mỗi hình ảnh
-                    imageItemRepository.save(image);
-                }
-            }
+    // Xử lý yêu cầu thêm sản phẩm
+    @PostMapping("/them")
+    public ResponseEntity<?> addProducts(@RequestBody ProductRequest productEntity) {
+        try {
+            ProductEntity savedProduct = productEntity.toProductEntity();
+            savedProduct.setManufacturer(manufacturerRepository.findById(productEntity.getManufacturerId()).orElse(null));
+            savedProduct.setCategory(categoryRepository.findById(productEntity.getCategoryId()).orElse(null));
+            productDetailRepository.save(savedProduct.getDetail());
+            List<ImageItemEntity> images = savedProduct.getDetail().getImages();
+            imageItemRepository.saveAll(images);
+            productRepository.save(savedProduct);
+            return ResponseEntity.ok(savedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
-
-        // Cập nhật thông tin category, manufacturer cho sản phẩm
-        productEntity.setCategory(category);
-        productEntity.setManufacturer(manufacturer);
-
-        // Lưu sản phẩm vào cơ sở dữ liệu
-        return productRepository.save(productEntity);
     }
+
+//    @PostMapping("/add")
+//    public ProductEntity addProduct(@RequestBody ProductEntity productEntity) {
+//        // Lấy thông tin Category và Manufacturer
+//        CategoryEntity category = categoryRepository.findById(productEntity.getCategory().getCategoryID())
+//                .orElseThrow(() -> new RuntimeException("Category not found"));
+//
+//        ManufacturerEntity manufacturer = manufacturerRepository.findById(productEntity.getManufacturer().getId())
+//                .orElseThrow(() -> new RuntimeException("Manufacturer not found"));
+//
+//        // Lưu ProductDetail nếu có thông tin chi tiết
+//        ProductDetailEntity productDetail = productEntity.getDetail();
+//        if (productDetail != null) {
+//            // Lưu thông tin chi tiết sản phẩm
+//            productDetailRepository.save(productDetail);
+//
+//            // Lưu danh sách hình ảnh nếu có
+//            List<ImageItemEntity> images = productDetail.getImages();
+//            if (images != null && !images.isEmpty()) {
+//                for (ImageItemEntity image : images) {
+//                    image.setProductDetail(productDetail); // Gắn chi tiết sản phẩm cho mỗi hình ảnh
+//                    imageItemRepository.save(image);
+//                }
+//            }
+//        }
+//
+//        // Cập nhật thông tin category, manufacturer cho sản phẩm
+//        productEntity.setCategory(category);
+//        productEntity.setManufacturer(manufacturer);
+//
+//        // Lưu sản phẩm vào cơ sở dữ liệu
+//        return productRepository.save(productEntity);
+//    }
 
     @DeleteMapping("/remove/{productId}")
     public ResponseEntity<String> removeProduct(@RequestHeader("Authorization") String authorizationHeader,@PathVariable Long productId) {

@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giỏ hàng</title>
+    <title>Quản lý sản phẩm</title>
 
 
     <style>
@@ -134,7 +134,6 @@
                 <th class="pro-thumbnail">Thumbnail</th>
                 <th class="pro-title">Product</th>
                 <th class="pro-price">Price</th>
-                <th class="pro-quantity">Quantity</th>
                 <th class="pro-edit">Edit</th>
                 <th class="pro-remove">Remove</th>
               </tr>
@@ -158,8 +157,7 @@
         <div class="col-lg-5 ml-auto">
           <!-- Cart Calculation Area -->
           <div class="cart-calculator-wrapper mb-4">
-            <button onclick="proceedToCheckout()" class="sqr-btn d-block">Thêm sản phẩm</button>
-            <!--                    <a href="/checkout" >Proceed To Checkout</a>-->
+            <a th:href="@{/admin/products/add}" class="sqr-btn d-block">Thêm sản phẩm</a>
           </div>
         </div>
       </div>
@@ -223,13 +221,6 @@
             </td>
             <td class="pro-price">
                 <span>${product.price.toLocaleString("vi-VN")}</span>
-            </td>
-            <td>
-                <div class="quantity">
-
-                    <input type="text" value="1" min="1" class="quantity-input" readonly>
-
-                </div>
             </td>
             <td class="pro-edit">
                 <button class="edit-btn" data-product-id="${product.productID}">

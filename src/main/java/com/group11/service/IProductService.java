@@ -1,5 +1,4 @@
 package com.group11.service;
-import com.group11.dto.ProductDTO;
 import com.group11.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductService {
+    public void addProductWithDetails(ProductRequest productRequestDTO);
     Page<ProductEntity> searchProducts(@Param("keyword") String keyword, Pageable pageable);
     public Page<ProductEntity> findAll(Pageable pageable);
 
