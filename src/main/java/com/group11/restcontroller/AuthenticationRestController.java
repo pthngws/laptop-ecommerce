@@ -74,10 +74,14 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserModel loginUser) {
+    public ResponseEntity<Object> authenticate(@RequestBody LoginUserModel loginUser) {
         UserEntity authenticatedUser = authenticationService.authenticate(loginUser);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
         LoginResponse loginResponse = new LoginResponse();
+        if(!authenticatedUser.getActive()) {
+            return ResponseEntity.badRequest().body("Tài khoản đã bị khóa!");
+        }
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);

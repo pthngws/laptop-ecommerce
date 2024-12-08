@@ -100,7 +100,7 @@ public class HistoryServiceImpl implements IHistoryService {
         return new CheckoutResponse(
                 order.getUser().getName(),
                 order.getUser().getEmail(),
-                order.getUser().getPhone(),  // Lấy số điện thoại từ UserEntity
+                order.getPhoneNumber(),  // Lấy số điện thoại từ UserEntity
                 order.getNote(),
                 order.getShippingAddress(),
                 cartItems,

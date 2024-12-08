@@ -7,6 +7,7 @@ import com.group11.entity.UserEntity;
 import com.group11.service.IHistoryService;
 import com.group11.service.IJwtService;
 import com.group11.service.impl.UserServiceImpl;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,22 +66,6 @@ public class HistoryRestController {
         System.out.println("Account details: " + accountNumber + ", " + accountName + ", " + bankName);
 
 
-        token = token.substring(7); // Loại bỏ "Bearer " để lấy JWT thực tế
-        String email = jwtService.extractClaim(token, claims -> claims.getSubject());
-        UserEntity user = userService.findByEmail(email);
-
-
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User không tồn tại.");
-        }
-
-        Long userID = user.getUserID();
-        OrderEntity order = historyService.getOrderById(orderId);
-
-        System.out.println("Order's User ID: " + order.getUser());
-        System.out.println("Current User ID: " + userID);
 
 
         // Gọi phương thức hủy đơn hàng từ service
