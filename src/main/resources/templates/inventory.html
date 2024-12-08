@@ -154,7 +154,7 @@
 
             const prevButton = `
                 <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" onclick="changePage(currentPage - 1)">« Previous</a>
+                    <a class="page-link" onclick="changePage(currentPage - 1)">« Trước</a>
                 </li>`;
             paginationDiv.append(prevButton);
 
@@ -167,7 +167,7 @@
 
             const nextButton = `
                 <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link"  onclick="changePage(currentPage + 1)">Next »</a>
+                    <a class="page-link"  onclick="changePage(currentPage + 1)">Sau »</a>
                 </li>`;
 
             paginationDiv.append(nextButton);
