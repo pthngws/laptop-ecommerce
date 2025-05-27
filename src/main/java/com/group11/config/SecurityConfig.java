@@ -31,7 +31,12 @@ public class SecurityConfig {
                 )
                 .sessionManagement(mana -> mana.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("script-src 'self'; style-src 'self'; img-src 'self' data:")
+                        )
+                );
 
         return httpSecurity.build();
     }
