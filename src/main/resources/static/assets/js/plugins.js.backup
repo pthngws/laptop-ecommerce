@@ -228,7 +228,7 @@
         e.options.dots && null !== e.$dots && (i("li", e.$dots).off("click.slick", e.changeSlide).off("mouseenter.slick", i.proxy(e.interrupt, e, !0)).off("mouseleave.slick", i.proxy(e.interrupt, e, !1)), !0 === e.options.accessibility && e.$dots.off("keydown.slick", e.keyHandler)), e.$slider.off("focus.slick blur.slick"), !0 === e.options.arrows && e.slideCount > e.options.slidesToShow && (e.$prevArrow && e.$prevArrow.off("click.slick", e.changeSlide), e.$nextArrow && e.$nextArrow.off("click.slick", e.changeSlide), !0 === e.options.accessibility && (e.$prevArrow && e.$prevArrow.off("keydown.slick", e.keyHandler), e.$nextArrow && e.$nextArrow.off("keydown.slick", e.keyHandler))), e.$list.off("touchstart.slick mousedown.slick", e.swipeHandler), e.$list.off("touchmove.slick mousemove.slick", e.swipeHandler), e.$list.off("touchend.slick mouseup.slick", e.swipeHandler), e.$list.off("touchcancel.slick mouseleave.slick", e.swipeHandler), e.$list.off("click.slick", e.clickHandler), i(document).off(e.visibilityChange, e.visibility), e.cleanUpSlideEvents(), !0 === e.options.accessibility && e.$list.off("keydown.slick", e.keyHandler), !0 === e.options.focusOnSelect && i(e.$slideTrack).children().off("click.slick", e.selectHandler), i(window).off("orientationchange.slick.slick-" + e.instanceUid, e.orientationChange), i(window).off("resize.slick.slick-" + e.instanceUid, e.resize), i("[draggable!=true]", e.$slideTrack).off("dragstart", e.preventDefault), i(window).off("load.slick.slick-" + e.instanceUid, e.setPosition)
     }, e.prototype.cleanUpSlideEvents = function () {
         var e = this;
-        e.$list.off("mouseenter.slick", i.proxy(e.interrupt, e, !0)).off("mouseleave.slick", i.proxy(e.interrupt, e, !1))
+        e.$list.off("mouseenter.slick", i.proxy(e.interrupt, e, !0)), e.$list.off("mouseleave.slick", i.proxy(e.interrupt, e, !1))
     }, e.prototype.cleanUpRows = function () {
         var i, e = this;
         e.options.rows > 1 && ((i = e.$slides.children().children()).removeAttr("style"), e.$slider.empty().append(i))
@@ -705,7 +705,7 @@
 }(jQuery);
 // End Nice Select
 
-/*! jQuery UI - v1.13.2 - 2023-07-12
+/*! jQuery UI - v1.12.1 - 2018-11-27
 * http://jqueryui.com
 * Includes: widget.js, keycode.js, widgets/mouse.js, widgets/slider.js
 * Copyright jQuery Foundation and other contributors; Licensed MIT */
@@ -713,7 +713,7 @@
 (function (t) {
     "function" == typeof define && define.amd ? define(["jquery"], t) : t(jQuery)
 })(function (t) {
-    t.ui = t.ui || {}, t.ui.version = "1.13.2";
+    t.ui = t.ui || {}, t.ui.version = "1.12.1";
     var e = 0, i = Array.prototype.slice;
     t.cleanData = function (e) {
         return function (i) {
@@ -948,6 +948,59 @@
     var s = !1;
     t(document).on("mouseup", function () {
         s = !1
+    }), t.widget("ui.mouse", {
+        version: "1.12.1",
+        options: {cancel: "input, textarea, button, select, option", distance: 1, delay: 0},
+        _mouseInit: function () {
+            var e = this;
+            this.element.on("mousedown." + this.widgetName, function (t) {
+                return e._mouseDown(t)
+            }).on("click." + this.widgetName, function (i) {
+                return !0 === t.data(i.target, e.widgetName + ".preventClickEvent") ? (t.removeData(i.target, e.widgetName + ".preventClickEvent"), i.stopImmediatePropagation(), !1) : void 0
+            }), this.started = !1
+        },
+        _mouseDestroy: function () {
+            this.element.off("." + this.widgetName), this._mouseMoveDelegate && this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate)
+        },
+        _mouseDown: function (e) {
+            if (!s) {
+                this._mouseMoved = !1, this._mouseStarted && this._mouseUp(e), this._mouseDownEvent = e;
+                var i = this, n = 1 === e.which,
+                    o = "string" == typeof this.options.cancel && e.target.nodeName ? t(e.target).closest(this.options.cancel).length : !1;
+                return n && !o && this._mouseCapture(e) ? (this.mouseDelayMet = !this.options.delay, this.mouseDelayMet || (this._mouseDelayTimer = setTimeout(function () {
+                    i.mouseDelayMet = !0
+                }, this.options.delay)), this._mouseDistanceMet(e) && this._mouseDelayMet(e) && (this._mouseStarted = this._mouseStart(e) !== !1, !this._mouseStarted) ? (e.preventDefault(), !0) : (!0 === t.data(e.target, this.widgetName + ".preventClickEvent") && t.removeData(e.target, this.widgetName + ".preventClickEvent"), this._mouseMoveDelegate = function (t) {
+                    return i._mouseMove(t)
+                }, this._mouseUpDelegate = function (t) {
+                    return i._mouseUp(t)
+                }, this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate), e.preventDefault(), s = !0, !0)) : !0
+            }
+        },
+        _mouseMove: function (e) {
+            if (this._mouseMoved) {
+                if (t.ui.ie && (!document.documentMode || 9 > document.documentMode) && !e.button) return this._mouseUp(e);
+                if (!e.which) if (e.originalEvent.altKey || e.originalEvent.ctrlKey || e.originalEvent.metaKey || e.originalEvent.shiftKey) this.ignoreMissingWhich = !0; else if (!this.ignoreMissingWhich) return this._mouseUp(e)
+            }
+            return (e.which || e.button) && (this._mouseMoved = !0), this._mouseStarted ? (this._mouseDrag(e), e.preventDefault()) : (this._mouseDistanceMet(e) && this._mouseDelayMet(e) && (this._mouseStarted = this._mouseStart(this._mouseDownEvent, e) !== !1, this._mouseStarted ? this._mouseDrag(e) : this._mouseUp(e)), !this._mouseStarted)
+        },
+        _mouseUp: function (e) {
+            this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate), this._mouseStarted && (this._mouseStarted = !1, e.target === this._mouseDownEvent.target && t.data(e.target, this.widgetName + ".preventClickEvent", !0), this._mouseStop(e)), this._mouseDelayTimer && (clearTimeout(this._mouseDelayTimer), delete this._mouseDelayTimer), this.ignoreMissingWhich = !1, s = !1, e.preventDefault()
+        },
+        _mouseDistanceMet: function (t) {
+            return Math.max(Math.abs(this._mouseDownEvent.pageX - t.pageX), Math.abs(this._mouseDownEvent.pageY - t.pageY)) >= this.options.distance
+        },
+        _mouseDelayMet: function () {
+            return this.mouseDelayMet
+        },
+        _mouseStart: function () {
+        },
+        _mouseDrag: function () {
+        },
+        _mouseStop: function () {
+        },
+        _mouseCapture: function () {
+            return !0
+        }
     }), t.widget("ui.slider", t.ui.mouse, {
         version: "1.12.1",
         widgetEventPrefix: "slide",
@@ -1389,12 +1442,12 @@ Author: Siddharth Doshi
         return t
     }
 
-    function e(t, i, e) {
-        var n, o, s, r;
-        return r = function () {
-            n = !1, o && (s.apply(e, o), o = !1)
-        }, s = function () {
-            n ? o = arguments : (t.apply(e, arguments), setTimeout(r, i), n = !0)
+    function e(t, i) {
+        var e = Array.prototype.slice;
+        if (t.bind) return t.bind.apply(t, e.call(arguments, 1));
+        var n = e.call(arguments, 2);
+        return function () {
+            return t.apply(i, n.length ? n.concat(e.call(arguments)) : arguments)
         }
     }
 
@@ -1494,16 +1547,16 @@ Author: Siddharth Doshi
         return t instanceof x ? t : oi(t) ? new x(t[0], t[1]) : void 0 === t || null === t ? t : "object" == typeof t && "x" in t && "y" in t ? new x(t.x, t.y) : new x(t, i, e)
     }
 
-    function P(t, i, e) {
-        if (t) for (var n = e ? [t, i] : t, o = 0, s = n.length; o < s; o++) this.extend(n[o])
+    function P(t, i) {
+        if (t) for (var e = i ? [t, i] : t, n = 0, o = e.length; n < o; n++) this.extend(e[n])
     }
 
     function b(t, i) {
         return !t || t instanceof P ? t : new P(t, i)
     }
 
-    function T(t, i, e) {
-        if (t) for (var n = e ? [t, i] : t, o = 0, s = n.length; o < s; o++) this.extend(n[o])
+    function T(t, i) {
+        if (t) for (var e = i ? [t, i] : t, n = 0, o = e.length; n < o; n++) this.extend(e[n])
     }
 
     function z(t, i) {
@@ -2300,23 +2353,54 @@ Author: Siddharth Doshi
             return new T(new M(s.lat - n, s.lng - o), new M(r.lat - n, r.lng - o))
         }
     }, pi = i({}, di, {
-        code: "EPSG:3857", projection: mi, transformation: function () {
-            var t = .5 / (Math.PI * mi.R);
-            return Z(t, .5, -t, .5)
+        wrapLng: [-180, 180], R: 6371e3, distance: function (t, i) {
+            var e = Math.PI / 180, n = t.lat * e, o = i.lat * e, s = Math.sin((i.lat - t.lat) * e / 2),
+                r = Math.sin((i.lng - t.lng) * e / 2), a = s * s + Math.cos(n) * Math.cos(o) * r * r,
+                h = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return this.R * h
+        }
+    }), mi = {
+        R: 6378137, MAX_LATITUDE: 85.0511287798, project: function (t) {
+            var i = Math.PI / 180, e = this.MAX_LATITUDE, n = Math.max(Math.min(e, t.lat), -e), o = Math.sin(n * i);
+            return new x(this.R * t.lng * i, this.R * Math.log((1 + o) / (1 - o)) / 2)
+        }, unproject: function (t) {
+            var i = 180 / Math.PI;
+            return new M((2 * Math.atan(Math.exp(t.y / this.R)) - Math.PI / 2) * i, t.x * i / this.R)
+        }, bounds: function () {
+            var t = 6378137 * Math.PI;
+            return new P([-t, -t], [t, t])
         }()
-    }), mi = i({}, pi, {code: "EPSG:900913"}), wi = document.documentElement.style, Pi = "ActiveXObject" in window,
+    };
+    S.prototype = {
+        transform: function (t, i) {
+            return this._transform(t.clone(), i)
+        }, _transform: function (t, i) {
+            return i = i || 1, t.x = i * (this._a * t.x + this._b), t.y = i * (this._c * t.y + this._d), t
+        }, untransform: function (t, i) {
+            return i = i || 1, new x((t.x / i - this._b) / this._a, (t.y / i - this._d) / this._c)
+        }
+    };
+    var fi, gi, vi, yi = i({}, pi, {
+            code: "EPSG:3857", projection: mi, transformation: function () {
+                var t = .5 / (Math.PI * mi.R);
+                return Z(t, .5, -t, .5)
+            }()
+        }), xi = i({}, yi, {code: "EPSG:900913"}), wi = document.documentElement.style, Pi = "ActiveXObject" in window,
         Li = Pi && !document.addEventListener, bi = "msLaunchUri" in navigator && !("documentMode" in document),
         Ti = A("webkit"), zi = A("android"), Mi = A("android 2") || A("android 3"),
         Ci = parseInt(/WebKit\/([0-9]+)|$/.exec(navigator.userAgent)[1], 10),
-        Si = zi && A("Google") && Ci < 537 && !("AudioNode" in window), Zi = !!window.opera,
-        Ei = A("chrome"), ki = A("gecko") && !Ti && !Zi && !Pi, Ai = !Ei && A("safari"),
-        Bi = "OTransition" in wi, Ii = 0 === navigator.platform.indexOf("Win"), Oi = Pi && "transition" in wi,
-        Ri = "WebKitCSSMatrix" in window && "m11" in new window.WebKitCSSMatrix && !Mi, Ni = "MozPerspective" in wi,
-        Di = !window.L_DISABLE_3D && (Oi || Ri || Ni) && !Bi, ji = !window.L_NO_TOUCH && (Vi || "ontouchstart" in window || window.DocumentTouch && document instanceof window.DocumentTouch),
-        Wi = Wi && Zi, Hi = Wi && ki, Fi = Wi && Ri, Ui = !window.PointerEvent && window.MSPointerEvent,
-        Vi = !(!window.PointerEvent && !Ui), qi = !window.L_NO_TOUCH && (Vi || "ontouchstart" in window || window.DocumentTouch && document instanceof window.DocumentTouch),
-        Gi = Wi && Zi, Ki = Wi && ki, Yi = (window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI) > 1,
-        Xi = !!document.createElement("canvas").getContext, Ji = !Ji && function () {
+        Si = zi && A("Google") && Ci < 537 && !("AudioNode" in window), Zi = !!window.opera, Ei = A("chrome"),
+        ki = A("gecko") && !Ti && !Zi && !Pi, Ai = !Ei && A("safari"), Bi = A("phantom"), Ii = "OTransition" in wi,
+        Oi = 0 === navigator.platform.indexOf("Win"), Ri = Pi && "transition" in wi,
+        Ni = "WebKitCSSMatrix" in window && "m11" in new window.WebKitCSSMatrix && !Mi, Di = "MozPerspective" in wi,
+        ji = !window.L_DISABLE_3D && (Ri || Ni || Di) && !Ii && !Bi,
+        Wi = "undefined" != typeof orientation || A("mobile"), Hi = Wi && Ti, Fi = Wi && Ni,
+        Ui = !window.PointerEvent && window.MSPointerEvent, Vi = !(!window.PointerEvent && !Ui),
+        qi = !window.L_NO_TOUCH && (Vi || "ontouchstart" in window || window.DocumentTouch && document instanceof window.DocumentTouch),
+        Gi = Wi && Zi, Ki = Wi && ki,
+        Yi = (window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI) > 1,
+        Xi = !!document.createElement("canvas").getContext,
+        Ji = !(!document.createElementNS || !E("svg").createSVGRect), $i = !Ji && function () {
             try {
                 var t = document.createElement("div");
                 t.innerHTML = '<v:shape adj="1"/>';
@@ -2325,7 +2409,7 @@ Author: Siddharth Doshi
             } catch (t) {
                 return !1
             }
-        }(), $i = (Object.freeze || Object)({
+        }(), Qi = (Object.freeze || Object)({
             ie: Pi,
             ielt9: Li,
             edge: bi,
@@ -2339,11 +2423,11 @@ Author: Siddharth Doshi
             safari: Ai,
             phantom: Bi,
             opera12: Ii,
-            win: Ii,
-            ie3d: Oi,
-            webkit3d: Ri,
-            gecko3d: Ni,
-            any3d: Di,
+            win: Oi,
+            ie3d: Ri,
+            webkit3d: Ni,
+            gecko3d: Di,
+            any3d: ji,
             mobile: Wi,
             mobileWebkit: Hi,
             mobileWebkit3d: Fi,
@@ -2358,7 +2442,8 @@ Author: Siddharth Doshi
             vml: $i
         }), te = Ui ? "MSPointerDown" : "pointerdown", ie = Ui ? "MSPointerMove" : "pointermove",
         ee = Ui ? "MSPointerUp" : "pointerup", ne = Ui ? "MSPointerCancel" : "pointercancel",
-        oe = ["INPUT", "SELECT", "OPTION"], se = {}, re = !1, ae = 0, he = Ui ? "MSPointerDown" : Vi ? "pointerdown" : "touchstart",
+        oe = ["INPUT", "SELECT", "OPTION"], se = {}, re = !1, ae = 0,
+        he = Ui ? "MSPointerDown" : Vi ? "pointerdown" : "touchstart",
         ue = Ui ? "MSPointerUp" : Vi ? "pointerup" : "touchend", le = "_leaflet_",
         ce = st(["transform", "webkitTransform", "OTransform", "MozTransform", "msTransform"]),
         _e = st(["webkitTransition", "transition", "OTransition", "MozTransition", "msTransition"]),
@@ -2407,7 +2492,7 @@ Author: Siddharth Doshi
             restoreOutline: _t,
             getSizedParentNode: dt,
             getScale: pt
-        }), ye = "_leaflet_events", xe = Ii && Ei ? 2 * window.devicePixelRatio : ki ? window.devicePixelRatio : 1, we = {},
+        }), ye = "_leaflet_events", xe = Oi && Ei ? 2 * window.devicePixelRatio : ki ? window.devicePixelRatio : 1, we = {},
         Pe = (Object.freeze || Object)({
             on: mt,
             off: ft,
@@ -2461,7 +2546,7 @@ Author: Siddharth Doshi
                 trackResize: !0
             },
             initialize: function (t, i) {
-                i = l(this, i), this._initContainer(t), this._initLayout(), this._onResize = e(this._onResize, this), this._initEvents(), i.maxBounds && this.setMaxBounds(i.maxBounds), void 0 !== i.zoom && (this._zoom = this._limitZoom(i.zoom)), i.center && void 0 !== i.zoom && this.setView(C(i.center), i.zoom, {reset: !0}), this._handlers = [], this._layers = {}, this._zoomBoundLayers = {}, this._sizeChanged = !0, this.callInitHooks(), this._zoomAnimated = _e && Di && !Gi && this.options.zoomAnimation, this._zoomAnimated && (this._createAnimProxy(), mt(this._proxy, de, this._catchTransitionEnd, this)), this._addLayers(this.options.layers)
+                i = l(this, i), this._initContainer(t), this._initLayout(), this._onResize = e(this._onResize, this), this._initEvents(), i.maxBounds && this.setMaxBounds(i.maxBounds), void 0 !== i.zoom && (this._zoom = this._limitZoom(i.zoom)), i.center && void 0 !== i.zoom && this.setView(C(i.center), i.zoom, {reset: !0}), this._handlers = [], this._layers = {}, this._zoomBoundLayers = {}, this._sizeChanged = !0, this.callInitHooks(), this._zoomAnimated = _e && ji && !Gi && this.options.zoomAnimation, this._zoomAnimated && (this._createAnimProxy(), mt(this._proxy, de, this._catchTransitionEnd, this)), this._addLayers(this.options.layers)
             },
             setView: function (t, e, n) {
                 return e = void 0 === e ? this._zoom : this._limitZoom(e), t = this._limitCenter(C(t), e, this.options.maxBounds), n = n || {}, this._stop(), this._loaded && !n.reset && !0 !== n && (void 0 !== n.animate && (n.zoom = i({animate: n.animate}, n.zoom), n.pan = i({
@@ -2473,10 +2558,10 @@ Author: Siddharth Doshi
                 return this._loaded ? this.setView(this.getCenter(), t, {zoom: i}) : (this._zoom = t, this)
             },
             zoomIn: function (t, i) {
-                return t = t || (Di ? this.options.zoomDelta : 1), this.setZoom(this._zoom + t, i)
+                return t = t || (ji ? this.options.zoomDelta : 1), this.setZoom(this._zoom + t, i)
             },
             zoomOut: function (t, i) {
-                return t = t || (Di ? this.options.zoomDelta : 1), this.setZoom(this._zoom - t, i)
+                return t = t || (ji ? this.options.zoomDelta : 1), this.setZoom(this._zoom - t, i)
             },
             setZoomAround: function (t, i, e) {
                 var n = this.getZoomScale(i), o = this.getSize().divideBy(2),
@@ -2914,7 +2999,7 @@ Author: Siddharth Doshi
                 return t + i > 0 ? Math.round(t - i) / 2 : Math.max(0, Math.ceil(t)) - Math.max(0, Math.floor(i))
             },
             _limitZoom: function (t) {
-                var i = this.getMinZoom(), e = this.getMaxZoom(), n = Di ? this.options.zoomSnap : 1;
+                var i = this.getMinZoom(), e = this.getMaxZoom(), n = ji ? this.options.zoomSnap : 1;
                 return n && (t = Math.round(t / n) * n), Math.max(i, Math.min(e, t))
             },
             _onPanTransitionStep: function () {
@@ -3048,7 +3133,7 @@ Author: Siddharth Doshi
             var t = "leaflet-control-layers", i = this._container = G("div", t), e = this.options.collapsed;
             i.setAttribute("aria-haspopup", !0), wt(i), xt(i);
             var n = this._form = G("form", t + "-list");
-            e && (this._map.on("click", this.collapse, this), Di || mt(i, {
+            e && (this._map.on("click", this.collapse, this), zi || mt(i, {
                 mouseenter: this.expand,
                 mouseleave: this.collapse
             }, this));
@@ -4447,8 +4532,8 @@ Author: Siddharth Doshi
                 r = (this._wmsVersion >= 1.3 && this._crs === Ue ? [o.y, o.x, s.y, s.x] : [o.x, o.y, s.x, s.y]).join(","),
                 a = mn.prototype.getTileUrl.call(this, t);
             return a + c(this.wmsParams, a, this.options.uppercase) + (this.options.uppercase ? "&BBOX=" : "&bbox=") + r
-        }, setParams: function (t, i) {
-            return i(this.wmsParams, t), i || this.redraw(), this
+        }, setParams: function (t, e) {
+            return i(this.wmsParams, t), e || this.redraw(), this
         }
     });
     mn.WMS = fn, Jt.wms = function (t, i) {
@@ -4513,7 +4598,9 @@ Author: Siddharth Doshi
         }, _reset: function () {
             gn.prototype._reset.call(this), this._postponeUpdatePaths && (this._postponeUpdatePaths = !1, this._updatePaths())
         }, _initPath: function (t) {
-            this._updateDashArray(t), this._layers[n(t)] = t, t._order = {layer: t, prev: this._drawLast, next: null}, this._drawLast && (this._drawLast.next = t._order), this._drawLast = t, this._drawFirst = this._drawFirst || this._drawLast
+            this._updateDashArray(t), this._layers[n(t)] = t;
+            var i = t._order = {layer: t, prev: this._drawLast, next: null};
+            this._drawLast && (this._drawLast.next = i), this._drawLast = i, this._drawFirst = this._drawFirst || this._drawLast
         }, _addPath: function (t) {
             this._requestRedraw(t)
         }, _removePath: function (t) {
@@ -4589,31 +4676,12 @@ Author: Siddharth Doshi
             n !== this._hoveredLayer && (this._handleMouseOut(t), n && (Q(this._container, "leaflet-interactive"), this._fireEvent([n], t, "mouseover"), this._hoveredLayer = n)), this._hoveredLayer && this._fireEvent([this._hoveredLayer], t)
         }, _fireEvent: function (t, i, e) {
             this._map._fireDOMEvent(i, e || i.type, t)
-        }, _initContainer: function () {
-            this._container = G("div", "leaflet-vml-container")
-        }, _update: function () {
-            this._map._animatingZoom || (gn.prototype._update.call(this), this.fire("update"))
-        }, _initPath: function (t) {
-            var i = t._container = yn("shape");
-            Q(i, "leaflet-vml-shape " + (this.options.className || "")), i.coordsize = "1 1", t._path = yn("path"), i.appendChild(t._path), this._updateStyle(t), this._layers[n(t)] = t
-        }, _addPath: function (t) {
-            var i = t._container;
-            this._container.appendChild(i), t.options.interactive && t.addInteractiveTarget(i)
-        }, _removePath: function (t) {
-            var i = t._container;
-            K(i), t.removeInteractiveTarget(i), delete this._layers[n(t)]
-        }, _updateStyle: function (t) {
-            var i = t._stroke, e = t._fill, n = t.options, o = t._container;
-            o.stroked = !!n.stroke, o.filled = !!n.fill, n.stroke ? (i || (i = t._stroke = yn("stroke")), o.appendChild(i), i.weight = n.weight + "px", i.color = n.color, i.opacity = n.opacity, n.dashArray ? i.dashStyle = oi(n.dashArray) ? n.dashArray.join(" ") : n.dashArray.replace(/( *, *)/g, " ") : i.dashStyle = "", i.endcap = n.lineCap.replace("butt", "flat"), i.joinstyle = n.lineJoin) : i && (o.removeChild(i), t._stroke = null), n.fill ? (e || (e = t._fill = yn("fill")), o.appendChild(e), e.color = n.fillColor || n.color, e.opacity = n.fillOpacity) : e && (o.removeChild(e), t._fill = null)
-        }, _updateCircle: function (t) {
-            var i = t._point.round(), e = Math.round(t._radius), n = Math.round(t._radiusY || e);
-            this._setPath(t, t._empty() ? "M0 0" : "AL " + i.x + "," + i.y + " " + e + "," + n + " 0,23592600")
-        }, _setPath: function (t, i) {
-            t._path.v = i
         }, _bringToFront: function (t) {
-            X(t._path)
+            var i = t._order, e = i.next, n = i.prev;
+            e && (e.prev = n, n ? n.next = e : e && (this._drawFirst = e), i.prev = this._drawLast, this._drawLast.next = i, i.next = null, this._drawLast = i, this._requestRedraw(t))
         }, _bringToBack: function (t) {
-            J(t._path)
+            var i = t._order, e = i.next, n = i.prev;
+            n && (n.next = e, e ? e.prev = n : n && (this._drawLast = n), i.prev = null, i.next = this._drawFirst, this._drawFirst.prev = i, this._drawFirst = i, this._requestRedraw(t))
         }
     }), yn = function () {
         try {
@@ -4648,9 +4716,9 @@ Author: Siddharth Doshi
         }, _setPath: function (t, i) {
             t._path.v = i
         }, _bringToFront: function (t) {
-            X(t._path)
+            X(t._container)
         }, _bringToBack: function (t) {
-            J(t._path)
+            J(t._container)
         }
     }, wn = $i ? yn : E, Pn = gn.extend({
         getEvents: function () {
@@ -4927,75 +4995,6 @@ Author: Siddharth Doshi
         }
     });
     be.addInitHook("addHandler", "scrollWheelZoom", Cn), be.mergeOptions({tap: !0, tapTolerance: 15});
-    var Sn = Ee.extend({
-        addHooks: function () {
-            mt(this._map._container, "touchstart", this._onDown, this)
-        }, removeHooks: function () {
-            ft(this._map._container, "touchstart", this._onDown, this)
-        }, _onDown: function (t) {
-            if (t.touches) {
-                if (Pt(t), this._fireClick = !0, t.touches.length > 1) return this._fireClick = !1, void clearTimeout(this._holdTimeout);
-                var i = t.touches[0], n = i.target;
-                this._startPos = this._newPos = new x(i.clientX, i.clientY), n.tagName && "a" === n.tagName.toLowerCase() && Q(n, "leaflet-active"), this._holdTimeout = setTimeout(e(function () {
-                    this._isTapValid() && (this._fireClick = !1, this._onUp(), this._simulateEvent("contextmenu", i))
-                }, this), 1e3), this._simulateEvent("mousedown", i), mt(document, {
-                    touchmove: this._onMove,
-                    touchend: this._onUp
-                }, this)
-            }
-        }, _onUp: function (t) {
-            if (clearTimeout(this._holdTimeout), ft(document, {
-                touchmove: this._onMove,
-                touchend: this._onUp
-            }, this), this._fireClick && t && t.changedTouches) {
-                var i = t.changedTouches[0], e = i.target;
-                e && e.tagName && "a" === e.tagName.toLowerCase() && tt(e, "leaflet-active"), this._simulateEvent("mouseup", i), this._isTapValid() && this._simulateEvent("click", i)
-            }
-        }, _isTapValid: function () {
-            return this._newPos.distanceTo(this._startPos) <= this._map.options.tapTolerance
-        }, _onMove: function (t) {
-            var i = t.touches[0];
-            this._newPos = new x(i.clientX, i.clientY), this._simulateEvent("mousemove", i)
-        }, _simulateEvent: function (t, i) {
-            var e = document.createEvent("MouseEvents");
-            e._simulated = !0, i.target._simulatedClick = !0, e.initMouseEvent(t, !0, !0, window, 1, i.screenX, i.screenY, i.clientX, i.clientY, !1, !1, !1, !1, 0, null), i.target.dispatchEvent(e)
-        }
-    });
-    qi && !Vi && be.addInitHook("addHandler", "tap", Sn), be.mergeOptions({
-        touchZoom: qi && !Mi,
-        bounceAtZoomLimits: !0
-    });
-    var Zn = Ee.extend({
-        addHooks: function () {
-            Q(this._map._container, "leaflet-touch-zoom"), mt(this._map._container, "touchstart", this._onTouchStart, this)
-        }, removeHooks: function () {
-            tt(this._map._container, "leaflet-touch-zoom"), ft(this._map._container, "touchstart", this._onTouchStart, this)
-        }, _onTouchStart: function (t) {
-            var i = this._map;
-            if (t.touches && 2 === t.touches.length && !i._animatingZoom && !this._zooming) {
-                var e = i.mouseEventToContainerPoint(t.touches[0]), n = i.mouseEventToContainerPoint(t.touches[1]);
-                this._centerPoint = i.getSize()._divideBy(2), this._startLatLng = i.containerPointToLatLng(this._centerPoint), "center" !== i.options.touchZoom && (this._pinchStartLatLng = i.containerPointToLatLng(e.add(n)._divideBy(2))), this._startDist = e.distanceTo(n), this._startZoom = i.getZoom(), this._moved = !1, this._zooming = !0, i._stop(), mt(document, "touchmove", this._onTouchMove, this), mt(document, "touchend", this._onTouchEnd, this), Pt(t)
-            }
-        }, _onTouchMove: function (t) {
-            if (t.touches && 2 === t.touches.length && this._zooming) {
-                var i = this._map, n = i.mouseEventToContainerPoint(t.touches[0]),
-                    o = i.mouseEventToContainerPoint(t.touches[1]), s = n.distanceTo(o) / this._startDist;
-                if (this._zoom = i.getScaleZoom(s, this._startZoom), !i.options.bounceAtZoomLimits && (this._zoom < i.getMinZoom() && s < 1 || this._zoom > i.getMaxZoom() && s > 1) && (this._zoom = i._limitZoom(this._zoom)), "center" === i.options.touchZoom) {
-                    if (this._center = this._startLatLng, 1 === s) return
-                } else {
-                    var r = n._add(o)._divideBy(2)._subtract(this._centerPoint);
-                    if (1 === s && 0 === r.x && 0 === r.y) return;
-                    this._center = i.unproject(i.project(this._pinchStartLatLng, this._zoom).subtract(r), this._zoom)
-                }
-                this._moved || (i._moveStart(!0, !1), this._moved = !0), g(this._animRequest);
-                var a = e(i._move, i, this._center, this._zoom, {pinch: !0, round: !1});
-                this._animRequest = f(a, this, !0), Pt(t)
-            }
-        }, _onTouchEnd: function () {
-            this._moved && this._zooming ? (this._zooming = !1, g(this._animRequest), ft(document, "touchmove", this._onTouchMove), ft(document, "touchend", this._onTouchEnd), this._map.options.zoomAnimation ? this._map._animateZoom(this._center, this._map._limitZoom(this._zoom), !0, this._map.options.zoomSnap) : this._map._resetView(this._center, this._map._limitZoom(this._zoom))) : this._zooming = !1
-        }
-    });
-    be.addInitHook("addHandler", "touchZoom", Zn), be.addInitHook("addHandler", "scrollWheelZoom", Cn), be.mergeOptions({tap: !0, tapTolerance: 15});
     var Sn = Ee.extend({
         addHooks: function () {
             mt(this._map._container, "touchstart", this._onDown, this)
