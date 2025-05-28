@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>404 - Không tìm thấy trang</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #fff;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 6rem;
+      color: #d32f2f; /* Màu đỏ chủ đạo */
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    a {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #d32f2f;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    a:hover {
+      background-color: #b71c1c;
+      transform: scale(1.05);
+    }
+
+    img {
+      max-width: 300px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 4rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      img {
+        max-width: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+<img src="/assets/img/logo/logo.jpg" alt="Không tìm thấy trang"> <!-- Đặt ảnh minh họa tại public/images -->
+<h1>404</h1>
+<h2>Trang không tồn tại!</h2>
+<p>Trang bạn đang tìm kiếm có thể đã bị xóa, đổi tên hoặc không tồn tại.</p>
+<a th:href="@{/}">Trang chủ</a>
+</body>
+</html>
