@@ -34,7 +34,16 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("script-src 'self'; style-src 'self'; img-src 'self' data:")
+                                .policyDirectives("default-src 'self'; " +
+                                        "script-src 'self'; " +
+                                        "style-src 'self'; " +
+                                        "img-src 'self' data:; " +
+                                        "font-src 'self'; " +
+                                        "connect-src 'self'; " +
+                                        "object-src 'none'; " +
+                                        "frame-ancestors 'none'; " +
+                                        "form-action 'self';")
+
                         )
                 );
 
